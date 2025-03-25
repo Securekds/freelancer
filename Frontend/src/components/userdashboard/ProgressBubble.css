@@ -1,0 +1,115 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* General styles */
+.progress {
+  position: relative;
+  border-radius: 50%;
+  transition: all 1s ease;
+  /* Default size removed - now controlled by inline styles */
+}
+
+/* Color variants */
+.red .progress {
+  border: 5px solid rgb(237, 59, 59);
+  box-shadow: 0 0 20px rgba(127, 29, 29, 0.75);
+}
+
+.orange .progress {
+  border: 5px solid rgb(240, 124, 62);
+  box-shadow: 0 0 20px rgba(180, 83, 9, 0.75);
+}
+
+.green .progress {
+  border: 5px solid rgb(83, 252, 83);
+  box-shadow: 0 0 20px rgba(22, 101, 52, 0.75);
+}
+
+/* Inner container */
+.progress .inner {
+  position: absolute;
+  overflow: hidden;
+  z-index: 2;
+  border-radius: 50%;
+  border: 5px solid #121212;
+  transition: all 1s ease;
+  /* Size removed - now controlled by inline styles */
+}
+
+/* Water fill effect */
+.progress .inner .water {
+  position: absolute;
+  z-index: 1;
+  width: 200%;
+  height: 200%;
+  left: -50%;
+  border-radius: 40%;
+  animation-name: spin;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 10s;
+  transition: all 1s ease;
+}
+
+.red .progress .inner .water {
+  background: rgba(237, 59, 59, 0.5);
+  box-shadow: 0 0 20px rgba(237, 59, 59, 0.95);
+}
+
+.orange .progress .inner .water {
+  background: rgba(240, 124, 62, 0.5);
+  box-shadow: 0 0 20px rgba(240, 124, 62, 0.95);
+}
+
+.green .progress .inner .water {
+  background: rgba(83, 252, 83, 0.5);
+  box-shadow: 0 0 20px rgba(83, 252, 83, 0.95);
+}
+
+/* Glare effect */
+.progress .inner .glare {
+  position: absolute;
+  top: -120%;
+  left: -120%;
+  z-index: 5;
+  width: 200%;
+  height: 200%;
+  transform: rotate(45deg);
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: all 1s ease;
+}
+
+/* Percentage text */
+.progress .inner .percent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  text-align: center;
+  transition: all 1s ease;
+  /* Line height and font size removed - now controlled by inline styles */
+}
+
+.red .progress .inner .percent {
+  color: #5c1616;
+  text-shadow: 0 0 10px #3d0e0e;
+}
+
+.orange .progress .inner .percent {
+  color: #703d16;
+  text-shadow: 0 0 10px #4a280f;
+}
+
+.green .progress .inner .percent {
+  color: #0e5c29;
+  text-shadow: 0 0 10px #063d1b;
+}

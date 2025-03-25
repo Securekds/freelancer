@@ -1,0 +1,36 @@
+.drawer-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100; /* Ensure it's above other content */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Align items to the bottom */
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease; /* Smooth height transition */
+  }
+  
+  .drawer-container.open {
+    height: 5400px; /* Height of the drawer when open */
+  }
+  
+
+  .drawer-button {
+    margin-bottom: 20px; /* Space below the drawer button */
+  }
+  
+  .drawer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: white;
+  }
+  
+  .drawer-button button {
+    color: white;
+    border-color: white;
+  }

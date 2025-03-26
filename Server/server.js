@@ -50,11 +50,10 @@ mongoose.set('strictQuery', true);
 // Apply CORS middleware for Express routes
 app.use(
   cors({
-    origin: "http://nabilhamici-001-site1.otempurl.com",
+    origin: ["http://62.171.139.251", "http://localhost:5173"],
     credentials: true,
   })
 );
-
 
 
 
@@ -63,7 +62,7 @@ const server = http.createServer(app);
 // Setup Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", 
+    origin: ["http://62.171.139.251", "http://localhost:5173"], // Allow both
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -430,11 +429,6 @@ app.use(cookieParser());
 
 
 // Make sure your CORS configuration is properly set
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-  exposedHeaders: ['Cross-Origin-Resource-Policy']
-}));
 
 // Emulate __dirname
 const __filename = fileURLToPath(import.meta.url);

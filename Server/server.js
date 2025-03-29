@@ -57,9 +57,17 @@ mongoose.set('strictQuery', true);
 app.use(
   cors({
     origin: [
-      "http://62.171.139.251", 
+      // Production domains
+      "http://khadamatpro.net",
+      "http://www.khadamatpro.net",
+      "http://server.khadamatpro.net",
+      
+      // Local development
+      "http://localhost:5173", 
       "https://localhost:5173",
-      "http://localhost:5173" 
+      
+      // VPS IP (fallback)
+      "http://62.171.139.251"
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -73,15 +81,26 @@ app.use(
 
 const server = http.createServer(app);
 
-// Setup Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: ["http://62.171.139.251", "https://localhost:5173"], // Allow both
-    methods: ["GET", "POST"],
+    origin: [
+      // Production domains
+      "http://khadamatpro.net",
+      "http://www.khadamatpro.net",
+      "http://server.khadamatpro.net",
+      
+      // Local development
+      "http://localhost:5173",
+      "https://localhost:5173",
+      
+      // VPS IP (fallback)
+      "http://62.171.139.251"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Added more methods
     credentials: true,
-  },
+    allowedHeaders: ['Content-Type', 'Authorization'] // Added headers
+  }
 });
-
 
 const onlineUsers = new Map(); // userId -> socket ID
 

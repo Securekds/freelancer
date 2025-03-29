@@ -29,7 +29,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/server': {
-        target: 'http://localhost:8800',
+        target: 'http://server.khadamatpro.net', 
         changeOrigin: true
       }
     }

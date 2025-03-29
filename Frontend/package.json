@@ -21,7 +21,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@greatsumini/react-facebook-login": "^3.4.0",
-    "@lottiefiles/react-lottie-player": "^3.6.0",
+    "@lottiefiles/react-lottie-player": "^3.5.2",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.16.6",
     "@mui/system": "^5.16.6",

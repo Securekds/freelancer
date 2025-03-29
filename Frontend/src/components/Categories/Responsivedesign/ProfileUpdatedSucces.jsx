@@ -6,7 +6,7 @@ import { useUser } from '../../../Context/UserContext.jsx'
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCrown, faStar } from '@fortawesome/free-solid-svg-icons';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import EmailCode from '../../../assets/images/small-logos/EmailCode.json';
 import ProfileSucces from '../../../assets/images/small-logos/ProfileSucces.json'
 import AccountEmailVerify from './AccountEmailVerify.jsx'
@@ -18,7 +18,7 @@ import EmailVerfiyDone from './EmailVerfiyDone.jsx';
 
 
 
-function ProfileUpdatedSucces({ onCloseClick  }) {
+function ProfileUpdatedSucces({ onCloseClick }) {
 
     const { t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(() => {
@@ -125,7 +125,7 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
     const [isEmailDone, setIsEmailDone] = useState(false);
     const [startAnimation, setStartAnimation] = useState(false);
     const [openedFromButton, setOpenedFromButton] = useState(false);
- 
+
 
 
 
@@ -137,13 +137,13 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
             setIsEmailVerify(true); // Show the EmailVerify component
         }, 500); // Match the duration of the slide-up animation
     };
-    
+
 
     // Handler to update the state when email verification is successful
     const handleEmailVerificationSuccess = () => {
 
-            setIsEmailVerify(false); // Hide AccountEmailVerify component after animation
-            setIsEmailDone(true); // Show success message or next component
+        setIsEmailVerify(false); // Hide AccountEmailVerify component after animation
+        setIsEmailDone(true); // Show success message or next component
 
     };
     return (
@@ -156,7 +156,7 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
                 padding: '17px',
                 flexDirection: "column",
                 gap: "20px",
-                position: "relative", 
+                position: "relative",
 
             }}
         >
@@ -220,11 +220,15 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
 
                         }}
                     >
-                        <Lottie
-                            animationData={ProfileSucces}
-                            loop={false}
+                        <Player
+                            src={ProfileSucces}
+                            autoplay
                             style={{ width: '100%', height: '100%' }}
-                            onComplete={() => setIsAnimationComplete(true)}
+                            onEvent={(event) => {
+                                if (event === 'complete') {
+                                    setIsAnimationComplete(true)
+                                }
+                            }}
                         />
                     </div>
                     {showSuccessMessage && (
@@ -241,7 +245,7 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
                                     fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                     fontSize: '18px',
                                     fontWeight: 'bold',
-                                    textAlign : 'center',
+                                    textAlign: 'center',
                                 }}
                             >
                                 {t('Profile Updated Successfully')}
@@ -264,7 +268,7 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
                                     fontSize: '16px',
                                     opacity: '0.8',
                                     fontWeight: 'bold',
-                                    textAlign : 'center',
+                                    textAlign: 'center',
                                 }}
                             >
                                 {t('Your profile has been successfully updated with the new information.')}
@@ -296,7 +300,7 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
                     )}
                     {showSuccessMessage4 && !isEmailConfirmed && (
                         <div className="Button"
-                            
+
                             style={{
                                 display: 'flex', // Enable flexbox
                                 justifyContent: 'center', // Center horizontally
@@ -345,9 +349,9 @@ function ProfileUpdatedSucces({ onCloseClick  }) {
 
                 <AccountEmailVerify
                     onSuccess={handleEmailVerificationSuccess}
-                    isEmailVerify={isEmailVerify}       
+                    isEmailVerify={isEmailVerify}
                     setIsEmailVerify={setIsEmailVerify}
-                    openedFromButton={openedFromButton}  
+                    openedFromButton={openedFromButton}
 
                 />
 

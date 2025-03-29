@@ -6,7 +6,7 @@ import { useUser } from '../../../Context/UserContext.jsx'
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCrown, faStar } from '@fortawesome/free-solid-svg-icons';
-import Lottie from 'lottie-react';
+
 import EmailCode from '../../../assets/images/small-logos/EmailCode.json';
 import ProfileSucces from '../../../assets/images/small-logos/ProfileSucces.json'
 import AccountEmailVerify from './AccountEmailVerify.jsx'

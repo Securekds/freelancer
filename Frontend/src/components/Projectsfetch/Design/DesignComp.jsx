@@ -16,7 +16,7 @@ import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import CodeIcon from '@mui/icons-material/Code';
 import Designmenu from '../../Categories/Designmenu';
 import { useUser } from '../../../Context/UserContext.jsx'
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 import { useGig } from '../../../Context/GigContext.jsx';
 import { Card, Skeleton } from "@nextui-org/react";
@@ -136,7 +136,7 @@ function DesignComp() {
         setIsOpen((prev) => !prev);
     };
 
-    const { gigs , designGigs, isLoaded, error ,  selectedSubCategory, setSelectedSubCategory, } = useGig();
+    const { gigs, designGigs, isLoaded, error, selectedSubCategory, setSelectedSubCategory, } = useGig();
 
 
     const { user, getImageUrl } = useUser();
@@ -212,44 +212,44 @@ function DesignComp() {
     };
 
 
-      // Local state for pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [gigsPerPage] = useState(10); // Number of gigs per page
+    // Local state for pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [gigsPerPage] = useState(10); // Number of gigs per page
 
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(designGigs.length / gigsPerPage);
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(designGigs.length / gigsPerPage);
 
-  // Get the gigs for the current page
-  const indexOfLastGig = currentPage * gigsPerPage;
-  const indexOfFirstGig = indexOfLastGig - gigsPerPage;
-  const currentGigs = designGigs.slice(indexOfFirstGig, indexOfLastGig);
+    // Get the gigs for the current page
+    const indexOfLastGig = currentPage * gigsPerPage;
+    const indexOfFirstGig = indexOfLastGig - gigsPerPage;
+    const currentGigs = designGigs.slice(indexOfFirstGig, indexOfLastGig);
 
-  // Handle page click
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
+    // Handle page click
+    const handlePageClick = (page) => {
+        setCurrentPage(page);
+    };
 
-  // Handle previous click
-  const handlePreviousClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+    // Handle previous click
+    const handlePreviousClick = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
-  // Handle next click
-  const handleNextClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+    // Handle next click
+    const handleNextClick = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-  // Generate page numbers
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  
+    // Generate page numbers
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
 
-      const handleGigClick = (gigId) => {
+
+
+    const handleGigClick = (gigId) => {
         navigate(`/userdashboard/project/singlepost/${gigId}`);
     };
 
@@ -415,9 +415,9 @@ function DesignComp() {
 
                         >
                             <Designmenu
-                            selectedSubCategory={selectedSubCategory}
-                            setSelectedSubCategory={setSelectedSubCategory}
-                             />
+                                selectedSubCategory={selectedSubCategory}
+                                setSelectedSubCategory={setSelectedSubCategory}
+                            />
 
 
                         </div>
@@ -702,13 +702,16 @@ function DesignComp() {
                                     marginTop: '-15px',
                                 }}
                             >
-                                <Lottie animationData={animationData} style={{ width: 250, height: 250 }} />
-                            </div>
+                                <Player
+                                    src={animationData}  // Changed from animationData to src
+                                    autoplay             // Added to auto-play the animation
+                                    style={{ width: 250, height: 250 }}  // Kept same dimensions
+                                />                            </div>
 
 
                         </div>
                     )}
-                     { isLoaded && designGigs.map((gig) => (
+                    {isLoaded && designGigs.map((gig) => (
                         <Box key={gig._id} className='meteors-demo-container'
 
                             sx={{
@@ -902,16 +905,16 @@ function DesignComp() {
                                                         textOverflow: 'ellipsis',
 
                                                     }}>
-                                                       <span
-                                                        style={{
-                                                            fontFamily : '"Airbnbcereal", sans-serif',
-                                                            marginLeft : currentLanguage === 'ar'? '3px'  : 'unset',
-                                                            marginRight : '3px',
-                                                            
-                                                            
-                                                        }}
+                                                        <span
+                                                            style={{
+                                                                fontFamily: '"Airbnbcereal", sans-serif',
+                                                                marginLeft: currentLanguage === 'ar' ? '3px' : 'unset',
+                                                                marginRight: '3px',
+
+
+                                                            }}
                                                         >
-                                                      {gig.offerCount}
+                                                            {gig.offerCount}
                                                         </span>
                                                         {t('Offer')}
                                                     </Typography>
@@ -1070,113 +1073,113 @@ function DesignComp() {
                     ))}
                 </div>
 
-              
-      {/* Pagination */}
-      <div
-        className="Pages"
-        style={{
-          width: "100%",
-          height: "30px",
-          background: "transparent",
-          marginTop: "50px",
-          display: "flex",
-          gap: "5px",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "relative",
-          right: isSmallScreen ? (currentLanguage === "ar" ? "0px" : "5px") : "unset",
-        }}
-      >
-        <div id={currentLanguage === "ar" ? "triangleRight" : "triangleLeft"}></div>
-        {pages.map((page) => (
-          <div
-            key={page}
-            onClick={() => handlePageClick(page)}
-            style={{
-              width: "38px",
-              height: isSmallScreen ? "30px" : "38px",
-              background: page === currentPage ? "rgb(91, 66, 243)" : "hsl(240, 3.7%, 15.88%)",
-              color: "white",
-              borderRadius: "13px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "background 0.1s ease-in-out, color 0.1s ease-in-out",
-              "&:hover": {
-                background: page === 1 || page === 2 ? "#e5e7eb" : "rgba(255,255,255,0.2)",
-              },
-            }}
-          >
-            <Typography>{page}</Typography>
-          </div>
-        ))}
-        <div id={currentLanguage === "ar" ? "triangleLeft" : "triangleRight"}></div>
-      </div>
 
-      {/* Previous/Next Buttons */}
-      <div
-        className="Buttonss"
-        style={{
-          display: "flex",
-          gap: "5px",
-          justifyContent: "center",
-          marginTop: "20px",
-        }}
-      >
-        <Button
-          onClick={handlePreviousClick}
-          disabled={currentPage === 1}
-          sx={{
-            color: "rgb(91, 66, 243)",
-            WebkitTapHighlightColor: "transparent",
-            borderRadius: "8px",
-            fontWeight: "bold",
-            textTransform: "capitalize",
-            minWidth: "64px",
-            height: "32px",
-            padding: "0 12px",
-            outline: "none",
-            boxSizing: "border-box",
-            appearance: "none",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backgroundColor: "rgba(255,255,255,0.1)",
-            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
-            userSelect: "none",
-            fontSize: "13px",
-            whiteSpace: "nowrap",
-            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-          }}
-        >
-          {t("Previous")}
-        </Button>
-        <Button
-          onClick={handleNextClick}
-          disabled={currentPage === totalPages}
-          sx={{
-            color: "rgb(91, 66, 243)",
-            WebkitTapHighlightColor: "transparent",
-            borderRadius: "8px",
-            boxSizing: "border-box",
-            appearance: "none",
-            userSelect: "none",
-            whiteSpace: "nowrap",
-            fontSize: "13px",
-            width: "80px",
-            fontWeight: "bold",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backgroundColor: "rgba(255,255,255,0.1)",
-            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
-            textTransform: "capitalize",
-            height: "32px",
-            padding: "0 12px",
-            outline: "none",
-            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-          }}
-        >
-          {t("Next")}
-        </Button>
-      </div>
+                {/* Pagination */}
+                <div
+                    className="Pages"
+                    style={{
+                        width: "100%",
+                        height: "30px",
+                        background: "transparent",
+                        marginTop: "50px",
+                        display: "flex",
+                        gap: "5px",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position: "relative",
+                        right: isSmallScreen ? (currentLanguage === "ar" ? "0px" : "5px") : "unset",
+                    }}
+                >
+                    <div id={currentLanguage === "ar" ? "triangleRight" : "triangleLeft"}></div>
+                    {pages.map((page) => (
+                        <div
+                            key={page}
+                            onClick={() => handlePageClick(page)}
+                            style={{
+                                width: "38px",
+                                height: isSmallScreen ? "30px" : "38px",
+                                background: page === currentPage ? "rgb(91, 66, 243)" : "hsl(240, 3.7%, 15.88%)",
+                                color: "white",
+                                borderRadius: "13px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                transition: "background 0.1s ease-in-out, color 0.1s ease-in-out",
+                                "&:hover": {
+                                    background: page === 1 || page === 2 ? "#e5e7eb" : "rgba(255,255,255,0.2)",
+                                },
+                            }}
+                        >
+                            <Typography>{page}</Typography>
+                        </div>
+                    ))}
+                    <div id={currentLanguage === "ar" ? "triangleLeft" : "triangleRight"}></div>
+                </div>
+
+                {/* Previous/Next Buttons */}
+                <div
+                    className="Buttonss"
+                    style={{
+                        display: "flex",
+                        gap: "5px",
+                        justifyContent: "center",
+                        marginTop: "20px",
+                    }}
+                >
+                    <Button
+                        onClick={handlePreviousClick}
+                        disabled={currentPage === 1}
+                        sx={{
+                            color: "rgb(91, 66, 243)",
+                            WebkitTapHighlightColor: "transparent",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            textTransform: "capitalize",
+                            minWidth: "64px",
+                            height: "32px",
+                            padding: "0 12px",
+                            outline: "none",
+                            boxSizing: "border-box",
+                            appearance: "none",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            backgroundColor: "rgba(255,255,255,0.1)",
+                            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
+                            userSelect: "none",
+                            fontSize: "13px",
+                            whiteSpace: "nowrap",
+                            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                        }}
+                    >
+                        {t("Previous")}
+                    </Button>
+                    <Button
+                        onClick={handleNextClick}
+                        disabled={currentPage === totalPages}
+                        sx={{
+                            color: "rgb(91, 66, 243)",
+                            WebkitTapHighlightColor: "transparent",
+                            borderRadius: "8px",
+                            boxSizing: "border-box",
+                            appearance: "none",
+                            userSelect: "none",
+                            whiteSpace: "nowrap",
+                            fontSize: "13px",
+                            width: "80px",
+                            fontWeight: "bold",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            backgroundColor: "rgba(255,255,255,0.1)",
+                            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
+                            textTransform: "capitalize",
+                            height: "32px",
+                            padding: "0 12px",
+                            outline: "none",
+                            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                        }}
+                    >
+                        {t("Next")}
+                    </Button>
+                </div>
             </div>
         </>
 

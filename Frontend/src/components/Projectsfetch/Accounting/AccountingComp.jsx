@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Skeleton } from "@nextui-org/react";
 import MenuItem from '@mui/material/MenuItem';
 import { useUser } from '../../../Context/UserContext.jsx'
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 import { useGig } from '../../../Context/GigContext.jsx';
 import Fade from '@mui/material/Fade';
@@ -691,8 +691,11 @@ function AccountingComp() {
                                     marginTop: '-15px',
                                 }}
                             >
-                                <Lottie animationData={animationData} style={{ width: 250, height: 250 }} />
-                            </div>
+                                <Player
+                                    src={animationData}
+                                    autoplay
+                                    style={{ width: 250, height: 250 }}
+                                />                            </div>
 
 
                         </div>
@@ -892,15 +895,15 @@ function AccountingComp() {
 
                                                     }}>
                                                         <span
-                                                        style={{
-                                                            fontFamily : '"Airbnbcereal", sans-serif',
-                                                            marginLeft : currentLanguage === 'ar'? '3px'  : 'unset',
-                                                            marginRight : '3px',
-                                                            
-                                                            
-                                                        }}
+                                                            style={{
+                                                                fontFamily: '"Airbnbcereal", sans-serif',
+                                                                marginLeft: currentLanguage === 'ar' ? '3px' : 'unset',
+                                                                marginRight: '3px',
+
+
+                                                            }}
                                                         >
-                                                       {gig.offerCount}
+                                                            {gig.offerCount}
                                                         </span>
                                                         {t('Offer')}
                                                     </Typography>

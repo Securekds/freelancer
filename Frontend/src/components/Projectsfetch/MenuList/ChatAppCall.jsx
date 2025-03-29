@@ -29,7 +29,7 @@ import {
     faVideo,
     faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/ChatAppCallWaiting.json';
 import animationData2 from '../../../assets/images/small-logos/CallSliderUser.json';
 import { useChat } from '../../../Context/ChatContext.jsx'; // Import the useChat hook
@@ -54,7 +54,7 @@ function ChatAppCall({ isClose, callDuration }) {
         i18n.changeLanguage(currentLanguage);
     }, [currentLanguage]);
 
-      const isSmallScreen = useMediaQuery('(max-width:600px)');
+    const isSmallScreen = useMediaQuery('(max-width:600px)');
     const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)');
     const isMediumScreen = useMediaQuery('(min-width:1001px) and (max-width:1400px)');
     const isLargeScreen = useMediaQuery('(min-width:1401px) and (max-width:1920px)');
@@ -160,7 +160,7 @@ function ChatAppCall({ isClose, callDuration }) {
         <div
             className="CallDailog"
             style={{
-                width: isSmallScreen? '90vw' : '40vw',
+                width: isSmallScreen ? '90vw' : '40vw',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -273,11 +273,12 @@ function ChatAppCall({ isClose, callDuration }) {
                             height: '130px',
                         }}
                     >
-                        <Lottie
-                            animationData={animationData}
+                        <Player
+                            src={animationData}
+                            autoplay
                             style={{
                                 width: '100%',
-                                height: '100%',
+                                height: '100%'
                             }}
                         />
                     </div>
@@ -405,11 +406,12 @@ function ChatAppCall({ isClose, callDuration }) {
                             height: '130px',
                         }}
                     >
-                        <Lottie
-                            animationData={animationData}
+                        <Player
+                            src={animationData}
+                            autoplay
                             style={{
                                 width: '100%',
-                                height: '100%',
+                                height: '100%'
                             }}
                         />
                     </div>
@@ -533,11 +535,12 @@ function ChatAppCall({ isClose, callDuration }) {
                                 marginRight: '10px',
                             }}
                         >
-                            <Lottie
-                                animationData={animationData2}
+                            <Player
+                                src={animationData2}
+                                autoplay
                                 style={{
                                     width: '160px',
-                                    height: '70px',
+                                    height: '70px'
                                 }}
                             />
                         </div>
@@ -668,7 +671,7 @@ function ChatAppCall({ isClose, callDuration }) {
             )}
 
 
-        
+
 
 
 

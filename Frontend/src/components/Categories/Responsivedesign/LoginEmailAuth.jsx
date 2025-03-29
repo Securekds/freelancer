@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import CloseIcon from '@mui/icons-material/Close';
 import { useUser } from '../../../Context/UserContext.jsx'
 import React, { useState, useEffect, useRef } from 'react';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import EmailCode from '../../../assets/images/small-logos/EmailCode.json';
 import EmailSuccess from '../../../assets/images/small-logos/EmailSuccess.json';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -24,7 +24,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 
 
-function LoginEmailAuth({ onVerificationSuccess , user }) {
+function LoginEmailAuth({ onVerificationSuccess, user }) {
     console.log("Received user data in LoginAuthEmail:", user);
     const { t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(() => {
@@ -99,7 +99,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
     };
 
 
-   
+
     const [verifyEmail, setVerifyEmail] = useState(true);
     const [emailSuccess, setEmailSuccess] = useState(false);
     const [isScaling, setIsScaling] = useState(true);
@@ -147,7 +147,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
 
     const maskEmail = (email) => {
         if (!email) return "";
-        
+
         const [name, domain] = email.split("@");
         if (name.length <= 2) {
             return `${name[0]}***@${domain}`; // If short, show only first letter
@@ -155,17 +155,17 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
         return `${name[0]}***${name[name.length - 1]}@${domain}`;
     };
 
-    
+
 
     const sendEmailVerificationCode = async () => {
-      
-    
+
+
         // Prevent excessive resend attempts
         if (resendAttempts >= 3) {
             setErrorMessage("Too many attempts. Please wait before trying again.");
             return;
         }
-    
+
         setIsLoading(true);
         try {
             const response = await axios.post(
@@ -173,25 +173,25 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                 {
                     userId: user._id,
                     email: user.secondaryEmail,
-                    
+
                 },
                 { withCredentials: true }
             );
-    
+
             // Check if the response was successful
             if (response.data && response.status === 200) {
                 setIsLoading(false);
                 setErrorMessage("");
-                
+
                 // Reset verification code inputs
                 setEmailVerifyCode(Array(4).fill(''));
-    
+
                 // Reset attempts and cooldown
                 setWrongAttempts(0);
                 setCooldown(0);
                 setDisableResend(false);
                 setResendAttempts(0);
-    
+
                 console.log("✅ Verification code sent successfully!");
             } else {
                 throw new Error(response.data?.message || "Failed to send verification code");
@@ -199,19 +199,19 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
         } catch (error) {
             setIsLoading(false);
             console.error("❌ Error during email verification request:", error);
-    
+
             setErrorMessage(error.response?.data?.message || "Failed to send verification code.");
-    
+
         }
     };
-    
+
     useEffect(() => {
         if (user?._id && user?.secondaryEmail) {
             sendEmailVerificationCode();
         }
-    }, []); 
-    
- 
+    }, []);
+
+
 
     const handleEmailCodeVerify = async () => {
         const userId = user ? user._id : null;
@@ -219,31 +219,31 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
             setErrorMessage("User ID is missing. Please try again.");
             return;
         }
-    
+
         if (cooldown > 0) return;
-    
+
         const enteredCode = emailVerifyCode.join('');
         if (enteredCode.length !== 4) {
             setErrorMessage('Please enter the full 4-digit code.');
             return;
         }
-    
+
         if (wrongAttempts >= 3) {
             setErrorMessage(`Too many failed attempts. Please wait ${cooldown}s before requesting another code.`);
             return;
         }
-    
+
         setIsLoading(true);
-    
+
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/server/auth/verify-email-code`,
-                { 
-                    userId, 
-                    code: enteredCode, 
+                {
+                    userId,
+                    code: enteredCode,
 
                 },
-                { 
+                {
                     withCredentials: true,
                     headers: { 'Content-Type': 'application/json' }
                 }
@@ -262,11 +262,11 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
             login(res.data);
             onVerificationSuccess(res.data);
 
-    
+
         } catch (error) {
             console.error("Error during verification:", error);
             setWrongAttempts((prev) => prev + 1);
-    
+
             if (wrongAttempts + 1 >= 3) {
                 setErrorMessage("Too many failed attempts. Please wait 1 minute before requesting another code.");
                 startCooldown();
@@ -279,7 +279,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
         }
     };
 
-    
+
     const [resendAttempts, setResendAttempts] = useState(0);
 
     const startCooldown = () => {
@@ -376,13 +376,13 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                     width: "100%",
                     bottom: 0,
                     borderRadius: "16px",
-                   
+
                     backdropFilter: "blur(10px)",
                     WebkitBackdropFilter: "blur(10px)",
                     zIndex: "-1",
                 }}
             />
-          
+
             <div id="recaptcha-container"></div>
 
             <div className="ContainreEmail"
@@ -394,7 +394,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                 }}
             >
 
-             
+
 
                 {verifyEmail && (
                     <>
@@ -405,8 +405,12 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                                 marginTop: '-25px',
                             }}
                         >
-                            <Lottie animationData={EmailCode} loop={true} style={{ width: 170, height: 170 }} />
-                        </div>
+                            <Player
+                                src={EmailCode}
+                                autoplay
+                                loop
+                                style={{ width: 170, height: 170 }}
+                            />                        </div>
                         <div className="VerificationTypo"
 
                             style={{
@@ -522,7 +526,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                                 disabled={wrongAttempts >= 3 || cooldown > 0}
                                 className="btn-grad"
                                 sx={{
-                                    width: isSmallScreen? '270px' :  '315px',
+                                    width: isSmallScreen ? '270px' : '315px',
                                     height: '38px',
                                     backgroundColor: 'transparent',
                                     color: 'white',
@@ -566,7 +570,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                             >
                                 {t("Didn't receive the email?")}
                                 <Button
-                               
+
                                     onClick={disableResend ? null : handleResendCode}
                                     style={{
                                         marginLeft: '5px',
@@ -577,7 +581,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                                     }}
                                 >
                                     {disableResend ? `${t('Wait')} ${cooldown}s` : t('Resend Code')}
-                                    </Button>
+                                </Button>
                             </Typography>
                         </div>
 
@@ -586,7 +590,7 @@ function LoginEmailAuth({ onVerificationSuccess , user }) {
                     </>
                 )}
 
-           
+
 
             </div>
 

@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Created from '../../assets/images/small-logos/Created.json';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import DOMPurify from 'dompurify';
 import GoogleRegisterMobile from './GoogleRegisterMobile';
 

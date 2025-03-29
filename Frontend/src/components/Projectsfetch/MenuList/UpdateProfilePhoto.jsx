@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/CoverPhoto.json'
 import animationData1 from '../../../assets/images/small-logos/CoverDone.json'
 import CountrySelect from './CountrySelect';
@@ -541,8 +541,8 @@ const Pricing = ({ handleCloseProfile, onUpdateCoverImage, currentCoverImg }) =>
 
             // Update the user's profile image in context
             const { user: updatedUser } = response.data;
-              // Add this log to see what the backend is returning
-        console.log('Response from backend:', response.data);
+            // Add this log to see what the backend is returning
+            console.log('Response from backend:', response.data);
             updateUserProfileImage(updatedUser.profileImg); // This updates the profile image
 
             // Set the uploaded image URL
@@ -652,8 +652,16 @@ const Pricing = ({ handleCloseProfile, onUpdateCoverImage, currentCoverImg }) =>
                     >
                         <div className="Animation"
                             style={{ marginTop: '-20px', }}>
-                            <Lottie animationData={animationData} style={{ width: 200, height: 200, display: 'block', margin: '0 auto' }} />
-                        </div>
+                            <Player
+                                src={animationData}
+                                autoplay
+                                style={{
+                                    width: 200,
+                                    height: 200,
+                                    display: 'block',
+                                    margin: '0 auto'
+                                }}
+                            />                        </div>
                         <div className="Typo"
                             style={{
                                 marginTop: '-20px',
@@ -928,8 +936,11 @@ const Pricing = ({ handleCloseProfile, onUpdateCoverImage, currentCoverImg }) =>
                         </div>
 
                         <div className="LottiesSucces" style={{ marginTop: '-30px' }}>
-                            <Lottie animationData={animationData1} style={{ width: 350, height: 350 }} />
-                        </div>
+                            <Player
+                                src={animationData1}
+                                autoplay
+                                style={{ width: 350, height: 350 }}
+                            />                        </div>
 
                         <div
                             className="Close"

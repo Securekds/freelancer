@@ -22,8 +22,7 @@ import { CacheProvider } from '@emotion/react';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import createCache from '@emotion/cache';
-import Lottie from 'lottie-react';
-
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../assets/images/small-logos/CoverPhoto.json'
 
 // Create RTL-specific cache
@@ -529,8 +528,8 @@ function AddNewProject() {
     const [loadingProgress, setLoadingProgress] = useState(0);
     const [imageSize, setImageSize] = useState('0');
     const fileInputRef = useRef(null);
-      const [isLoading, setIsLoading] = useState(false);
-    
+    const [isLoading, setIsLoading] = useState(false);
+
     const [isUploading, setIsUploading] = useState(false);
 
     const handleClick = () => {
@@ -703,185 +702,185 @@ function AddNewProject() {
         let isValid = true;
         let newErrors = { ...errors };
         setIsLoading(true); // Start loading
-      
+
         try {
-          // Retrieve userId from user context
-          const userId = user ? user._id : null;
-          if (!userId) {
-            setErrorMessage("User ID is missing. Please try again.");
-            setIsLoading(false);
-            return;
-          }
-      
-          // Sanitize inputs using DOMPurify
-          const sanitizedProjectTitle = DOMPurify.sanitize(formData.projectTitle.trim());
-          const sanitizedProjectDescription = DOMPurify.sanitize(formData.projectDescription.trim());
-          const sanitizedSelectedCategory = DOMPurify.sanitize(formData.selectedCategory.trim());
-          const sanitizedSelectedSubCategory = DOMPurify.sanitize(formData.selectedSubCategory.trim());
-          const sanitizedSelectedBudget = DOMPurify.sanitize(formData.selectedBudget.trim());
-          const sanitizedSelectedTime = DOMPurify.sanitize(formData.selectedTime);
-      
-          // Validate required fields
-          if (!sanitizedProjectTitle) {
-            setErrorMessage('All fields are required.');
-            newErrors.projectTitleError = true;
-            isValid = false;
-          } else {
-            newErrors.projectTitleError = false;
-          }
-      
-          if (!sanitizedProjectDescription) {
-            setErrorMessage('All fields are required.');
-            newErrors.projectDescriptionError = true;
-            isValid = false;
-          } else if (sanitizedProjectDescription.length < 20) {
-            setErrorMessage('Project description must be at least 20 characters long. Provide more details about your project.');
-            newErrors.projectDescriptionError = true;
-            isValid = false;
-          } else {
-            newErrors.projectDescriptionError = false;
-          }
-      
-          if (!sanitizedSelectedCategory) {
-            setErrorMessage('All fields are required.');
-            newErrors.selectedCategoryError = true;
-            isValid = false;
-          } else {
-            newErrors.selectedCategoryError = false;
-          }
-      
-          if (!sanitizedSelectedSubCategory) {
-            setErrorMessage('All fields are required.');
-            newErrors.selectedSubCategoryError = true;
-            isValid = false;
-          } else {
-            newErrors.selectedSubCategoryError = false;
-          }
-      
-          if (!sanitizedSelectedBudget) {
-            setErrorMessage('All fields are required.');
-            newErrors.selectedBudgetError = true;
-            isValid = false;
-          } else {
-            newErrors.selectedBudgetError = false;
-          }
-      
-          if (!sanitizedSelectedTime && sanitizedSelectedTime !== 0) {
-            setErrorMessage('All fields are required.');
-            newErrors.selectedTimeError = true;
-            isValid = false;
-          } else {
-            newErrors.selectedTimeError = false;
-          }
-      
-          if (formData.selectedSkills.length === 0) {
-            setErrorMessage('All fields are required.');
-            newErrors.selectedSkillsError = true;
-            isValid = false;
-          } else {
-            newErrors.selectedSkillsError = false;
-          }
-      
-          // Optional project links validation
-          const linkRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/;
-          const projectLinks = [
-            formData.ProjectLink1,
-            formData.ProjectLink2,
-            formData.ProjectLink3
-          ];
-      
-          projectLinks.forEach((link, index) => {
-            if (link && !linkRegex.test(link)) {
-              setErrorMessage1(`Invalid link format for Link ${index + 1}.`);
-              newErrors[`ProjectLink${index + 1}Error`] = true;
-              isValid = false;
+            // Retrieve userId from user context
+            const userId = user ? user._id : null;
+            if (!userId) {
+                setErrorMessage("User ID is missing. Please try again.");
+                setIsLoading(false);
+                return;
+            }
+
+            // Sanitize inputs using DOMPurify
+            const sanitizedProjectTitle = DOMPurify.sanitize(formData.projectTitle.trim());
+            const sanitizedProjectDescription = DOMPurify.sanitize(formData.projectDescription.trim());
+            const sanitizedSelectedCategory = DOMPurify.sanitize(formData.selectedCategory.trim());
+            const sanitizedSelectedSubCategory = DOMPurify.sanitize(formData.selectedSubCategory.trim());
+            const sanitizedSelectedBudget = DOMPurify.sanitize(formData.selectedBudget.trim());
+            const sanitizedSelectedTime = DOMPurify.sanitize(formData.selectedTime);
+
+            // Validate required fields
+            if (!sanitizedProjectTitle) {
+                setErrorMessage('All fields are required.');
+                newErrors.projectTitleError = true;
+                isValid = false;
             } else {
-              newErrors[`ProjectLink${index + 1}Error`] = false;
+                newErrors.projectTitleError = false;
             }
-          });
-      
-          // Set errors for the inputs
-          setErrors(newErrors);
-      
-          if (!isValid) {
-            setIsLoading(false); // Stop loading if validation fails
-            return;
-          }
-      
-          // Prepare project links array (filter out empty links)
-          const validProjectLinks = projectLinks.filter(link => link && link.trim() !== '');
-      
-          // Create FormData to send files and other data
-          const formDataToSend = new FormData();
-      
-          // Append all text fields
-          formDataToSend.append('projectTitle', sanitizedProjectTitle);
-          formDataToSend.append('projectDescription', sanitizedProjectDescription);
-          formDataToSend.append('selectedCategory', sanitizedSelectedCategory);
-          formDataToSend.append('selectedSubCategory', sanitizedSelectedSubCategory);
-          formDataToSend.append('selectedBudget', sanitizedSelectedBudget);
-          formDataToSend.append('selectedTime', sanitizedSelectedTime);
-          formDataToSend.append('userId', userId);
-      
-          // Append skills as JSON
-          formDataToSend.append('selectedSkills', JSON.stringify(formData.selectedSkills));
-      
-          // Append project links as JSON
-          formDataToSend.append('projectLinks', JSON.stringify(validProjectLinks));
-      
-          // Append files
-          formData.uploadedPhotos.forEach((file) => {
-            formDataToSend.append('uploadedPhotos', file);
-          });
-      
-          const response = await axios.post(
-            `${import.meta.env.VITE_BACKEND_URL}/server/gigs/new-gig`,
-            formDataToSend,
-            {
-              withCredentials: true,
-              headers: { 'Content-Type': 'multipart/form-data' }
+
+            if (!sanitizedProjectDescription) {
+                setErrorMessage('All fields are required.');
+                newErrors.projectDescriptionError = true;
+                isValid = false;
+            } else if (sanitizedProjectDescription.length < 20) {
+                setErrorMessage('Project description must be at least 20 characters long. Provide more details about your project.');
+                newErrors.projectDescriptionError = true;
+                isValid = false;
+            } else {
+                newErrors.projectDescriptionError = false;
             }
-          );
-      
-          console.log("Gig created successfully:", response.data);
-      
-          // Show success toast
-          toast('🎉 Project created successfully!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-      
-          // Optional: Reset form or redirect
-          // resetForm();
-          // navigate('/dashboard');
-      
+
+            if (!sanitizedSelectedCategory) {
+                setErrorMessage('All fields are required.');
+                newErrors.selectedCategoryError = true;
+                isValid = false;
+            } else {
+                newErrors.selectedCategoryError = false;
+            }
+
+            if (!sanitizedSelectedSubCategory) {
+                setErrorMessage('All fields are required.');
+                newErrors.selectedSubCategoryError = true;
+                isValid = false;
+            } else {
+                newErrors.selectedSubCategoryError = false;
+            }
+
+            if (!sanitizedSelectedBudget) {
+                setErrorMessage('All fields are required.');
+                newErrors.selectedBudgetError = true;
+                isValid = false;
+            } else {
+                newErrors.selectedBudgetError = false;
+            }
+
+            if (!sanitizedSelectedTime && sanitizedSelectedTime !== 0) {
+                setErrorMessage('All fields are required.');
+                newErrors.selectedTimeError = true;
+                isValid = false;
+            } else {
+                newErrors.selectedTimeError = false;
+            }
+
+            if (formData.selectedSkills.length === 0) {
+                setErrorMessage('All fields are required.');
+                newErrors.selectedSkillsError = true;
+                isValid = false;
+            } else {
+                newErrors.selectedSkillsError = false;
+            }
+
+            // Optional project links validation
+            const linkRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/;
+            const projectLinks = [
+                formData.ProjectLink1,
+                formData.ProjectLink2,
+                formData.ProjectLink3
+            ];
+
+            projectLinks.forEach((link, index) => {
+                if (link && !linkRegex.test(link)) {
+                    setErrorMessage1(`Invalid link format for Link ${index + 1}.`);
+                    newErrors[`ProjectLink${index + 1}Error`] = true;
+                    isValid = false;
+                } else {
+                    newErrors[`ProjectLink${index + 1}Error`] = false;
+                }
+            });
+
+            // Set errors for the inputs
+            setErrors(newErrors);
+
+            if (!isValid) {
+                setIsLoading(false); // Stop loading if validation fails
+                return;
+            }
+
+            // Prepare project links array (filter out empty links)
+            const validProjectLinks = projectLinks.filter(link => link && link.trim() !== '');
+
+            // Create FormData to send files and other data
+            const formDataToSend = new FormData();
+
+            // Append all text fields
+            formDataToSend.append('projectTitle', sanitizedProjectTitle);
+            formDataToSend.append('projectDescription', sanitizedProjectDescription);
+            formDataToSend.append('selectedCategory', sanitizedSelectedCategory);
+            formDataToSend.append('selectedSubCategory', sanitizedSelectedSubCategory);
+            formDataToSend.append('selectedBudget', sanitizedSelectedBudget);
+            formDataToSend.append('selectedTime', sanitizedSelectedTime);
+            formDataToSend.append('userId', userId);
+
+            // Append skills as JSON
+            formDataToSend.append('selectedSkills', JSON.stringify(formData.selectedSkills));
+
+            // Append project links as JSON
+            formDataToSend.append('projectLinks', JSON.stringify(validProjectLinks));
+
+            // Append files
+            formData.uploadedPhotos.forEach((file) => {
+                formDataToSend.append('uploadedPhotos', file);
+            });
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/server/gigs/new-gig`,
+                formDataToSend,
+                {
+                    withCredentials: true,
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                }
+            );
+
+            console.log("Gig created successfully:", response.data);
+
+            // Show success toast
+            toast('🎉 Project created successfully!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+
+            // Optional: Reset form or redirect
+            // resetForm();
+            // navigate('/dashboard');
+
         } catch (error) {
-          console.error("Error creating gig:", error.response ? error.response.data : error.message);
-          setErrorMessage("Failed to create gig. Please try again.");
-      
-          // Show error toast
-          toast.error('Failed to create project. Please try again.', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
+            console.error("Error creating gig:", error.response ? error.response.data : error.message);
+            setErrorMessage("Failed to create gig. Please try again.");
+
+            // Show error toast
+            toast.error('Failed to create project. Please try again.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         } finally {
-          setIsLoading(false); // Stop loading regardless of success or failure
+            setIsLoading(false); // Stop loading regardless of success or failure
         }
-      };
-   
- 
+    };
+
+
 
 
 
@@ -2771,8 +2770,17 @@ function AddNewProject() {
                             onDrop={handleDrop}
                         >
                             <div className="Animation" style={{ marginTop: '-20px' }}>
-                                <Lottie animationData={animationData} style={{ width: 200, height: 200, display: 'block', margin: '0 auto' }} />
-                            </div>
+                                <Player
+                                    src={animationData}  // Changed from animationData to src
+                                    autoplay             // Required for auto-play
+                                    loop                 // Defaults to true (same as Lottie)
+                                    style={{
+                                        width: 200,
+                                        height: 200,
+                                        display: 'block',
+                                        margin: '0 auto'
+                                    }}
+                                />                            </div>
                             <div className="Typo"
                                 style={{
                                     marginTop: '-20px',
@@ -3426,7 +3434,7 @@ function AddNewProject() {
                             cursor: 'pointer',
                             height: '38px',
                             color: 'white',
-                            opacity : isLoading? '0.5' : 'unset', 
+                            opacity: isLoading ? '0.5' : 'unset',
                             borderColor: 'none',
                             '&:hover': {
                                 borderColor: 'white',
@@ -3434,43 +3442,43 @@ function AddNewProject() {
                             },
                         }}
                     >
-                           {isLoading ? (
-                      <>
-                        <div className="lds-dual-ring" style={{ margin: 'auto' }}></div>
+                        {isLoading ? (
+                            <>
+                                <div className="lds-dual-ring" style={{ margin: 'auto' }}></div>
 
-                      </>
-                    ) : (
+                            </>
+                        ) : (
 
-                        <Typography
-                            sx={{
-                                color: 'white',
-                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                fontWeight: 'bold',
-                                textTransform: 'capitalize',
-                                fontSize: '13px',
-                            }}
-                        >
-                            {t('Create a project')}
-                        </Typography>
-                    )}
-                      
+                            <Typography
+                                sx={{
+                                    color: 'white',
+                                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                    fontWeight: 'bold',
+                                    textTransform: 'capitalize',
+                                    fontSize: '13px',
+                                }}
+                            >
+                                {t('Create a project')}
+                            </Typography>
+                        )}
+
                     </Button>
                 </div>
 
-                  {/* Place ToastContainer outside of the Button */}
-        
+                {/* Place ToastContainer outside of the Button */}
 
-             
+
+
 
 
 
 
             </div>
-         
+
 
         </div>
 
-        
+
     )
 }
 

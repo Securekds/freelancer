@@ -11,8 +11,6 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Created from '../../assets/images/small-logos/Created.json';
-import Lottie from 'lottie-react';
 import DOMPurify from 'dompurify';
 import GoogleRegisterMobile from './GoogleRegisterMobile';
 import useMediaQuery from '@mui/material/useMediaQuery';

@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Created from '../../assets/images/small-logos/Created.json';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import DOMPurify from 'dompurify';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -979,15 +979,16 @@ useEffect(() => {
                                 }}
                             />
                             {countdown > 0 && progress === 100 && (
-                                <Lottie
-                                    animationData={Created}
-                                    loop={false}
-                                    style={{
-                                        width: '80px', // Smaller size for mobile screens
-                                        height: '80px',
-                                        marginBottom: '-15px',
-                                    }}
-                                />
+                             <Player
+                             src={Created}
+                             autoplay
+                             loop={false}
+                             style={{
+                               width: '80px',
+                               height: '80px',
+                               marginBottom: '-15px'
+                             }}
+                           />
                             )}
 
                             {/* Progress Bar */}

@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUser } from '../../../Context/UserContext.jsx'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React, { useState, useEffect, useRef } from 'react';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import { useNavigate } from 'react-router-dom';
 import PhoneCode from '../../../assets/images/small-logos/PhoneCode.json';
 import UserNotVerifeyd from '../../../assets/images/small-logos/UserNotVerifeyd.json';
@@ -56,14 +56,14 @@ function IsUserVerifeyd({ onCloseClick }) {
 
 
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  // Function to handle click and trigger animation
-  const handleProfileRedirect = () => {
+    // Function to handle click and trigger animation
+    const handleProfileRedirect = () => {
 
-    navigate('/userdashboard/profile/settings');
+        navigate('/userdashboard/profile/settings');
 
-  };
+    };
 
 
 
@@ -120,8 +120,11 @@ function IsUserVerifeyd({ onCloseClick }) {
                 {/* Customize icon size and color */}
             </div>
             <div className="lotti">
-                <Lottie animationData={UserNotVerifeyd} loop={true} style={{ width: 170, height: 170 }} />
-
+                <Player
+                    src={UserNotVerifeyd}
+                    autoplay
+                    style={{ width: 170, height: 170 }}
+                />
             </div>
             <div className="div"
                 style={{
@@ -138,7 +141,7 @@ function IsUserVerifeyd({ onCloseClick }) {
                         fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                         fontWeight: 'bold',
                         fontSize: '17px',
-                        textAlign : 'center',
+                        textAlign: 'center',
                     }}
                 >
                     {t('Account Verification Required')}
@@ -149,7 +152,7 @@ function IsUserVerifeyd({ onCloseClick }) {
                         fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                         fontSize: '15px',
                         fontWeight: 'bold',
-                        textAlign : 'center',
+                        textAlign: 'center',
 
 
                     }}
@@ -166,7 +169,7 @@ function IsUserVerifeyd({ onCloseClick }) {
                         height: "38px",
                         backgroundColor: "transparent",
                         color: "white",
-                        marginTop : '10px',
+                        marginTop: '10px',
 
                         borderColor: "none",
 

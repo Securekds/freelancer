@@ -12,7 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Skeleton } from "@nextui-org/react";
 import MenuItem from '@mui/material/MenuItem';
 import { useUser } from '../../../Context/UserContext.jsx'
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
+
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 import { useGig } from '../../../Context/GigContext.jsx';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
@@ -232,7 +233,7 @@ function SupportComp() {
 
 
     const [offerCounts, setOfferCounts] = useState({}); // Store offer count per gig
-  
+
 
 
     const handleGigClick = (gigId) => {
@@ -692,7 +693,11 @@ function SupportComp() {
                                     marginTop: '-15px',
                                 }}
                             >
-                                <Lottie animationData={animationData} style={{ width: 250, height: 250 }} />
+                                <Player
+                                    src={animationData}  // Changed from animationData to src
+                                    autoplay             // Added to auto-play the animation
+                                    style={{ width: 250, height: 250 }}  // Kept same dimensions
+                                />
                             </div>
 
 
@@ -892,16 +897,16 @@ function SupportComp() {
                                                         textOverflow: 'ellipsis',
 
                                                     }}>
-                                                          <span
-                                                        style={{
-                                                            fontFamily : '"Airbnbcereal", sans-serif',
-                                                            marginLeft : currentLanguage === 'ar'? '3px'  : 'unset',
-                                                            marginRight : '3px',
-                                                            
-                                                            
-                                                        }}
+                                                        <span
+                                                            style={{
+                                                                fontFamily: '"Airbnbcereal", sans-serif',
+                                                                marginLeft: currentLanguage === 'ar' ? '3px' : 'unset',
+                                                                marginRight: '3px',
+
+
+                                                            }}
                                                         >
-                                                       {gig.offerCount}
+                                                            {gig.offerCount}
                                                         </span>
                                                         {t('Offer')}
                                                     </Typography>

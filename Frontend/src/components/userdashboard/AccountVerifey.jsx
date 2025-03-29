@@ -12,7 +12,7 @@ import EditOffIcon from '@mui/icons-material/EditOff';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import AccountVerifeyIcon from '../../assets/images/small-logos/AccountVerifeyIcon.json';
 
 
@@ -35,7 +35,7 @@ function AccountVerifey() {
             style={{
                 width: '80%',
                 height: '100px',
-                maxWidth : '1200px',
+                maxWidth: '1200px',
 
 
 
@@ -58,9 +58,14 @@ function AccountVerifey() {
                             zIndex: '111111111111111111111'
                         }}
                     >
-                        <Lottie
-                            animationData={AccountVerifeyIcon}
-                            style={{ width: 90, height: 90, zIndex: '111111111111111111111' }}
+                        <Player
+                            src={AccountVerifeyIcon}
+                            autoplay
+                            style={{
+                                width: 90,
+                                height: 90,
+                                zIndex: '111111111111111111111'
+                            }}
                         />
                     </div>
                     <div className="Message"

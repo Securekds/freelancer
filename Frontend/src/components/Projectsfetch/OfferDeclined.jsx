@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Typography, Button, TextField, InputAdornment } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../assets/images/small-logos/BillingInfo.json';
 import axios from "axios";
 import { useParams } from 'react-router-dom';
@@ -17,7 +17,7 @@ import { useGig } from '../../Context/GigContext.jsx';
 
 
 
-function OfferDeclined({ handleCloseOfferDeclined , selectedOffer }) {
+function OfferDeclined({ handleCloseOfferDeclined, selectedOffer }) {
 
     console.log("Selected Offer:", selectedOffer);
     const { t } = useTranslation();
@@ -36,13 +36,13 @@ function OfferDeclined({ handleCloseOfferDeclined , selectedOffer }) {
     const isMediumScreen = useMediaQuery('(min-width:1001px) and (max-width:1400px)')
     const isLargeScreen = useMediaQuery('(min-width:1401px) and (max-width:1920px)');
 
-    const { user   } = useUser();
+    const { user } = useUser();
 
     const userId = user ? user._id : null;
 
     const { gigId } = useParams(); // Extract gigId from the URL
-          const [isLoading, setIsLoading] = useState(false);
-    
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const updateOfferStatus = async () => {
         try {
@@ -51,36 +51,36 @@ function OfferDeclined({ handleCloseOfferDeclined , selectedOffer }) {
                 {
                     status: "rejected",
                     userId,
-                    firstName: user.firstName,  
-                    lastName: user.lastName,  
-                    profileImg: user.profileImg || "" ,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    profileImg: user.profileImg || "",
                     gigId,
                 },
                 { withCredentials: true }
             );
-    
+
             console.log("Offer Status Response:", response.data);
-          
-              // Optional: Show success feedback
-                toast("Offer Declined", {
-                  position: "top-right",
-                  autoClose: 3000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: false,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "dark",
-                });
+
+            // Optional: Show success feedback
+            toast("Offer Declined", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
             handleCloseOfferDeclined();
 
             return response.data;
-    
+
         } catch (error) {
             console.error("Error updating offer status:", error.response?.data || error.message);
         }
     };
-    
+
 
 
 
@@ -164,9 +164,14 @@ function OfferDeclined({ handleCloseOfferDeclined , selectedOffer }) {
                     marginTop: '-20px',
                 }}
             >
-                <Lottie
-                    animationData={animationData}
-                    style={{ display: 'block', width: '200px', height: '200px' }}
+                <Player
+                    src={animationData}
+                    autoplay
+                    style={{
+                        display: 'block',
+                        width: '200px',
+                        height: '200px'
+                    }}
                 />
             </div>
 
@@ -222,7 +227,7 @@ function OfferDeclined({ handleCloseOfferDeclined , selectedOffer }) {
                         cursor: 'pointer',
                         height: '38px',
                         color: 'white',
-                        opacity : isLoading? '0.5' : 'unset', 
+                        opacity: isLoading ? '0.5' : 'unset',
                         borderColor: 'none',
                         '&:hover': {
                             borderColor: 'white',
@@ -230,24 +235,24 @@ function OfferDeclined({ handleCloseOfferDeclined , selectedOffer }) {
                         },
                     }}
                 >
-                              {isLoading ? (
-                      <>
-                        <div className="lds-dual-ring" style={{ margin: 'auto' }}></div>
+                    {isLoading ? (
+                        <>
+                            <div className="lds-dual-ring" style={{ margin: 'auto' }}></div>
 
-                      </>
+                        </>
                     ) : (
 
-                    <Typography
-                        sx={{
-                            color: 'white',
-                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                            fontWeight: 'bold',
-                            textTransform: 'capitalize',
-                            fontSize: '13px',
-                        }}
-                    >
-                        {t('Confirm Decline')}
-                    </Typography>
+                        <Typography
+                            sx={{
+                                color: 'white',
+                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                fontWeight: 'bold',
+                                textTransform: 'capitalize',
+                                fontSize: '13px',
+                            }}
+                        >
+                            {t('Confirm Decline')}
+                        </Typography>
                     )}
 
                 </Button>

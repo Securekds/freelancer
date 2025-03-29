@@ -17,7 +17,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -2312,268 +2312,266 @@ function Profilecontent({ handleOpenProfile, handleOpenCover, handleOpenVerify, 
                                             scrollbarWidth: 'thin',
                                             scrollbarColor: '#4a5568 rgba(0, 0, 0, 0.1)',
                                         }}>
-                                      {conversationsLoading ? (
-    // Skeleton Loading State
-    [...Array(5)].map((_, index) => (
-        <div
-            key={index}
-            style={{
-                height: '66px',
-                width: '100%',
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '15px',
-                display: 'flex',
-                alignItems: 'center',
-                padding: '7px',
-                gap: '10px',
-                marginTop: index === 0 ? '0' : '20px',
-            }}
-        >
-            {/* Skeleton Profile Image */}
-            <div
-                style={{
-                    width: '60px',
-                    height: '60px',
-                    background: 'rgba(255,255,255,0.2)',
-                    borderRadius: '50%',
-                }}
-            />
+                                            {conversationsLoading ? (
+                                                // Skeleton Loading State
+                                                [...Array(5)].map((_, index) => (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            height: '66px',
+                                                            width: '100%',
+                                                            background: 'rgba(255,255,255,0.1)',
+                                                            borderRadius: '15px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            padding: '7px',
+                                                            gap: '10px',
+                                                            marginTop: index === 0 ? '0' : '20px',
+                                                        }}
+                                                    >
+                                                        {/* Skeleton Profile Image */}
+                                                        <div
+                                                            style={{
+                                                                width: '60px',
+                                                                height: '60px',
+                                                                background: 'rgba(255,255,255,0.2)',
+                                                                borderRadius: '50%',
+                                                            }}
+                                                        />
 
-            {/* Skeleton Text */}
-            <div style={{ width: '100%' }}>
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '5px'
-                }}>
-                    <div
-                        style={{
-                            width: '40%',
-                            height: '15px',
-                            background: 'rgba(255,255,255,0.2)',
-                            borderRadius: '4px',
-                        }}
-                    />
-                    <div
-                        style={{
-                            width: '20%',
-                            height: '15px',
-                            background: 'rgba(255,255,255,0.2)',
-                            borderRadius: '4px',
-                        }}
-                    />
-                </div>
-                <div
-                    style={{
-                        width: '70%',
-                        height: '15px',
-                        background: 'rgba(255,255,255,0.2)',
-                        borderRadius: '4px',
-                    }}
-                />
-            </div>
-        </div>
-    ))
-) : conversationsError ? (
-    // Error State
-    <Typography
-        sx={{
-            color: '#ffffff',
-            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-            textAlign: 'center',
-            fontSize: '13px',
-            opacity: '0.5',
-            padding: '20px',
-        }}
-    >
-        {t("Failed to load conversations")}
-    </Typography>
-) : conversations.length > 0 ? (
-    conversations.map((conversation, index) => {
-        const otherUser = getOtherUser(conversation); // Get the other user's details
-        const isOnline = isUserOnline(otherUser?._id);
+                                                        {/* Skeleton Text */}
+                                                        <div style={{ width: '100%' }}>
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                                marginBottom: '5px'
+                                                            }}>
+                                                                <div
+                                                                    style={{
+                                                                        width: '40%',
+                                                                        height: '15px',
+                                                                        background: 'rgba(255,255,255,0.2)',
+                                                                        borderRadius: '4px',
+                                                                    }}
+                                                                />
+                                                                <div
+                                                                    style={{
+                                                                        width: '20%',
+                                                                        height: '15px',
+                                                                        background: 'rgba(255,255,255,0.2)',
+                                                                        borderRadius: '4px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    width: '70%',
+                                                                    height: '15px',
+                                                                    background: 'rgba(255,255,255,0.2)',
+                                                                    borderRadius: '4px',
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : conversationsError ? (
+                                                // Error State
+                                                <Typography
+                                                    sx={{
+                                                        color: '#ffffff',
+                                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                                        textAlign: 'center',
+                                                        fontSize: '13px',
+                                                        opacity: '0.5',
+                                                        padding: '20px',
+                                                    }}
+                                                >
+                                                    {t("Failed to load conversations")}
+                                                </Typography>
+                                            ) : conversations.length > 0 ? (
+                                                conversations.map((conversation, index) => {
+                                                    const otherUser = getOtherUser(conversation); // Get the other user's details
+                                                    const isOnline = isUserOnline(otherUser?._id);
 
-        return (
-            <div
-                key={conversation._id}
-                className="UsersMsg1"
-                style={{
-                    display: 'flex',
-                    justifyContent: isMediumScreen ? 'space-between' :
-                        currentLanguage === 'ar' ? 'flex-start' : 'space-between',
-                    alignItems: 'center',
-                    marginTop: index === 0 ? '0' : '20px',
-                    marginRight: currentLanguage === 'ar' ? '-10px' : 'unset',
-                    width: currentLanguage === 'fr' ? '90%' : '100%',
-                }}
-            >
-                {/* Profile Picture with Online Status */}
-                <div
-                    className='ProfileCircle'
-                    style={{
-                        position: 'relative',
-                        width: '60px',
-                        height: isMediumScreen ? '45px' : '60px',
-                        borderRadius: '50%',
-                        overflow: 'hidden',
-                        border: '2px solid #ccc',
-                    }}
-                >
-                    <img
-                        src={getProfileImage(otherUser?.profileImg)}
-                        alt="Profile"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            textAlign: 'center',
-                        }}
-                    />
-                    {/* Online Status Badge */}
-                    {isOnline && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                bottom: '2px',
-                                right: '2px',
-                                width: '12px',
-                                height: '12px',
-                                borderRadius: '50%',
-                                background: '#4CAF50',
-                                border: '2px solid #2d3748',
-                            }}
-                        />
-                    )}
-                </div>
+                                                    return (
+                                                        <div
+                                                            key={conversation._id}
+                                                            className="UsersMsg1"
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: isMediumScreen ? 'space-between' :
+                                                                    currentLanguage === 'ar' ? 'flex-start' : 'space-between',
+                                                                alignItems: 'center',
+                                                                marginTop: index === 0 ? '0' : '20px',
+                                                                marginRight: currentLanguage === 'ar' ? '-10px' : 'unset',
+                                                                width: currentLanguage === 'fr' ? '90%' : '100%',
+                                                            }}
+                                                        >
+                                                            {/* Profile Picture with Online Status */}
+                                                            <div
+                                                                className='ProfileCircle'
+                                                                style={{
+                                                                    position: 'relative',
+                                                                    width: '60px',
+                                                                    height: isMediumScreen ? '45px' : '60px',
+                                                                    borderRadius: '50%',
+                                                                    overflow: 'hidden',
+                                                                    border: '2px solid #ccc',
+                                                                }}
+                                                            >
+                                                                <img
+                                                                    src={getProfileImage(otherUser?.profileImg)}
+                                                                    alt="Profile"
+                                                                    style={{
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        objectFit: 'cover',
+                                                                        textAlign: 'center',
+                                                                    }}
+                                                                />
+                                                                {/* Online Status Badge */}
+                                                                {isOnline && (
+                                                                    <div
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            bottom: '2px',
+                                                                            right: '2px',
+                                                                            width: '12px',
+                                                                            height: '12px',
+                                                                            borderRadius: '50%',
+                                                                            background: '#4CAF50',
+                                                                            border: '2px solid #2d3748',
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </div>
 
-                {/* Name & Last Message */}
-                <div
-                    className="ProfileName"
-                    style={{
-                        marginLeft: currentLanguage === 'ar' ? '5px' : '20px',
-                        marginRight: currentLanguage === 'ar' ? '20px' : '5px',
-                        flex: 1,
-                    }}
-                >
-                    <Typography
-                        sx={{
-                            color: 'white',
-                            fontFamily: otherUser?.firstName && /[\u0600-\u06FF]/.test(otherUser.firstName)
-                                ? '"Droid Arabic Kufi", serif'
-                                : '"Airbnbcereal", sans-serif',
-                            fontWeight: 'bold',
-                            fontSize: '14px',
-                            textTransform: 'capitalize',
-                        }}
-                    >
-                        {otherUser?.firstName} {otherUser?.lastName}
-                    </Typography>
-                    <Typography
-                        sx={{
-                            color: '#ffffffcc',
-                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                            fontWeight: '300',
-                            fontSize: '0.75rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                        }}
-                    >
-                        <span style={{
-                            display: 'inline-block',
-                            maxWidth: '120px',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                        }}>
-                            {conversation.lastMessage || t('No messages yet')}
-                        </span>
-                        {conversation.unreadCount > 0 && (
-                            <span
-                                style={{
-                                    width: '18px',
-                                    height: '18px',
-                                    borderRadius: '50%',
-                                    background: '#76c1fb',
-                                    display: 'inline-flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    fontSize: '10px',
-                                    color: 'white',
-                                }}
-                            >
-                                {conversation.unreadCount}
-                            </span>
-                        )}
-                    </Typography>
-                </div>
+                                                            {/* Name & Last Message */}
+                                                            <div
+                                                                className="ProfileName"
+                                                                style={{
+                                                                    marginLeft: currentLanguage === 'ar' ? '5px' : '20px',
+                                                                    marginRight: currentLanguage === 'ar' ? '20px' : '5px',
+                                                                    flex: 1,
+                                                                }}
+                                                            >
+                                                                <Typography
+                                                                    sx={{
+                                                                        color: 'white',
+                                                                        fontFamily: otherUser?.firstName && /[\u0600-\u06FF]/.test(otherUser.firstName)
+                                                                            ? '"Droid Arabic Kufi", serif'
+                                                                            : '"Airbnbcereal", sans-serif',
+                                                                        fontWeight: 'bold',
+                                                                        fontSize: '14px',
+                                                                        textTransform: 'capitalize',
+                                                                    }}
+                                                                >
+                                                                    {otherUser?.firstName} {otherUser?.lastName}
+                                                                </Typography>
+                                                                <Typography
+                                                                    sx={{
+                                                                        color: '#ffffffcc',
+                                                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                                                        fontWeight: '300',
+                                                                        fontSize: '0.75rem',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        gap: '5px',
+                                                                    }}
+                                                                >
+                                                                    <span style={{
+                                                                        display: 'inline-block',
+                                                                        maxWidth: '120px',
+                                                                        overflow: 'hidden',
+                                                                        textOverflow: 'ellipsis',
+                                                                        whiteSpace: 'nowrap',
+                                                                    }}>
+                                                                        {conversation.lastMessage || t('No messages yet')}
+                                                                    </span>
+                                                                    {conversation.unreadCount > 0 && (
+                                                                        <span
+                                                                            style={{
+                                                                                width: '18px',
+                                                                                height: '18px',
+                                                                                borderRadius: '50%',
+                                                                                background: '#76c1fb',
+                                                                                display: 'inline-flex',
+                                                                                justifyContent: 'center',
+                                                                                alignItems: 'center',
+                                                                                fontSize: '10px',
+                                                                                color: 'white',
+                                                                            }}
+                                                                        >
+                                                                            {conversation.unreadCount}
+                                                                        </span>
+                                                                    )}
+                                                                </Typography>
+                                                            </div>
 
-                {/* Time and Reply Button */}
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-end',
-                        gap: '5px',
-                    }}
-                >
-                    <Typography
-                        style={{
-                            fontFamily: '"Airbnbcereal", sans-serif',
-                            fontSize: '11px',
-                            color: '#ffffff',
-                            opacity: '0.5',
-                        }}
-                    >
-                        {formatLastMessageTime(conversation.updatedAt)}
-                    </Typography>
-                    <Button
-                        variant="text"
-                        sx={{
-                            fontSize: currentLanguage === 'fr' ? '10px' : '12px',
-                            fontWeight: '600',
-                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                            padding: '4px 8px',
-                            minWidth: 'auto',
-                        }}
-                        onClick={() => handleSelectConversation(conversation, index)}
-                    >
-                        {t('REPLY')}
-                    </Button>
-                </div>
-            </div>
-        );
-    })
-) : (
-    <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        marginTop: '-20px'
-    }}>
-        <Typography
-            sx={{
-                color: '#fff',
-                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                fontWeight: '300',
-                fontSize: '14px',
-                textAlign: 'center',
-                marginBottom: '10px',
-            }}
-        >
-            {t('No Conversation found')}
-        </Typography>
-        <Lottie 
-            animationData={Conversationo} 
-            style={{ 
-                width: 200, 
-                height: 200,
-            }} 
-        />
-    </div>
-)}
+                                                            {/* Time and Reply Button */}
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    flexDirection: 'column',
+                                                                    alignItems: 'flex-end',
+                                                                    gap: '5px',
+                                                                }}
+                                                            >
+                                                                <Typography
+                                                                    style={{
+                                                                        fontFamily: '"Airbnbcereal", sans-serif',
+                                                                        fontSize: '11px',
+                                                                        color: '#ffffff',
+                                                                        opacity: '0.5',
+                                                                    }}
+                                                                >
+                                                                    {formatLastMessageTime(conversation.updatedAt)}
+                                                                </Typography>
+                                                                <Button
+                                                                    variant="text"
+                                                                    sx={{
+                                                                        fontSize: currentLanguage === 'fr' ? '10px' : '12px',
+                                                                        fontWeight: '600',
+                                                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                                                        padding: '4px 8px',
+                                                                        minWidth: 'auto',
+                                                                    }}
+                                                                    onClick={() => handleSelectConversation(conversation, index)}
+                                                                >
+                                                                    {t('REPLY')}
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <div style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    height: '100%',
+                                                    marginTop: '-20px'
+                                                }}>
+                                                    <Typography
+                                                        sx={{
+                                                            color: '#fff',
+                                                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                                            fontWeight: '300',
+                                                            fontSize: '14px',
+                                                            textAlign: 'center',
+                                                            marginBottom: '10px',
+                                                        }}
+                                                    >
+                                                        {t('No Conversation found')}
+                                                    </Typography>
+                                                    <Player
+                                                        src={Conversationo}  // Changed from animationData to src
+                                                        autoplay             // Added to auto-play the animation
+                                                        style={{ width: 200, height: 200 }}  // Kept same dimensions
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     </>
                                 )}

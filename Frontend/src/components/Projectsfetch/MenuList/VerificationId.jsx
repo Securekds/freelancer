@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import HttpsIcon from '@mui/icons-material/Https';
 import animationData from '../../../assets/images/small-logos/SuccesID.json'
 import animationData2 from '../../../assets/images/small-logos/SystemID.json'
@@ -548,7 +548,7 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
 
 
     const [fileToUpload2, setFileToUpload2] = useState(null);
-    const { user , updateUserVerificationStatus , setUser } = useUser();
+    const { user, updateUserVerificationStatus, setUser } = useUser();
 
 
 
@@ -564,7 +564,7 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
 
 
 
-    const messages = {  
+    const messages = {
         IDCard: 'Take a photo of your ID card ',
         Residense: 'Take a photo of your Residence permit',
         Passport: 'Take a photo of your Passport',
@@ -580,40 +580,40 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
             setErrorMessage('Please select both front and back images of your ID.');
             return;
         }
-    
+
         setErrorMessage(''); // Clear any previous error
         setLoading(true);
-    
+
         // Introduce a 2-second delay before starting the upload process
         setTimeout(async () => {
             const formData = new FormData();
             formData.append('userId', userId);
             formData.append('idType', selected);  // ✅ 
-            formData.append('idImages', fileToUpload); 
-            formData.append('idImages', fileToUpload2); 
-    
+            formData.append('idImages', fileToUpload);
+            formData.append('idImages', fileToUpload2);
+
             try {
                 const response = await axios.put(
-                    `${import.meta.env.VITE_BACKEND_URL}/server/get/verifications/upload`, 
+                    `${import.meta.env.VITE_BACKEND_URL}/server/get/verifications/upload`,
                     formData, {
-                        withCredentials: true,
-                        headers: { 'Content-Type': 'multipart/form-data' },
-                    }
+                    withCredentials: true,
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }
                 );
-    
-                console.log('Upload success:', response.data);
-                
-                // ✅ Update the user state using setUser
-            setUser(prevUser => {
-                const updatedUser = {
-                    ...prevUser,
-                    requests: [...(prevUser?.requests || []), response.data.request]
-                };
-                localStorage.setItem('userData', JSON.stringify(updatedUser)); // Sync localStorage
-                return updatedUser;
-            });
 
-    
+                console.log('Upload success:', response.data);
+
+                // ✅ Update the user state using setUser
+                setUser(prevUser => {
+                    const updatedUser = {
+                        ...prevUser,
+                        requests: [...(prevUser?.requests || []), response.data.request]
+                    };
+                    localStorage.setItem('userData', JSON.stringify(updatedUser)); // Sync localStorage
+                    return updatedUser;
+                });
+
+
                 setIsVerifyId(false);
                 setIsVerifySucces(true);
             } catch (error) {
@@ -624,8 +624,8 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
             }
         }, 2000); // ⏳ 2-second delay before starting the upload
     };
-    
-   
+
+
 
     useEffect(() => {
         if (VerifySucces) {
@@ -637,7 +637,7 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
 
 
 
-  
+
 
 
 
@@ -949,9 +949,9 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
                                 {isUploading ? (
                                     showAnimation ? (
                                         <div className="Animation" style={{ display: 'flex', marginTop: '9px' }}>
-                                            <Lottie
+                                            <Player
+                                                src={animationData}
                                                 loop={false}
-                                                animationData={animationData}
                                                 style={{ width: 170, height: 170 }}
                                             />
                                         </div>
@@ -1212,9 +1212,9 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
                                 {isUploading2 ? (
                                     showAnimation2 ? (
                                         <div className="Animation" style={{ display: 'flex', marginTop: '9px' }}>
-                                            <Lottie
-                                                loop={false}
-                                                animationData={animationData}
+                                            <Player
+                                                src={animationData}
+                                                autoplay
                                                 style={{ width: 170, height: 170 }}
                                             />
                                         </div>
@@ -1227,8 +1227,16 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
                             </div>
                             <div className="Animation "
                                 style={{ marginTop: '-20px', display: 'none' }}>
-                                <Lottie animationData={animationData} style={{ width: 200, height: 200, display: 'block', margin: '0 auto' }} />
-                            </div>
+                                <Player
+                                    src={animationData}
+                                    autoplay
+                                    style={{
+                                        width: 200,
+                                        height: 200,
+                                        display: 'block',
+                                        margin: '0 auto'
+                                    }}
+                                />                            </div>
                             <div className="Typo"
                                 style={{
 
@@ -1444,7 +1452,7 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
                         >
                             {loading ? (
                                 <div className="lds-dual-ring"
-                                 style={{ margin: 'auto' , opacity : loading? '0.5' : '1' }}></div> // Show loading ring
+                                    style={{ margin: 'auto', opacity: loading ? '0.5' : '1' }}></div> // Show loading ring
                             ) : (
                                 <Typography
                                     sx={{
@@ -1466,114 +1474,114 @@ const Pricing = ({ handleCloseVerify, onUpdateCoverImage, currentCoverImg }) => 
 
                 </>
             )}
-           {VerifySucces && (
-    <>
-    <div className="Div slide-from-right ">
+            {VerifySucces && (
+                <>
+                    <div className="Div slide-from-right ">
 
-        <motion.div
-            initial={{ marginTop: 80 }}
-            animate={{ marginTop: startAnimation ? -30 : 80 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            style={{
-                width: "100%",
-                height: "295px",
-                display: "flex",
-                overflow: "hidden",
-                justifyContent: "center",
-            }}
-        >
-            <Lottie
-                loop={true}
-                animationData={animationData2}
-                style={{ width: 390, height: 390 }}
-            />
-        </motion.div>
+                        <motion.div
+                            initial={{ marginTop: 80 }}
+                            animate={{ marginTop: startAnimation ? -30 : 80 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            style={{
+                                width: "100%",
+                                height: "295px",
+                                display: "flex",
+                                overflow: "hidden",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Player
+                                src={animationData2}
+                                autoplay
+                                style={{ width: 390, height: 390 }}
+                            />
+                        </motion.div>
 
-        {/* Typography with Staggered Animations */}
-        <div className="TYpos" style={{ marginTop: '20px' }}>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
-                transition={{ duration: 0.5, delay: 0.5 }} // Delay after Lottie
-            >
-                <Typography
-                    sx={{
-                        color: "white",
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                    }}>
-                    {t('Your ID Verification is in Progress')}
-                </Typography>
-            </motion.div>
+                        {/* Typography with Staggered Animations */}
+                        <div className="TYpos" style={{ marginTop: '20px' }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
+                                transition={{ duration: 0.5, delay: 0.5 }} // Delay after Lottie
+                            >
+                                <Typography
+                                    sx={{
+                                        color: "white",
+                                        fontWeight: 'bold',
+                                        textAlign: 'center',
+                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                    }}>
+                                    {t('Your ID Verification is in Progress')}
+                                </Typography>
+                            </motion.div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
-                transition={{ duration: 0.5, delay: 1 }} // Extra delay for second text
-            >
-                <Typography
-                    sx={{
-                        color: "white",
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        opacity: '0.8',
-                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                    }}>
-                    {t('Thank you for submitting your ID for verification. Our team is currently reviewing your document to ensure compliance with our security standards. This process may take some time.')}
-                </Typography>
-            </motion.div>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
-                transition={{ duration: 0.5, delay: 1 }} // Extra delay for second text
-            >
-                <Typography
-                    sx={{
-                        color: "white",
-                        fontWeight: '600',
-                        textAlign: 'center',
-                        opacity: '0.8',
-                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                    }}>
-                    {t('You will receive a notification within 24 hours once the review is complete.')}
-                </Typography>
-            </motion.div>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
-                transition={{ duration: 0.5, delay: 1 }} // Extra delay for second text
-            >
-                <div className="Div"
-                onClick={handleCloseVerify}
-                style={{
-                    display : 'flex',
-                    justifyContent : 'center',
-                    gap : '5px',
-                    marginTop : '30px',
-                    cursor : 'pointer',
-                }}
-                >
-                <ArrowBackIcon/>
-                <Typography
-                    sx={{
-                        color: "white",
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        
-                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                    }}>
-                   {t('Close')}
-                </Typography>
-                </div>
-            </motion.div>
-        </div>
-    </div>
-       
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
+                                transition={{ duration: 0.5, delay: 1 }} // Extra delay for second text
+                            >
+                                <Typography
+                                    sx={{
+                                        color: "white",
+                                        fontWeight: 'bold',
+                                        textAlign: 'center',
+                                        opacity: '0.8',
+                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                    }}>
+                                    {t('Thank you for submitting your ID for verification. Our team is currently reviewing your document to ensure compliance with our security standards. This process may take some time.')}
+                                </Typography>
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
+                                transition={{ duration: 0.5, delay: 1 }} // Extra delay for second text
+                            >
+                                <Typography
+                                    sx={{
+                                        color: "white",
+                                        fontWeight: '600',
+                                        textAlign: 'center',
+                                        opacity: '0.8',
+                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                    }}>
+                                    {t('You will receive a notification within 24 hours once the review is complete.')}
+                                </Typography>
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: startAnimation ? 1 : 0, y: startAnimation ? 0 : 20 }}
+                                transition={{ duration: 0.5, delay: 1 }} // Extra delay for second text
+                            >
+                                <div className="Div"
+                                    onClick={handleCloseVerify}
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        gap: '5px',
+                                        marginTop: '30px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <ArrowBackIcon />
+                                    <Typography
+                                        sx={{
+                                            color: "white",
+                                            fontWeight: 'bold',
+                                            textAlign: 'center',
 
-      
-    </>
-)}
+                                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                        }}>
+                                        {t('Close')}
+                                    </Typography>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+
+
+
+                </>
+            )}
 
         </div >
     );

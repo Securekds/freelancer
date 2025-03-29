@@ -5,31 +5,31 @@ import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PasswordIcon from '@mui/icons-material/Password';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import PasswordSucces from '../../../assets/images/small-logos/PasswordSucces.json'
 
 
 function ProfilePasswordUpdatedSucces({ handleCloseVerify }) {
 
-    
-  const { t } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState(() => {
-    const storedLanguage = localStorage.getItem('language');
-    return storedLanguage || 'en';
-  });
 
-  const toggleLanguage = (language) => {
-    localStorage.setItem('language', language);
-    setCurrentLanguage(language);
-    i18n
-      .changeLanguage(language)
-      .then(() => console.log('Language changed successfully'))
-      .catch((error) => console.error('Error changing language:', error));
-  };
+    const { t } = useTranslation();
+    const [currentLanguage, setCurrentLanguage] = useState(() => {
+        const storedLanguage = localStorage.getItem('language');
+        return storedLanguage || 'en';
+    });
 
-  useEffect(() => {
-    i18n.changeLanguage(currentLanguage);
-  }, [currentLanguage]);
+    const toggleLanguage = (language) => {
+        localStorage.setItem('language', language);
+        setCurrentLanguage(language);
+        i18n
+            .changeLanguage(language)
+            .then(() => console.log('Language changed successfully'))
+            .catch((error) => console.error('Error changing language:', error));
+    };
+
+    useEffect(() => {
+        i18n.changeLanguage(currentLanguage);
+    }, [currentLanguage]);
 
 
 
@@ -38,7 +38,7 @@ function ProfilePasswordUpdatedSucces({ handleCloseVerify }) {
             style={{
                 width: '100%',
                 height: 'auto',
-                padding : '10px',
+                padding: '10px',
             }}
         >
 
@@ -64,7 +64,7 @@ function ProfilePasswordUpdatedSucces({ handleCloseVerify }) {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                     padding : '10px',
+                    padding: '10px',
 
                 }}
             >
@@ -114,8 +114,9 @@ function ProfilePasswordUpdatedSucces({ handleCloseVerify }) {
                     </Typography>
                 </div>
                 <div className="SuccesLottiesIcon">
-                    <Lottie
-                        animationData={PasswordSucces}
+                    <Player
+                        src={PasswordSucces}
+                        autoplay
                         loop={false}
                         style={{ width: 200, height: 200 }}
                     />
@@ -159,7 +160,7 @@ function ProfilePasswordUpdatedSucces({ handleCloseVerify }) {
                                     fontSize: '15px',
                                 }}
                             >
-                                {t('Close')} 
+                                {t('Close')}
                             </Typography>
                         </>
                     )}

@@ -5,9 +5,6 @@ import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideoSlash ,faExpand, faVolumeHigh, faMicrophoneLinesSlash, faVolumeXmark, faMicrophoneLines, faCircle, faCommentDots, faBellSlash, faPlay, faXmark, faPaperclip, faMicrophone, faThumbtack, faPeopleRoof, faCalendarDays, faEye, faUsers, faBookmark, faMagnifyingGlass, faPhone, faVideo, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
-import Lottie from 'lottie-react';
-import animationData from '../../../assets/images/small-logos/ChatAppCallWaiting.json'
-import animationData2 from '../../../assets/images/small-logos/CallSliderUser.json'
 import { useChat } from '../../../Context/ChatContext.jsx'; // Import the useChat hook
 
 

@@ -19,7 +19,7 @@ import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 import { display, height, width } from '@mui/system';
 import { faHandHoldingDollar, faHourglassHalf, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
@@ -617,8 +617,11 @@ function AddOfferToBuyer({ handleOpenUserVerify, gigStatus, handleOpenOffer, gig
                                     marginTop: '-15px',
                                 }}
                             >
-                                <Lottie animationData={animationData} style={{ width: 250, height: 250 }} />
-                            </div>
+                                <Player
+                                    src={animationData}
+                                    autoplay
+                                    style={{ width: 250, height: 250 }}
+                                />                            </div>
 
 
                         </div>
@@ -791,15 +794,15 @@ function AddOfferToBuyer({ handleOpenUserVerify, gigStatus, handleOpenOffer, gig
                                                         fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                                     }}
                                                 >
-                                                    {isSmallScreen ?  (
+                                                    {isSmallScreen ? (
                                                         <>
-                                                    {t('Trusted')}
+                                                            {t('Trusted')}
                                                         </>
-                                                  ) : (  
-                                                    <>
-                                                    {t('Trusted by Khadamat')}
+                                                    ) : (
+                                                        <>
+                                                            {t('Trusted by Khadamat')}
                                                         </>
-                                                     )}
+                                                    )}
                                                     <img width={30} src="/src/assets/images/small-logos/Badge.png" alt="Badge" />
                                                 </Typography>
                                             </div>
@@ -963,10 +966,10 @@ function AddOfferToBuyer({ handleOpenUserVerify, gigStatus, handleOpenOffer, gig
                                                         textAlign: 'center',
                                                     }}
                                                 >
-                                                
-                                                        {offer.status}
-                                                     
-                                                  
+
+                                                    {offer.status}
+
+
                                                 </Typography>
 
                                             </Button>
@@ -1119,7 +1122,7 @@ function AddOfferToBuyer({ handleOpenUserVerify, gigStatus, handleOpenOffer, gig
                                         Nabil
                                     </Typography>
                                 </div>
-                              
+
                                 {isGigOwner && offer.status !== 'accepted' && offer.status !== 'rejected' && (
 
 
@@ -1233,14 +1236,14 @@ function AddOfferToBuyer({ handleOpenUserVerify, gigStatus, handleOpenOffer, gig
                                 )}
                             </Box>
                             <div className="Box"
-                               style={{
-                                position: 'absolute',
-                                top: isSmallScreen || isTabletScreen ? '82%' : '80%',
-                                width: '97%',
-                                left: currentLanguage === 'ar' ? '2%' : '0%',
-                                display: 'flex',
-                                justifyContent: isSmallScreen || isTabletScreen ? 'center' : "space-between",
-                            }}
+                                style={{
+                                    position: 'absolute',
+                                    top: isSmallScreen || isTabletScreen ? '82%' : '80%',
+                                    width: '97%',
+                                    left: currentLanguage === 'ar' ? '2%' : '0%',
+                                    display: 'flex',
+                                    justifyContent: isSmallScreen || isTabletScreen ? 'center' : "space-between",
+                                }}
                             >
                                 {!isGigOwner && (
                                     <>
@@ -1252,7 +1255,7 @@ function AddOfferToBuyer({ handleOpenUserVerify, gigStatus, handleOpenOffer, gig
                                             <Button
                                                 sx={{
                                                     width: isSmallScreen ? '130px' : '100px',
-                                                   
+
                                                     color: 'white',
                                                     backgroundColor:
                                                         offer.status === 'accepted' ? '#194e3d' :

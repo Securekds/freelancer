@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import Created from '../../assets/images/small-logos/Created.json'
 import DOMPurify from 'dompurify';
 
@@ -37,9 +37,9 @@ function AccountCreation() {
     const navigate = useNavigate();
     const [message, setMessage] = useState(''); // Initialize with an empty string
 
-useEffect(() => {
-    setMessage(t('We are setting up your account. This step takes a few seconds...'));
-}, [t, currentLanguage]); // Recalculate message when language changes
+    useEffect(() => {
+        setMessage(t('We are setting up your account. This step takes a few seconds...'));
+    }, [t, currentLanguage]); // Recalculate message when language changes
 
     useEffect(() => {
         // Start progress simulation
@@ -47,22 +47,22 @@ useEffect(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(interval);
-    
+
                     // Show success animation and back to login option
                     setShowSuccessAnimation(true);
                     setShowBackToLogin(true);
-    
+
                     // Start the countdown after progress reaches 100%
                     const countdownInterval = setInterval(() => {
                         setCountdown((prevCountdown) => {
                             if (prevCountdown <= 0) {
                                 clearInterval(countdownInterval);
-    
+
                                 navigate('/auth/signin')
-                            
+
                                 return 0;
                             }
-    
+
                             // Update the message with the countdown value
                             setMessage(
                                 t(
@@ -70,21 +70,21 @@ useEffect(() => {
                                     { count: prevCountdown }
                                 )
                             );
-    
+
                             return prevCountdown - 1; // Decrease countdown
                         });
                     }, 1000); // Update countdown every second
-    
+
                     return 100; // Ensure progress is set to 100%
                 }
                 return prev + 10; // Increment progress by 10%
             });
         }, 500); // Update progress every 500ms
-    
+
         // Cleanup intervals on component unmount
         return () => clearInterval(interval);
     }, [navigate, t]);
-    
+
 
     return (
         <div className="container"
@@ -93,8 +93,8 @@ useEffect(() => {
                 height: '100vh',
                 overflowX: 'hidden',
                 overflowY: 'hidden',
-                margin : '0',
-                padding : '0',
+                margin: '0',
+                padding: '0',
             }}
         >
 
@@ -111,7 +111,7 @@ useEffect(() => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     flexDirection: 'column',
-                    padding : '10px',   
+                    padding: '10px',
                 }}
             >
                 <img
@@ -124,10 +124,15 @@ useEffect(() => {
                     }}
                 />
                 {showSuccessAnimation && (
-                    <Lottie
-                        animationData={Created}
+                    <Player
+                        src={Created}
+                        autoplay
                         loop={false}
-                        style={{ width: 100, height: 100, marginBottom: '-20px' }}
+                        style={{
+                            width: 100,
+                            height: 100,
+                            marginBottom: '-20px'
+                        }}
                     />
                 )}
 
@@ -154,9 +159,9 @@ useEffect(() => {
                 </div>
                 <span style={{
                     color: 'white', marginTop: '20px', fontSize: '20px',
-                    textAlign : 'center',
-                    
-                    fontFamily:  '"Airbnbcereal", sans-serif',
+                    textAlign: 'center',
+
+                    fontFamily: '"Airbnbcereal", sans-serif',
                 }}>
                     {progress}%
                 </span>
@@ -166,8 +171,8 @@ useEffect(() => {
                     color: 'white',
                     marginTop: '20px',
                     fontSize: '18px',
-                    textAlign : 'center',
-                    lineHeight : '30px',
+                    textAlign: 'center',
+                    lineHeight: '30px',
                     fontWeight: 'bold',
                     fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                 }}>

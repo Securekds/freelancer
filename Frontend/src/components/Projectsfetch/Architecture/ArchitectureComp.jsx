@@ -15,7 +15,7 @@ import ArchitectureIcon from '@mui/icons-material/Architecture';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import { Card, Skeleton } from "@nextui-org/react";
 import { useUser } from '../../../Context/UserContext.jsx'
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 import { useGig } from '../../../Context/GigContext.jsx';
 import axios from 'axios';
@@ -91,7 +91,7 @@ function ArchitectureComp() {
         setAnchorEl2(null);
     };
 
- 
+
 
 
     const navigate = useNavigate();
@@ -134,133 +134,133 @@ function ArchitectureComp() {
     };
 
 
-        const {gigs , architectureGigs, isLoaded, error, selectedSubCategory, setSelectedSubCategory, } = useGig();
-    
-    
-        const { user, getImageUrl } = useUser();
-            const [offerCounts, setOfferCounts] = useState({}); // Store offer count per gig
+    const { gigs, architectureGigs, isLoaded, error, selectedSubCategory, setSelectedSubCategory, } = useGig();
 
-    
-        const containsArabic = (text) => {
-            const arabicPattern = /[\u0600-\u06FF]/;
-            return arabicPattern.test(text);
-        };
-    
-    
-    
-        const getTimeAgo = (dateString, lang = 'en') => {
-            const now = new Date();
-            const past = new Date(dateString);
-            const diffInMinutes = Math.floor((now - past) / (1000 * 60));
-    
-            const timeFormats = {
-                en: {
-                    prefix: '',
-                    minute: ['minute ago', 'minutes ago'],
-                    hour: ['hour ago', 'hours ago'],
-                    day: ['day ago', 'days ago']
-                },
-                ar: {
-                    prefix: 'منذ',
-                    minute: ['دقيقة', 'دقائق'],
-                    hour: ['ساعة', 'ساعات'],
-                    day: ['يوم', 'أيام']
-                }
-            };
-    
-            const format = timeFormats[lang] || timeFormats.en;
-    
-            // Helper function to get correct plural form for Arabic
-            const getArabicForm = (number, forms) => {
-                if (number === 1) return forms[0];
-                if (number >= 3 && number <= 10) return forms[1];
-                return forms[0];
-            };
-    
-            // Helper function to get correct plural form for English
-            const getEnglishForm = (number, forms) => {
-                return number === 1 ? forms[0] : forms[1];
-            };
-    
-            const getTimeString = (number, unit) => {
-                if (lang === 'ar') {
-                    return (
-                        <>
-                            {format.prefix}{' '}
-                            <span className="number">{number}</span>{' '}
-                            {getArabicForm(number, unit)}
-                        </>
-                    );
-                }
-                return (
-                    <>
-                        <span className="number">{number}</span>{' '}
-                        {getEnglishForm(number, unit)}
-                    </>
-                );
-            };
-    
-            if (diffInMinutes < 60) {
-                return getTimeString(diffInMinutes, format.minute);
-            } else if (diffInMinutes < 1440) {
-                const hours = Math.floor(diffInMinutes / 60);
-                return getTimeString(hours, format.hour);
-            } else {
-                const days = Math.floor(diffInMinutes / 1440);
-                return getTimeString(days, format.day);
+
+    const { user, getImageUrl } = useUser();
+    const [offerCounts, setOfferCounts] = useState({}); // Store offer count per gig
+
+
+    const containsArabic = (text) => {
+        const arabicPattern = /[\u0600-\u06FF]/;
+        return arabicPattern.test(text);
+    };
+
+
+
+    const getTimeAgo = (dateString, lang = 'en') => {
+        const now = new Date();
+        const past = new Date(dateString);
+        const diffInMinutes = Math.floor((now - past) / (1000 * 60));
+
+        const timeFormats = {
+            en: {
+                prefix: '',
+                minute: ['minute ago', 'minutes ago'],
+                hour: ['hour ago', 'hours ago'],
+                day: ['day ago', 'days ago']
+            },
+            ar: {
+                prefix: 'منذ',
+                minute: ['دقيقة', 'دقائق'],
+                hour: ['ساعة', 'ساعات'],
+                day: ['يوم', 'أيام']
             }
         };
-    
 
-     // Local state for pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [gigsPerPage] = useState(10); // Number of gigs per page
+        const format = timeFormats[lang] || timeFormats.en;
 
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(architectureGigs.length / gigsPerPage);
+        // Helper function to get correct plural form for Arabic
+        const getArabicForm = (number, forms) => {
+            if (number === 1) return forms[0];
+            if (number >= 3 && number <= 10) return forms[1];
+            return forms[0];
+        };
 
-  // Get the gigs for the current page
-  const indexOfLastGig = currentPage * gigsPerPage;
-  const indexOfFirstGig = indexOfLastGig - gigsPerPage;
-  const currentGigs = architectureGigs.slice(indexOfFirstGig, indexOfLastGig);
+        // Helper function to get correct plural form for English
+        const getEnglishForm = (number, forms) => {
+            return number === 1 ? forms[0] : forms[1];
+        };
 
-  // Handle page click
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
+        const getTimeString = (number, unit) => {
+            if (lang === 'ar') {
+                return (
+                    <>
+                        {format.prefix}{' '}
+                        <span className="number">{number}</span>{' '}
+                        {getArabicForm(number, unit)}
+                    </>
+                );
+            }
+            return (
+                <>
+                    <span className="number">{number}</span>{' '}
+                    {getEnglishForm(number, unit)}
+                </>
+            );
+        };
 
-  // Handle previous click
-  const handlePreviousClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  // Handle next click
-  const handleNextClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  // Generate page numbers
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+        if (diffInMinutes < 60) {
+            return getTimeString(diffInMinutes, format.minute);
+        } else if (diffInMinutes < 1440) {
+            const hours = Math.floor(diffInMinutes / 60);
+            return getTimeString(hours, format.hour);
+        } else {
+            const days = Math.floor(diffInMinutes / 1440);
+            return getTimeString(days, format.day);
+        }
+    };
 
 
-      const handleGigClick = (gigId) => {
+    // Local state for pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [gigsPerPage] = useState(10); // Number of gigs per page
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(architectureGigs.length / gigsPerPage);
+
+    // Get the gigs for the current page
+    const indexOfLastGig = currentPage * gigsPerPage;
+    const indexOfFirstGig = indexOfLastGig - gigsPerPage;
+    const currentGigs = architectureGigs.slice(indexOfFirstGig, indexOfLastGig);
+
+    // Handle page click
+    const handlePageClick = (page) => {
+        setCurrentPage(page);
+    };
+
+    // Handle previous click
+    const handlePreviousClick = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    // Handle next click
+    const handleNextClick = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    // Generate page numbers
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+
+    const handleGigClick = (gigId) => {
         navigate(`/userdashboard/project/singlepost/${gigId}`);
     };
     return (
         <>
             <div className="Container22"
                 style={{
-                    width: isSmallScreen? '96%' : '100%',
+                    width: isSmallScreen ? '96%' : '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                 }}
             >
-                       <div class="gradient-divider"
+                <div class="gradient-divider"
                     style={{
                         width: '100%',
 
@@ -411,9 +411,9 @@ function ArchitectureComp() {
 
                         >
                             <Architecturemenu
-                             selectedSubCategory={selectedSubCategory}
-                             setSelectedSubCategory={setSelectedSubCategory}
-                             />
+                                selectedSubCategory={selectedSubCategory}
+                                setSelectedSubCategory={setSelectedSubCategory}
+                            />
 
 
                         </div>
@@ -486,12 +486,12 @@ function ArchitectureComp() {
                 </div>
 
                 <div className="ArchitectureGigs"
-                 style={{
-                    position: 'relative',
-                    minHeight: isSmallScreen || isTabletScreen ? '250px' : '220px', // Minimum height for different screen sizes
-                }}
+                    style={{
+                        position: 'relative',
+                        minHeight: isSmallScreen || isTabletScreen ? '250px' : '220px', // Minimum height for different screen sizes
+                    }}
                 >
-                 {!isLoaded && !error && (
+                    {!isLoaded && !error && (
                         <>
                             <style>
                                 {loadingKeyframes}
@@ -699,7 +699,11 @@ function ArchitectureComp() {
                                     marginTop: '-15px',
                                 }}
                             >
-                                <Lottie animationData={animationData} style={{ width: 250, height: 250 }} />
+                                <Player
+                                    src={animationData}  // Changed from animationData to src
+                                    autoplay             // Added to auto-play the animation
+                                    style={{ width: 250, height: 250 }}  // Kept same dimensions
+                                />
                             </div>
 
 
@@ -900,15 +904,15 @@ function ArchitectureComp() {
 
                                                     }}>
                                                         <span
-                                                        style={{
-                                                            fontFamily : '"Airbnbcereal", sans-serif',
-                                                            marginLeft : currentLanguage === 'ar'? '3px'  : 'unset',
-                                                            marginRight : '3px',
-                                                            
-                                                            
-                                                        }}
+                                                            style={{
+                                                                fontFamily: '"Airbnbcereal", sans-serif',
+                                                                marginLeft: currentLanguage === 'ar' ? '3px' : 'unset',
+                                                                marginRight: '3px',
+
+
+                                                            }}
                                                         >
-                                                        {gig.offerCount}
+                                                            {gig.offerCount}
                                                         </span>
                                                         {t('Offer')}
                                                     </Typography>
@@ -1066,112 +1070,112 @@ function ArchitectureComp() {
                     ))}
                 </div>
 
-             {/* Pagination */}
-      <div
-        className="Pages"
-        style={{
-          width: "100%",
-          height: "30px",
-          background: "transparent",
-          marginTop: "50px",
-          display: "flex",
-          gap: "5px",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "relative",
-          right: isSmallScreen ? (currentLanguage === "ar" ? "0px" : "5px") : "unset",
-        }}
-      >
-        <div id={currentLanguage === "ar" ? "triangleRight" : "triangleLeft"}></div>
-        {pages.map((page) => (
-          <div
-            key={page}
-            onClick={() => handlePageClick(page)}
-            style={{
-              width: "38px",
-              height: isSmallScreen ? "30px" : "38px",
-              background: page === currentPage ? "rgb(91, 66, 243)" : "hsl(240, 3.7%, 15.88%)",
-              color: "white",
-              borderRadius: "13px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "background 0.1s ease-in-out, color 0.1s ease-in-out",
-              "&:hover": {
-                background: page === 1 || page === 2 ? "#e5e7eb" : "rgba(255,255,255,0.2)",
-              },
-            }}
-          >
-            <Typography>{page}</Typography>
-          </div>
-        ))}
-        <div id={currentLanguage === "ar" ? "triangleLeft" : "triangleRight"}></div>
-      </div>
+                {/* Pagination */}
+                <div
+                    className="Pages"
+                    style={{
+                        width: "100%",
+                        height: "30px",
+                        background: "transparent",
+                        marginTop: "50px",
+                        display: "flex",
+                        gap: "5px",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position: "relative",
+                        right: isSmallScreen ? (currentLanguage === "ar" ? "0px" : "5px") : "unset",
+                    }}
+                >
+                    <div id={currentLanguage === "ar" ? "triangleRight" : "triangleLeft"}></div>
+                    {pages.map((page) => (
+                        <div
+                            key={page}
+                            onClick={() => handlePageClick(page)}
+                            style={{
+                                width: "38px",
+                                height: isSmallScreen ? "30px" : "38px",
+                                background: page === currentPage ? "rgb(91, 66, 243)" : "hsl(240, 3.7%, 15.88%)",
+                                color: "white",
+                                borderRadius: "13px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                transition: "background 0.1s ease-in-out, color 0.1s ease-in-out",
+                                "&:hover": {
+                                    background: page === 1 || page === 2 ? "#e5e7eb" : "rgba(255,255,255,0.2)",
+                                },
+                            }}
+                        >
+                            <Typography>{page}</Typography>
+                        </div>
+                    ))}
+                    <div id={currentLanguage === "ar" ? "triangleLeft" : "triangleRight"}></div>
+                </div>
 
-      {/* Previous/Next Buttons */}
-      <div
-        className="Buttonss"
-        style={{
-          display: "flex",
-          gap: "5px",
-          justifyContent: "center",
-          marginTop: "20px",
-        }}
-      >
-        <Button
-          onClick={handlePreviousClick}
-          disabled={currentPage === 1}
-          sx={{
-            color: "rgb(91, 66, 243)",
-            WebkitTapHighlightColor: "transparent",
-            borderRadius: "8px",
-            fontWeight: "bold",
-            textTransform: "capitalize",
-            minWidth: "64px",
-            height: "32px",
-            padding: "0 12px",
-            outline: "none",
-            boxSizing: "border-box",
-            appearance: "none",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backgroundColor: "rgba(255,255,255,0.1)",
-            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
-            userSelect: "none",
-            fontSize: "13px",
-            whiteSpace: "nowrap",
-            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-          }}
-        >
-          {t("Previous")}
-        </Button>
-        <Button
-          onClick={handleNextClick}
-          disabled={currentPage === totalPages}
-          sx={{
-            color: "rgb(91, 66, 243)",
-            WebkitTapHighlightColor: "transparent",
-            borderRadius: "8px",
-            boxSizing: "border-box",
-            appearance: "none",
-            userSelect: "none",
-            whiteSpace: "nowrap",
-            fontSize: "13px",
-            width: "80px",
-            fontWeight: "bold",
-            border: "1px solid rgba(255,255,255,0.1)",
-            backgroundColor: "rgba(255,255,255,0.1)",
-            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
-            textTransform: "capitalize",
-            height: "32px",
-            padding: "0 12px",
-            outline: "none",
-            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-          }}
-        >
-          {t("Next")}
-        </Button>
-      </div>
+                {/* Previous/Next Buttons */}
+                <div
+                    className="Buttonss"
+                    style={{
+                        display: "flex",
+                        gap: "5px",
+                        justifyContent: "center",
+                        marginTop: "20px",
+                    }}
+                >
+                    <Button
+                        onClick={handlePreviousClick}
+                        disabled={currentPage === 1}
+                        sx={{
+                            color: "rgb(91, 66, 243)",
+                            WebkitTapHighlightColor: "transparent",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            textTransform: "capitalize",
+                            minWidth: "64px",
+                            height: "32px",
+                            padding: "0 12px",
+                            outline: "none",
+                            boxSizing: "border-box",
+                            appearance: "none",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            backgroundColor: "rgba(255,255,255,0.1)",
+                            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
+                            userSelect: "none",
+                            fontSize: "13px",
+                            whiteSpace: "nowrap",
+                            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                        }}
+                    >
+                        {t("Previous")}
+                    </Button>
+                    <Button
+                        onClick={handleNextClick}
+                        disabled={currentPage === totalPages}
+                        sx={{
+                            color: "rgb(91, 66, 243)",
+                            WebkitTapHighlightColor: "transparent",
+                            borderRadius: "8px",
+                            boxSizing: "border-box",
+                            appearance: "none",
+                            userSelect: "none",
+                            whiteSpace: "nowrap",
+                            fontSize: "13px",
+                            width: "80px",
+                            fontWeight: "bold",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            backgroundColor: "rgba(255,255,255,0.1)",
+                            transition: "transform 0.2s, colors 0.2s, opacity 0.2s",
+                            textTransform: "capitalize",
+                            height: "32px",
+                            padding: "0 12px",
+                            outline: "none",
+                            fontFamily: currentLanguage === "ar" ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                        }}
+                    >
+                        {t("Next")}
+                    </Button>
+                </div>
             </div>
         </>
 

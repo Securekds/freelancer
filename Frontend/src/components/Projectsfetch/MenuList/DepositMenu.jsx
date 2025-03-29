@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import Deposit from '../../../assets/images/small-logos/Deposit.json';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -260,11 +260,12 @@ function DepositMenu({ isClose, handleOpenDepositMenu }) {
                             width: '35%',
                         }}
                     >
-                        <Lottie
-                            animationData={Deposit}
+                        <Player
+                            src={Deposit}
+                            autoplay
                             style={{
                                 width: '100%',
-                                height: '100%',
+                                height: '100%'
                             }}
                         />
                     </div>
@@ -377,7 +378,7 @@ function DepositMenu({ isClose, handleOpenDepositMenu }) {
                                         cursor: 'pointer',
                                         height: '38px',
                                         color: 'white',
-                                        opacity : isLoading ? '0.5' : 'unset',
+                                        opacity: isLoading ? '0.5' : 'unset',
                                         borderColor: 'none',
                                         '&:hover': {
                                             borderColor: 'white',
@@ -656,12 +657,13 @@ function DepositMenu({ isClose, handleOpenDepositMenu }) {
                                 marginTop: '-40px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentFailed}
+                            <Player
+                                src={PaymentFailed}
+                                autoplay
                                 loop={false}
                                 style={{
                                     width: '200px',
-                                    height: '200px',
+                                    height: '200px'
                                 }}
                             />
                         </div>
@@ -737,12 +739,13 @@ function DepositMenu({ isClose, handleOpenDepositMenu }) {
                                 marginTop: '-80px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentDone}
+                            <Player
+                                src={PaymentDone}
+                                autoplay
                                 loop={false}
                                 style={{
                                     width: '260px',
-                                    height: '260px',
+                                    height: '260px'
                                 }}
                             />
                         </div>

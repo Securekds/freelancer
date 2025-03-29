@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/CoverPhoto.json'
 import animationData1 from '../../../assets/images/small-logos/CoverDone.json'
 import CountrySelect from './CountrySelect';
@@ -431,7 +431,7 @@ const Pricing = ({ handleCloseCover, onUpdateCoverImage, currentCoverImg }) => {
     };
 
     // Handle input change
-    const handleInputChange = (event)    => {
+    const handleInputChange = (event) => {
         setPhoneNumber(event.target.value);
     };
     const [dragging, setDragging] = useState(false);
@@ -443,7 +443,7 @@ const Pricing = ({ handleCloseCover, onUpdateCoverImage, currentCoverImg }) => {
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef(null);
     const [isUploading, setIsUploading] = useState(false);
-    const [fileToUpload, setFileToUpload] = useState(null); 
+    const [fileToUpload, setFileToUpload] = useState(null);
     const [uploadedImageUrl, setUploadedImageUrl] = useState('');
     const [DefaultDesign, setDefaultDesign] = useState(true);
     const [CoverUpdatedDesign, setCoverUpdatedDesign] = useState(false);
@@ -491,15 +491,15 @@ const Pricing = ({ handleCloseCover, onUpdateCoverImage, currentCoverImg }) => {
         }
     };
 
-        // Function to process and upload the image
-        const processImage = async (file) => {
-            console.log('Processing image:', file.name);
-            setImage(URL.createObjectURL(file));
-            setImageName(file.name);
-            setImageSize((file.size / (1024 * 1024)).toFixed(2));
-            setFileToUpload(file); // Store the file to upload later
+    // Function to process and upload the image
+    const processImage = async (file) => {
+        console.log('Processing image:', file.name);
+        setImage(URL.createObjectURL(file));
+        setImageName(file.name);
+        setImageSize((file.size / (1024 * 1024)).toFixed(2));
+        setFileToUpload(file); // Store the file to upload later
 
-        };
+    };
 
     // Upload image to backend
     const uploadImageToBackend = async (file) => {
@@ -653,8 +653,16 @@ const Pricing = ({ handleCloseCover, onUpdateCoverImage, currentCoverImg }) => {
                     >
                         <div className="Animation"
                             style={{ marginTop: '-20px', }}>
-                            <Lottie animationData={animationData} style={{ width: 200, height: 200, display: 'block', margin: '0 auto' }} />
-                        </div>
+                            <Player
+                                src={animationData}
+                                autoplay
+                                style={{
+                                    width: 200,
+                                    height: 200,
+                                    display: 'block',
+                                    margin: '0 auto'
+                                }}
+                            />                        </div>
                         <div className="Typo"
                             style={{
                                 marginTop: '-20px',
@@ -929,7 +937,11 @@ const Pricing = ({ handleCloseCover, onUpdateCoverImage, currentCoverImg }) => {
                         </div>
 
                         <div className="LottiesSucces" style={{ marginTop: '-30px' }}>
-                            <Lottie animationData={animationData1} style={{ width: 350, height: 350 }} />
+                            <Player
+                                src={animationData1}
+                                autoplay
+                                style={{ width: 350, height: 350 }}
+                            />
                         </div>
 
                         <div

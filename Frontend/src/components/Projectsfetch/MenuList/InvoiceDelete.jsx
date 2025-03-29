@@ -3,11 +3,11 @@ import { FiChevronDown } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Typography , Button } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/BillingInfo.json';
 
 
@@ -226,9 +226,9 @@ const Content = ({ onCloseClickBilling, selected, dir, TABS, onAddCardClick1, ha
                     y: 8,
                 }}
                 style={{
-                    width: isSmallScreen? '80vw' :
-                    isMediumScreen? '81vw' :
-                     '40vw',
+                    width: isSmallScreen ? '80vw' :
+                        isMediumScreen ? '81vw' :
+                            '40vw',
                     padding: "1rem",
                     height: '300px',
                     zIndex: '11110',
@@ -268,7 +268,7 @@ const Content = ({ onCloseClickBilling, selected, dir, TABS, onAddCardClick1, ha
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ duration: 0.25, ease: "easeInOut" }}
                                 >
-                                    <t.Component handleCloseInvoice={handleCloseInvoice} onCloseClick={onCloseClick} logoPath={logoPath}  onAddCardClick1={onAddCardClick1} />
+                                    <t.Component handleCloseInvoice={handleCloseInvoice} onCloseClick={onCloseClick} logoPath={logoPath} onAddCardClick1={onAddCardClick1} />
 
                                 </motion.div>
                             )}
@@ -420,7 +420,7 @@ const Pricing = ({ onCloseClickBilling, handleCloseInvoice, onLogoClick, onClose
                 justifyContent: 'center',
                 flexDirection: 'column',
                 position: 'relative',
-                 top : '-30px',  
+                top: '-30px',
                 marginLeft: '-2px',
                 alignItems: 'center',
 
@@ -443,118 +443,124 @@ const Pricing = ({ onCloseClickBilling, handleCloseInvoice, onLogoClick, onClose
                 <CloseIcon sx={{ fontSize: '20px' }} />
             </div>
             <div className='Animation'
-            style={{
-                position : 'absolute',
-                top :'-70px',
-
-            }}
-            >
-            <Lottie
-                animationData={animationData}
-                style={{ width: 200, height: 300, display: 'block', margin: '0 auto' }}
-            />
-            </div>
-            <div className="Confirm"
-            style={{
-                position : 'absolute',
-                top :'130px',
-
-            }}
-            >
-                <Typography
                 style={{
-                    fontSize : '20px',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    position: 'absolute',
+                    top: '-70px',
 
                 }}
+            >
+                <Player
+                    src={animationData}
+                    autoplay
+                    style={{
+                        width: 200,
+                        height: 300,
+                        display: 'block',
+                        margin: '0 auto'
+                    }}
+                />
+            </div>
+            <div className="Confirm"
+                style={{
+                    position: 'absolute',
+                    top: '130px',
+
+                }}
+            >
+                <Typography
+                    style={{
+                        fontSize: '20px',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+
+                    }}
                 >
                     {t('Confirm')}
                 </Typography>
             </div>
             <div className="Inforamtion"
-            style={{
-                position : 'absolute',
-                top :'160px',
-                width : '75%',
-                left :'15%',
-                textAlign : 'center',
-            }}
+                style={{
+                    position: 'absolute',
+                    top: '160px',
+                    width: '75%',
+                    left: '15%',
+                    textAlign: 'center',
+                }}
             >
                 <Typography
-                style={{
-                    fontSize : '17px',
-                    width : '95%',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    style={{
+                        fontSize: '17px',
+                        width: '95%',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
-                }}
+                    }}
                 >
-                    {t('Are you sure you want to delete this Invoice?')}    
+                    {t('Are you sure you want to delete this Invoice?')}
                 </Typography>
             </div>
             <div className="SubmitBtn">
-                    <div className="button">
-                        <Button variant="outlined" className='btn-grad' onClick={handleCloseInvoice}
+                <div className="button">
+                    <Button variant="outlined" className='btn-grad' onClick={handleCloseInvoice}
+                        sx={{
+                            width: '100%',
+                            position: 'absolute',
+                            top: '220px',
+                            right: '0%',
+                            height: '38px',
+
+                            borderColor: 'none', '&:hover': {
+                                borderColor: 'white',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+                            },
+                        }}
+                    >
+                        <Typography
                             sx={{
-                                width: '100%',
-                                position: 'absolute',
-                                top :'220px',
-                                right : '0%',
-                                height: '38px',
+                                color: 'white',
+                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                fontWeight: 'bold',
+                                textTransform: 'capitalize',
+                                fontSize: '13px',
 
-                                borderColor: 'none', '&:hover': {
-                                    borderColor: 'white',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-                                },
                             }}
                         >
-                            <Typography
-                                sx={{
-                                    color: 'white',
-                                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                    fontWeight: 'bold',
-                                    textTransform: 'capitalize',
-                                    fontSize: '13px',
-
-                                }}
-                            >
-                                {t('Delete')}
-                            </Typography>
-                        </Button>
-                    </div>
+                            {t('Delete')}
+                        </Typography>
+                    </Button>
                 </div>
-                <div className="SubmitBtn">
-                    <div className="button">
-                        <Button variant="outlined" className='btn-grad' onClick={handleCloseInvoice}
+            </div>
+            <div className="SubmitBtn">
+                <div className="button">
+                    <Button variant="outlined" className='btn-grad' onClick={handleCloseInvoice}
+                        sx={{
+                            width: '100%',
+                            position: 'absolute',
+                            top: '263px',
+                            right: '0%',
+                            height: '38px',
+
+                            borderColor: 'none', '&:hover': {
+                                borderColor: 'white',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+                            },
+                        }}
+                    >
+                        <Typography
                             sx={{
-                                width: '100%',
-                                position: 'absolute',
-                                 top :'263px',
-                                right : '0%',
-                                height: '38px',
+                                color: 'white',
+                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                fontWeight: 'bold',
+                                textTransform: 'capitalize',
+                                fontSize: '13px',
 
-                                borderColor: 'none', '&:hover': {
-                                    borderColor: 'white',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-                                },
                             }}
                         >
-                            <Typography
-                                sx={{
-                                    color: 'white',
-                                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                    fontWeight: 'bold',
-                                    textTransform: 'capitalize',
-                                    fontSize: '13px',
-
-                                }}
-                            >
-                                {t('Cancel')}
-                            </Typography>
-                        </Button>
-                    </div>
+                            {t('Cancel')}
+                        </Typography>
+                    </Button>
                 </div>
+            </div>
 
 
 

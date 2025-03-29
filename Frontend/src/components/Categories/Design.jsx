@@ -6,7 +6,7 @@ import animationData from '../../assets/images/small-logos/AnimationProg.json';
 import Design1 from '../../assets/images/small-logos/Design1.json';
 import animationData2 from '../../assets/images/small-logos/Animation - 1721224613686.json';
 import { useNavigate } from 'react-router-dom';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CodeIcon from '@mui/icons-material/Code';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
@@ -162,18 +162,18 @@ function Design() {
                     display: 'flex',
                     flexDirection: 'column',
                     width: '100%',
-                    position : 'relative',
+                    position: 'relative',
                     justifyContent: 'center',
-                    alignItems: 'center', 
-                    padding: '20px', 
-                    marginRight : isSmallScreen && currentLanguage === 'ar'? '0px' :
-                    currentLanguage === 'ar'? '10px' :
-                     'unset',
+                    alignItems: 'center',
+                    padding: '20px',
+                    marginRight: isSmallScreen && currentLanguage === 'ar' ? '0px' :
+                        currentLanguage === 'ar' ? '10px' :
+                            'unset',
                 }}
             >
                 <div className='aurora-hero'
                     style={{
-                        width: isSmallScreen? '110%' : '100%',
+                        width: isSmallScreen ? '110%' : '100%',
                         Height: 'auto',
                         background: 'transparent',
                         position: 'relative',
@@ -290,7 +290,7 @@ function Design() {
                                     height: '100px',
                                     marginTop: '10px',
                                     whiteSpace: 'nowrap',
-                                    
+
                                 }}
                             >
                                 {t('freelancers With [Khadamat].')}
@@ -306,13 +306,19 @@ function Design() {
                             justifyContent: 'center',
                             position: 'relative',
                             width: '100%',
-                            marginTop : '-70px',
+                            marginTop: '-70px',
                         }}
                     >
                         <div className="light-effect"></div>
-                        <Lottie
-                            animationData={Design1}
-                            style={{ width: 300, height: 300, display: 'block', margin: '0 auto' }}
+                        <Player
+                            src={Design1}
+                            autoplay
+                            style={{
+                                width: 300,
+                                height: 300,
+                                display: 'block',
+                                margin: '0 auto'
+                            }}
                         />
                     </div>
                     <div className='BoxesAR '
@@ -322,8 +328,8 @@ function Design() {
                             alignItems: 'center', // Center BoxesAR within aurora-hero
                             justifyContent: 'center',
                             width: '100%', // Full width to match aurora-hero
-                            opacity : '0',
-                            zIndex : '-1',
+                            opacity: '0',
+                            zIndex: '-1',
                             padding: '20px', // Add padding if needed for spacing
 
 
@@ -1072,10 +1078,13 @@ function Design() {
                         }}
                     >
                         <div className="light-effect"></div>
-                        <Lottie animationData={animationData2} style={{ width: 100, height: 100 }} />
-                    </div>
+                        <Player
+                            src={animationData2}
+                            autoplay
+                            style={{ width: 100, height: 100 }}
+                        />                    </div>
                 </div>
-             
+
 
                 <div className='CarAR'
                     style={{
@@ -1083,13 +1092,13 @@ function Design() {
                         display: 'flex',           // Flexbox for centering
                         alignItems: 'center',       // Vertical center alignment
                         justifyContent: 'center',   // Horizontal center alignment
-                        width: isSmallScreen? '103%' : '96%',  
-                        position : 'absolute', 
-                        top : isSmallScreen? '25%' :
-                        isTabletScreen? '38%' :
-                        isMediumScreen? '37%' :
-                         '55%',
-                                   
+                        width: isSmallScreen ? '103%' : '96%',
+                        position: 'absolute',
+                        top: isSmallScreen ? '25%' :
+                            isTabletScreen ? '38%' :
+                                isMediumScreen ? '37%' :
+                                    '55%',
+
                     }}
                 >
                     <div className="CatProjects"

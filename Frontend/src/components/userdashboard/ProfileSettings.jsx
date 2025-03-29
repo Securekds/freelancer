@@ -17,7 +17,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import Tooltip from '@mui/material/Tooltip';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import Verifey from '../../assets/images/small-logos/Verifey.json';
 import EmailCode from '../../assets/images/small-logos/EmailCode.json';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
@@ -777,34 +777,34 @@ function ProfileSettings({ setProfileSettings, setProfile, handleOpenVerify }) {
     const [codeSentBack, setCodeSentBack] = useState('');
 
     const [activeSection, setActiveSection] = useState('accountInfo'); // Default section
-// Start countdown when the active section is 'verifyEmail'
-useEffect(() => {
-    if (activeSection === 'verifyEmail') {
-        setTimeRemaining(120); // Reset countdown to 2 minutes
-        setWrongAttempts(0);   // Reset attempts
-        setErrorMessage("");   // Clear error message
-        setTimerActive(true);  // Activate the timer
-    }
-}, [activeSection]);
-
-// Countdown effect
-useEffect(() => {
-    let interval;
-
-    if (timerActive && timeRemaining > 0 && wrongAttempts < 3) {
-        interval = setInterval(() => {
-            setTimeRemaining((prevTime) => prevTime - 1);
-        }, 1000);
-    } else if (timeRemaining === 0 || wrongAttempts >= 3) {
-        clearInterval(interval);   // Stop the countdown
-        setTimerActive(false);     // Deactivate the timer
-        if (wrongAttempts >= 3) {
-            setErrorMessage("Too many incorrect attempts. Please request a new code.");
+    // Start countdown when the active section is 'verifyEmail'
+    useEffect(() => {
+        if (activeSection === 'verifyEmail') {
+            setTimeRemaining(120); // Reset countdown to 2 minutes
+            setWrongAttempts(0);   // Reset attempts
+            setErrorMessage("");   // Clear error message
+            setTimerActive(true);  // Activate the timer
         }
-    }
+    }, [activeSection]);
 
-    return () => clearInterval(interval); // Cleanup
-}, [timeRemaining, timerActive, wrongAttempts]);
+    // Countdown effect
+    useEffect(() => {
+        let interval;
+
+        if (timerActive && timeRemaining > 0 && wrongAttempts < 3) {
+            interval = setInterval(() => {
+                setTimeRemaining((prevTime) => prevTime - 1);
+            }, 1000);
+        } else if (timeRemaining === 0 || wrongAttempts >= 3) {
+            clearInterval(interval);   // Stop the countdown
+            setTimerActive(false);     // Deactivate the timer
+            if (wrongAttempts >= 3) {
+                setErrorMessage("Too many incorrect attempts. Please request a new code.");
+            }
+        }
+
+        return () => clearInterval(interval); // Cleanup
+    }, [timeRemaining, timerActive, wrongAttempts]);
 
 
     // Handle verification logic
@@ -958,7 +958,7 @@ useEffect(() => {
     const [resetInputSuccess, setResetInputSuccess] = useState({ code: false });
 
 
-    
+
 
     const handleProfileInfo = () => {
         setActiveSection('profileInfo');
@@ -980,12 +980,12 @@ useEffect(() => {
             style={{
                 width: '96%',
                 height: 'auto',
-    
+
                 padding: '10px',
 
             }}
         >
-         
+
             <div className="Accountsettings slide-from-left"
 
                 style={{
@@ -1457,10 +1457,11 @@ useEffect(() => {
 
                                     }}
                                 >
-                                    <Lottie
-                                        animationData={Verifey}
-                                        loop={true}
-                                        style={{ width: 120, height: 120, }}
+                                    <Player
+                                        src={Verifey}
+                                        autoplay
+                                        loop
+                                        style={{ width: 120, height: 120 }}
                                     />
 
                                 </div>
@@ -2309,8 +2310,12 @@ useEffect(() => {
                                 top: '-5%',
                             }}
                         >
-                            <Lottie animationData={EmailCode} loop={true} style={{ width: 170, height: 170 }} />
-                        </div>
+                            <Player
+                                src={EmailCode}
+                                autoplay
+                                loop
+                                style={{ width: 170, height: 170 }}
+                            />                        </div>
 
                         <div className="VerificationTypo"
 
@@ -2591,11 +2596,16 @@ useEffect(() => {
                                 transform: 'translateY(-50%)',
                             }}
                         >
-                            <Lottie
-                                animationData={ProfileSucces}
+                            <Player
+                                src={ProfileSucces}
+                                autoplay
                                 loop={false}
                                 style={{ width: '100%', height: '100%' }}
-                                onComplete={() => setIsAnimationComplete(true)}
+                                onEvent={(event) => {
+                                    if (event === 'complete') {
+                                        setIsAnimationComplete(true);
+                                    }
+                                }}
                             />
                         </div>
 

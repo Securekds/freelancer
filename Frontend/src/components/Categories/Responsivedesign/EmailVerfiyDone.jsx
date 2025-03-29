@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button } from '@mui/material';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import i18n from 'i18next';
-
 import { useTranslation } from 'react-i18next';
 import EmailSuccess from '../../../assets/images/small-logos/EmailSuccess.json';
 
@@ -71,11 +70,12 @@ function EmailVerifyDone() {
                     marginBottom: '-40px',
                 }}
             >
-                <Lottie
-                    animationData={EmailSuccess}
-                    loop={true}
-                    style={{ width: '100%', height: '100%' }}
-                />
+              <Player
+  src={EmailSuccess}
+  autoplay
+  loop={true}
+  style={{ width: '100%', height: '100%' }}
+/>
             </div>
 
             {/* Sequential Typography Messages */}

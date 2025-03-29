@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import i18n from 'i18next';
 import { Typography, Box } from '@mui/material';
-
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

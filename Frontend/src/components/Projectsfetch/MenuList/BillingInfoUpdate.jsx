@@ -8,8 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
-import Lottie from 'lottie-react';
-import animationData from '../../../assets/images/small-logos/BillingUpdate.json';
+
 
 
 

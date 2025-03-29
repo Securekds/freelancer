@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Menu from '@mui/material/Menu';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import PaymentDone from '../../assets/images/small-logos/PaymentDone.json';
 import DOMPurify from 'dompurify';
 import MenuItem from '@mui/material/MenuItem';
@@ -1173,12 +1173,13 @@ function Offertabs({ handleCloseOffer, gigOwnerId }) {
                                 marginTop: '-80px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentDone}
+                            <Player
+                                src={PaymentDone}
+                                autoplay
                                 loop={false}
                                 style={{
                                     width: '260px',
-                                    height: '260px',
+                                    height: '260px'
                                 }}
                             />
                         </div>

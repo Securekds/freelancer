@@ -13,7 +13,7 @@ import { Card, Skeleton } from "@nextui-org/react";
 import DrawIcon from '@mui/icons-material/Draw';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import { useUser } from '../../../Context/UserContext.jsx'
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 import { useGig } from '../../../Context/GigContext.jsx';
 import MenuItem from '@mui/material/MenuItem';
@@ -157,7 +157,7 @@ function WritingComp() {
         setIsOpen((prev) => !prev);
     };
 
-    const { gigs,  writingGigs, isLoaded, error, selectedSubCategory, setSelectedSubCategory, } = useGig();
+    const { gigs, writingGigs, isLoaded, error, selectedSubCategory, setSelectedSubCategory, } = useGig();
     const [offerCounts, setOfferCounts] = useState({}); // Store offer count per gig
 
 
@@ -235,10 +235,10 @@ function WritingComp() {
 
 
 
-      
 
 
-      const handleGigClick = (gigId) => {
+
+    const handleGigClick = (gigId) => {
         navigate(`/userdashboard/project/singlepost/${gigId}`);
     };
 
@@ -700,8 +700,11 @@ function WritingComp() {
                                     marginTop: '-15px',
                                 }}
                             >
-                                <Lottie animationData={animationData} style={{ width: 250, height: 250 }} />
-                            </div>
+                                <Player
+                                    src={animationData}  // Changed from animationData to src
+                                    autoplay             // Added to auto-play the animation
+                                    style={{ width: 250, height: 250 }}  // Kept same dimensions
+                                />                            </div>
 
 
                         </div>
@@ -900,16 +903,16 @@ function WritingComp() {
                                                         textOverflow: 'ellipsis',
 
                                                     }}>
-                                                         <span
-                                                        style={{
-                                                            fontFamily : '"Airbnbcereal", sans-serif',
-                                                            marginLeft : currentLanguage === 'ar'? '3px'  : 'unset',
-                                                            marginRight : '3px',
-                                                            
-                                                            
-                                                        }}
+                                                        <span
+                                                            style={{
+                                                                fontFamily: '"Airbnbcereal", sans-serif',
+                                                                marginLeft: currentLanguage === 'ar' ? '3px' : 'unset',
+                                                                marginRight: '3px',
+
+
+                                                            }}
                                                         >
-                                                       {gig.offerCount}
+                                                            {gig.offerCount}
                                                         </span>
                                                         {t('Offer')}
                                                     </Typography>

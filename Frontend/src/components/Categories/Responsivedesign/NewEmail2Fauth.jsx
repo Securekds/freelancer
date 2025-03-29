@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import CloseIcon from '@mui/icons-material/Close';
 import { useUser } from '../../../Context/UserContext.jsx'
 import React, { useState, useEffect, useRef } from 'react';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import EmailCode from '../../../assets/images/small-logos/EmailCode.json';
 import EmailSuccess from '../../../assets/images/small-logos/EmailSuccess.json';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -151,20 +151,20 @@ function NewEmail2Fauth({ onCloseClick }) {
             setErrors((prev) => ({ ...prev, secondaryEmailError: true }));
             return;
         }
-    
+
         // Prevent using the same email as the primary
         if (formData.secondaryEmail === user?.email) {
             setErrorMessage("The secondary email must be different from your primary email.");
             setErrors((prev) => ({ ...prev, secondaryEmailError: true }));
             return;
         }
-    
+
         // Prevent excessive resend attempts
         if (resendAttempts >= 3) {
             setErrorMessage("Too many attempts. Please wait before trying again.");
             return;
         }
-    
+
         setIsLoading(true);
         try {
             const response = await axios.post(
@@ -176,7 +176,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                 },
                 { withCredentials: true }
             );
-    
+
             // Check if the response was successful
             if (response.data && response.status === 200) {
                 setIsLoading(false);
@@ -184,16 +184,16 @@ function NewEmail2Fauth({ onCloseClick }) {
                 setVerifyEmail(true);
                 setEmailSuccess(false); // Ensure we're not skipping directly to success
                 setErrorMessage("");
-                
+
                 // Reset verification code inputs
                 setEmailVerifyCode(Array(4).fill(''));
-    
+
                 // Reset attempts and cooldown
                 setWrongAttempts(0);
                 setCooldown(0);
                 setDisableResend(false);
                 setResendAttempts(0);
-    
+
                 console.log("✅ Verification code sent successfully!");
             } else {
                 throw new Error(response.data?.message || "Failed to send verification code");
@@ -201,18 +201,18 @@ function NewEmail2Fauth({ onCloseClick }) {
         } catch (error) {
             setIsLoading(false);
             console.error("❌ Error during email verification request:", error);
-    
+
             setErrorMessage(error.response?.data?.message || "Failed to send verification code.");
-    
+
             // Keep the email input visible on error
             setEnterEmail(true);
             setVerifyEmail(false);
         }
     };
-    
 
-    
- 
+
+
+
 
     const handleEmailCodeVerify = async () => {
         const userId = user ? user._id : null;
@@ -220,46 +220,46 @@ function NewEmail2Fauth({ onCloseClick }) {
             setErrorMessage("User ID is missing. Please try again.");
             return;
         }
-    
+
         if (cooldown > 0) return;
-    
+
         const enteredCode = emailVerifyCode.join('');
         if (enteredCode.length !== 4) {
             setErrorMessage('Please enter the full 4-digit code.');
             return;
         }
-    
+
         if (wrongAttempts >= 3) {
             setErrorMessage(`Too many failed attempts. Please wait ${cooldown}s before requesting another code.`);
             return;
         }
-    
+
         setIsLoading(true);
-    
+
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/server/auth/verify-email-code`,
-                { 
-                    userId, 
-                    code: enteredCode, 
+                {
+                    userId,
+                    code: enteredCode,
                     isSecondaryEmail: true  // <== Ensure backend knows it's verifying secondary email
                 },
-                { 
+                {
                     withCredentials: true,
                     headers: { 'Content-Type': 'application/json' }
                 }
             );
-    
+
             setResetInputSuccess((prev) => ({ ...prev, code: true }));
             setVerifyEmail(false);
             setEmailSuccess(true);
             setWrongAttempts(0);
             setErrorMessage("");
-    
+
         } catch (error) {
             console.error("Error during verification:", error);
             setWrongAttempts((prev) => prev + 1);
-    
+
             if (wrongAttempts + 1 >= 3) {
                 setErrorMessage("Too many failed attempts. Please wait 1 minute before requesting another code.");
                 startCooldown();
@@ -272,7 +272,7 @@ function NewEmail2Fauth({ onCloseClick }) {
         }
     };
 
-    
+
     const [resendAttempts, setResendAttempts] = useState(0);
 
     const startCooldown = () => {
@@ -401,7 +401,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                 }}
             >
 
-                {enterEmail &&  (
+                {enterEmail && (
                     <>
                         <div className="EmailIcon"
                             style={{
@@ -433,7 +433,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                                     color: 'white',
                                     fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                     fontSize: '18px',
-                                    textAlign  : 'center',
+                                    textAlign: 'center',
                                     fontWeight: 'bold',
                                 }}
                             >
@@ -568,8 +568,12 @@ function NewEmail2Fauth({ onCloseClick }) {
                                 marginTop: '-25px',
                             }}
                         >
-                            <Lottie animationData={EmailCode} loop={true} style={{ width: 170, height: 170 }} />
-                        </div>
+                            <Player
+                                src={EmailCode}
+                                autoplay
+                                loop
+                                style={{ width: 170, height: 170 }}
+                            />                        </div>
                         <div className="VerificationTypo"
 
                             style={{
@@ -685,7 +689,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                                 disabled={wrongAttempts >= 3 || cooldown > 0}
                                 className="btn-grad"
                                 sx={{
-                                    width: isSmallScreen? '270px' :  '315px',
+                                    width: isSmallScreen ? '270px' : '315px',
                                     height: '38px',
                                     backgroundColor: 'transparent',
                                     color: 'white',
@@ -729,7 +733,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                             >
                                 {t("Didn't receive the email?")}
                                 <Button
-                               
+
                                     onClick={disableResend ? null : handleResendCode}
                                     style={{
                                         marginLeft: '5px',
@@ -740,7 +744,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                                     }}
                                 >
                                     {disableResend ? `${t('Wait')} ${cooldown}s` : t('Resend Code')}
-                                    </Button>
+                                </Button>
                             </Typography>
                         </div>
 
@@ -761,9 +765,10 @@ function NewEmail2Fauth({ onCloseClick }) {
                                 marginBottom: '-40px',
                             }}
                         >
-                            <Lottie
-                                animationData={EmailSuccess}
-                                loop={true}
+                            <Player
+                                src={EmailSuccess}
+                                autoplay
+                                loop
                                 style={{ width: '100%', height: '100%' }}
                             />
                         </div>
@@ -778,7 +783,7 @@ function NewEmail2Fauth({ onCloseClick }) {
                                         fontSize: '18px',
                                         fontWeight: 'bold',
                                         overflow: 'hidden',
-                                        textAlign : 'center',
+                                        textAlign: 'center',
                                         whiteSpace: 'wrap',
                                         position: 'relative',
                                     }}

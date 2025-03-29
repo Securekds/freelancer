@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUser } from '../../../Context/UserContext.jsx'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React, { useState, useEffect, useRef } from 'react';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import PhoneCode from '../../../assets/images/small-logos/PhoneCode.json';
 import PhoneDone from '../../../assets/images/small-logos/PhoneDone.json';
 import { motion } from "framer-motion";
@@ -22,7 +22,7 @@ import axios from 'axios';
 
 
 
-function Fauthphonelogin({ user , onVerificationSuccess }) {
+function Fauthphonelogin({ user, onVerificationSuccess }) {
     console.log("Received user data in Fauthphonelogin:", user);
 
     const { t } = useTranslation();
@@ -48,8 +48,8 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
 
 
     const inputRefs = useRef([]);
-  const { login } = useUser(); // Add UserContext hook
-        const isSmallScreen = useMediaQuery('(max-width:600px)');
+    const { login } = useUser(); // Add UserContext hook
+    const isSmallScreen = useMediaQuery('(max-width:600px)');
     const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)');
     const isMediumScreen = useMediaQuery('(min-width:1001px) and (max-width:1400px)');
     const isLargeScreen = useMediaQuery('(min-width:1401px) and (max-width:1920px)');
@@ -225,18 +225,18 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
 
     const sendOTP = async () => {
         if (isCooldown) return; // Prevent multiple OTP requests
-    
+
         setIsLoading(true);
         setError(null);
         setIsCooldown(true); // Start cooldown
-    
+
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/server/sms/send-verification`,
                 { phone: user?.phoneNumber, userId: user?._id }, // Use phoneNumber directly
                 { withCredentials: true }
             );
-    
+
             console.log("OTP sent successfully:", response.data);
             setCooldownTime(30); // Set cooldown period (30 seconds)
             startCooldown();
@@ -248,7 +248,7 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
             setIsLoading(false);
         }
     };
-    
+
 
 
 
@@ -304,7 +304,7 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
             setErrorMessage("");
             setCodesent(false);
             setCodesentSuccess(true);
-  
+
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/server/auth/finalize-login`,
                 { userId: user._id },
@@ -314,7 +314,7 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
             login(res.data);
             onVerificationSuccess(res.data);
 
-     
+
         } catch (err) {
             console.error("Verification error:", {
                 status: err.response?.status,
@@ -363,14 +363,14 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
                     width: "100%",
                     bottom: 0,
                     borderRadius: "16px",
-                  
+
                     backdropFilter: "blur(10px)",
                     WebkitBackdropFilter: "blur(10px)",
                     zIndex: "-1",
                 }}
             />
-            
-          
+
+
             <div id="recaptcha-container"></div>
 
 
@@ -384,7 +384,12 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
                             marginTop: '-20px',
                         }}
                     >
-                        <Lottie animationData={PhoneCode} loop={false} style={{ width: 170, height: 170 }} />
+                        <Player
+                            src={PhoneCode}  // Use 'src' instead of 'animationData'
+                            autoplay  // Add this to make it play automatically
+                            loop={false}
+                            style={{ width: 170, height: 170 }}
+                        />
                     </div>
 
 
@@ -417,7 +422,7 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
                             }}
                         >
                             {t("We've sent a code to your phone number")}
-                        
+
                         </Typography>
                     </div>
 
@@ -468,8 +473,8 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
                                 onChange={(e) => handleOtpChange(e.target.value, index)}
                                 className="otp-input"
                                 style={{
-                                    height:  "55px",
-                                    width: isSmallScreen? '40px' : "55px",
+                                    height: "55px",
+                                    width: isSmallScreen ? '40px' : "55px",
                                     border: "2px solid rgb(0, 116, 255)",
                                     borderRadius: "10px",
                                     textAlign: "center",
@@ -495,7 +500,7 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
                             disabled={wrongAttempts >= 3 || isBlocked}
                             className="btn-grad"
                             sx={{
-                                width: isSmallScreen? '300px' : "378px",
+                                width: isSmallScreen ? '300px' : "378px",
                                 height: "38px",
                                 backgroundColor: "transparent",
                                 color: "white",
@@ -615,7 +620,12 @@ function Fauthphonelogin({ user , onVerificationSuccess }) {
                                 marginTop: '-20px',
                             }}
                         >
-                            <Lottie animationData={PhoneDone} loop={true} style={{ width: 170, height: 170 }} />
+                            <Player
+                                src={PhoneDone}  // Changed from animationData to src
+                                autoplay         // Required to auto-start animation
+                                loop={true}      // Keeps the same looping behavior
+                                style={{ width: 170, height: 170 }}
+                            />
                         </motion.div>
                         <div className="VerificationTypo"
 

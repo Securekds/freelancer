@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography, Button } from '@mui/material'
-import Lottie from 'react-lottie';
+import { Player } from '@lottiefiles/react-lottie-player';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import i18n from 'i18next';
 import { useEffect, useState, useRef } from 'react';
@@ -70,9 +70,9 @@ function UnAuthPro() {
             <div className="PageContent"
                 style={{
                     width: '90%',
-                    height : 'auto',
-                    maxHeight : '85vh',
-                    minHeight : '50%',
+                    height: 'auto',
+                    maxHeight: '85vh',
+                    minHeight: '50%',
                     background: '#010020',
                     borderRadius: '30px',
                     margin: 'auto',
@@ -86,7 +86,7 @@ function UnAuthPro() {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'flex-start',
-                        padding: isMediumScreen? '10px' : '40px',
+                        padding: isMediumScreen ? '10px' : '40px',
 
 
                     }}
@@ -97,14 +97,14 @@ function UnAuthPro() {
                     <div className="MainText"
                         style={{
                             padding: '25px',
-                            marginTop: isMediumScreen? '10px' :  '20px',
+                            marginTop: isMediumScreen ? '10px' : '20px',
 
 
                         }}
                     >
                         <Typography className="glitch-text"
                             sx={{
-                                fontSize: isMediumScreen? '30px' : '40px',
+                                fontSize: isMediumScreen ? '30px' : '40px',
                             }}
                         >
                             Protected Data !
@@ -161,7 +161,7 @@ function UnAuthPro() {
                                     flex: 1,
                                     fontSize: '12px',
                                     fontWeight: 'bold',
-                                    textWrap : 'nowrap',
+                                    textWrap: 'nowrap',
                                     fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                 }}
                             >
@@ -196,7 +196,7 @@ function UnAuthPro() {
                                     flex: 1,
                                     fontSize: '12px',
                                     fontWeight: 'bold',
-                                    textWrap : 'nowrap',
+                                    textWrap: 'nowrap',
                                     fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                 }}
                             >
@@ -207,14 +207,14 @@ function UnAuthPro() {
                     </div>
 
                 </div>
-                <div   className="StylesImages"
-                  
+                <div className="StylesImages"
+
                     style={{
                         width: '55%',
-                  
+
                         display: 'flex',
                         flexDirection: 'column',
-                
+
                         justifyContent: 'flex-start',
                         alignItems: 'flex-start', // Ensures content aligns to the left
                         padding: '0', // Remove extra padding
@@ -222,14 +222,22 @@ function UnAuthPro() {
                     }}
                 >
                     <div className="CameraSpy"
-                        
+
                         style={{
                             position: 'absolute', // Positions it in the top-left corner
                             top: '-10%', // Adjust as needed
                             left: '-5%',
                         }}
                     >
-                        <Lottie options={defaultOptions} style={{width : isMediumScreen? '150px' : '190px' , height : isMediumScreen? '50px' : '70px'}} />
+                        <Player
+                            src={animationData}
+                            autoplay
+                            loop
+                            style={{
+                                width: isMediumScreen ? '150px' : '190px',
+                                height: isMediumScreen ? '50px' : '70px'
+                            }}
+                        />
                     </div>
                     <div className="ImgCyber "
                         style={{
@@ -240,8 +248,8 @@ function UnAuthPro() {
                         }}
                     >
                         <div className="light-effect3"></div>
-                        <img style={{width : isMediumScreen? '450px' : '500px'}}
-                         src="https://res.cloudinary.com/damicjacf/image/upload/v1729615148/cyber-security-concept_23-2148542046_ghwagg.jpg" alt="" srcset="" />
+                        <img style={{ width: isMediumScreen ? '450px' : '500px' }}
+                            src="https://res.cloudinary.com/damicjacf/image/upload/v1729615148/cyber-security-concept_23-2148542046_ghwagg.jpg" alt="" srcset="" />
                     </div>
                     <div className="ImgCyber "
                         style={{
@@ -252,12 +260,12 @@ function UnAuthPro() {
                         }}
                     >
                         <div className="light-effect3"></div>
-                        <img style={{width : isMediumScreen? '350px' : '400px'}}
-                         src="https://res.cloudinary.com/damicjacf/image/upload/v1732291313/_80af88c5-5718-42c8-93c5-e1fe9b90c10a-removebg-preview_LE_upscale_magic_beta_x4_creativity_75_resemblance_50_tone_enhance_50_color_enhance_70-removebg-preview_hmgavc.png" alt="" srcset="" />
+                        <img style={{ width: isMediumScreen ? '350px' : '400px' }}
+                            src="https://res.cloudinary.com/damicjacf/image/upload/v1732291313/_80af88c5-5718-42c8-93c5-e1fe9b90c10a-removebg-preview_LE_upscale_magic_beta_x4_creativity_75_resemblance_50_tone_enhance_50_color_enhance_70-removebg-preview_hmgavc.png" alt="" srcset="" />
                     </div>
-                    
-                  <div className="light-effect3"></div>
-                      
+
+                    <div className="light-effect3"></div>
+
                 </div>
 
 

@@ -16,7 +16,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import DraftsOutlinedIcon from '@mui/icons-material/DraftsOutlined';
 import PasswordIcon from '@mui/icons-material/Password';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import PasswordSucces from '../../assets/images/small-logos/PasswordSucces.json'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -2158,11 +2158,12 @@ function Signin() {
                           </Typography>
                         </div>
                         <div className="SuccesLottiesIcon">
-                          <Lottie
-                            animationData={PasswordSucces}
-                            loop={false}
-                            style={{ width: 200, height: 200 }}
-                          />
+                        <Player
+  src={PasswordSucces}
+  autoplay
+  loop={false}
+  style={{ width: 200, height: 200 }}
+/>
                         </div>
                         <div className="BackToLogin"
                           style={{

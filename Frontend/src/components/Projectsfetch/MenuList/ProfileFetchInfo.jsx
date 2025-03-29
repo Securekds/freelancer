@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useUser } from '../../../Context/UserContext';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import rtlPlugin from 'stylis-plugin-rtl';
@@ -794,7 +794,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minHeight: '150px',
-                
+
                 height: 'auto',
                 padding: '15px',
                 gap: '10px',
@@ -844,7 +844,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                 color: 'white',
                                 fontWeight: 'bold',
                                 fontSize: '16px',
-                                textAlign : 'center',
+                                textAlign: 'center',
                             }}
                         >
 
@@ -872,7 +872,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                             sx={{
                                 fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                 fontWeight: 'bold',
-                                textAlign : 'center',
+                                textAlign: 'center',
                                 color: errorMessage === "Your profile is already up-to-date. No changes detected." ? '#2df873' : '#ff4d4d',
                             }}
                         >
@@ -961,7 +961,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                                 display: 'flex',
                                                 flexDirection: isSmallScreen ? 'column' : 'unset',
                                                 gap: isSmallScreen ? '15px' : '5px',
-                                               
+
 
                                             }}
                                         >
@@ -999,7 +999,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                                     }}
                                                     sx={{
                                                         flex: 1,
-                                                        width : '100%',
+                                                        width: '100%',
                                                         '& .MuiOutlinedInput-root': {
                                                             borderRadius: '8px',
                                                             '& fieldset': {
@@ -1036,7 +1036,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                                     PaperProps={{
                                                         style: {
                                                             background: 'rgba(0, 0, 0, 0.8)',
-                                                            width: isSmallScreen? '67%' : '16%',
+                                                            width: isSmallScreen ? '67%' : '16%',
                                                             color: 'white',
                                                             borderRadius: '8px',
                                                             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
@@ -1146,7 +1146,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                                         PaperProps={{
                                                             style: {
                                                                 background: 'rgba(0, 0, 0, 0.8)',
-                                                                width: isSmallScreen? '67%' : '16%',
+                                                                width: isSmallScreen ? '67%' : '16%',
 
                                                                 color: 'white',
                                                                 borderRadius: '8px',
@@ -1253,7 +1253,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                                     PaperProps={{
                                                         style: {
                                                             background: 'rgba(0, 0, 0, 0.8)',
-                                                            width: isSmallScreen? '67%' : '16%',
+                                                            width: isSmallScreen ? '67%' : '16%',
 
                                                             color: 'white',
                                                             borderRadius: '8px',
@@ -1336,7 +1336,7 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                                     PaperProps={{
                                                         style: {
                                                             background: 'rgba(0, 0, 0, 0.8)',
-                                                            width: isSmallScreen? '67%' : '16%',
+                                                            width: isSmallScreen ? '67%' : '16%',
 
                                                             color: 'white',
                                                             borderRadius: '8px',
@@ -2282,12 +2282,12 @@ function ProfileFetchInfo({ handleShowProfileInfoClose }) {
                                 marginTop: '-30px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentDone}
-
+                            <Player
+                                src={PaymentDone}
+                                autoplay
                                 style={{
                                     width: '280px',
-                                    height: '160px',
+                                    height: '160px'
                                 }}
                             />
                         </div>

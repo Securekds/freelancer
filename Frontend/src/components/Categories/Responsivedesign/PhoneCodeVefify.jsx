@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUser } from '../../../Context/UserContext.jsx'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React, { useState, useEffect, useRef } from 'react';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import PhoneCode from '../../../assets/images/small-logos/PhoneCode.json';
 import PhoneDone from '../../../assets/images/small-logos/PhoneDone.json';
 import { motion } from "framer-motion";
@@ -48,7 +48,7 @@ function PhoneCodeVefify({ onCloseClick }) {
 
     const inputRefs = useRef([]);
 
-        const isSmallScreen = useMediaQuery('(max-width:600px)');
+    const isSmallScreen = useMediaQuery('(max-width:600px)');
     const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)');
     const isMediumScreen = useMediaQuery('(min-width:1001px) and (max-width:1400px)');
     const isLargeScreen = useMediaQuery('(min-width:1401px) and (max-width:1920px)');
@@ -336,7 +336,7 @@ function PhoneCodeVefify({ onCloseClick }) {
                 display: "flex",
                 padding: '17px',
                 flexDirection: "column",
-               
+
                 justifyContent: 'center',
                 alignItems: 'center',
                 gap: "10px",
@@ -361,7 +361,7 @@ function PhoneCodeVefify({ onCloseClick }) {
                     zIndex: "-1",
                 }}
             />
-            
+
             <div className="CloseIcon"
 
                 style={{
@@ -389,8 +389,12 @@ function PhoneCodeVefify({ onCloseClick }) {
                             marginTop: '-20px',
                         }}
                     >
-                        <Lottie animationData={PhoneCode} loop={false} style={{ width: 170, height: 170 }} />
-                    </div>
+                        <Player
+                            src={PhoneCode}
+                            autoplay
+                            loop={false}
+                            style={{ width: 170, height: 170 }}
+                        />                    </div>
 
 
                     <div className="VerificationTypo"
@@ -481,8 +485,8 @@ function PhoneCodeVefify({ onCloseClick }) {
                                 onChange={(e) => handleOtpChange(e.target.value, index)}
                                 className="otp-input"
                                 style={{
-                                    height:  "55px",
-                                    width: isSmallScreen? '40px' : "55px",
+                                    height: "55px",
+                                    width: isSmallScreen ? '40px' : "55px",
                                     border: "2px solid rgb(0, 116, 255)",
                                     borderRadius: "10px",
                                     textAlign: "center",
@@ -508,7 +512,7 @@ function PhoneCodeVefify({ onCloseClick }) {
                             disabled={wrongAttempts >= 3 || isBlocked}
                             className="btn-grad"
                             sx={{
-                                width: isSmallScreen? '300px' : "378px",
+                                width: isSmallScreen ? '300px' : "378px",
                                 height: "38px",
                                 backgroundColor: "transparent",
                                 color: "white",
@@ -628,8 +632,12 @@ function PhoneCodeVefify({ onCloseClick }) {
                                 marginTop: '-20px',
                             }}
                         >
-                            <Lottie animationData={PhoneDone} loop={true} style={{ width: 170, height: 170 }} />
-                        </motion.div>
+                            <Player
+                                src={PhoneDone}
+                                autoplay
+                                loop={false}
+                                style={{ width: 170, height: 170 }}
+                            />                        </motion.div>
                         <div className="VerificationTypo"
 
                             style={{

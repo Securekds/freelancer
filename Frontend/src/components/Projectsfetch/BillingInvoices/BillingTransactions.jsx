@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
@@ -143,25 +143,29 @@ function BillingTransactions({ handleOpenDepositMenu }) {
         if (transactions.length === 0) {
             return (
                 <div className="Div"
-                style={{
-                    display : 'flex',
-                    flexDirection : 'column',
-                    alignItems : 'center',
-                }}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
                 >
                     <div className="Lottie"
                         style={{
-                        
+
                         }}
                     >
-                        <Lottie animationData={animationData} style={{ width: 190, height: 150 }} />
-                    </div>
-                    <Typography sx={{ color: "white",
-                         textAlign: "center"
-                         , padding: "16px",
-                         fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                        <Player
+                            src={animationData}
+                            autoplay
+                            style={{ width: 190, height: 150 }}
+                        />                    </div>
+                    <Typography sx={{
+                        color: "white",
+                        textAlign: "center"
+                        , padding: "16px",
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
-                          }}>
+                    }}>
                         {t('No Transaction found.')}
                     </Typography>
 
@@ -226,10 +230,10 @@ function BillingTransactions({ handleOpenDepositMenu }) {
 
                     style={{
                         position: "absolute",
-                        left: currentLanguage === 'ar'? '40%' : "42%",
+                        left: currentLanguage === 'ar' ? '40%' : "42%",
                         alignItems: "center",
                         gap: "5px",
-                        display : 'flex',
+                        display: 'flex',
                         right: "unset",
                     }}
                 >
@@ -248,13 +252,13 @@ function BillingTransactions({ handleOpenDepositMenu }) {
                     style={{
                         position: "absolute",
                         left: isSmallScreen ? "35%" :
-                        currentLanguage === 'ar'? '59%' :
-                         "60%",
+                            currentLanguage === 'ar' ? '59%' :
+                                "60%",
                         right: "unset",
                         textWrap: "nowrap",
                         display: "flex",
                         gap: "5px",
-                        display: isSmallScreen ? "none" : "flex" 
+                        display: isSmallScreen ? "none" : "flex"
                     }}
                 >
                     <AssuredWorkloadIcon sx={{ fontSize: "20px", color: "rgba(0, 116, 255)" }} />
@@ -272,11 +276,11 @@ function BillingTransactions({ handleOpenDepositMenu }) {
                     style={{
                         position: "absolute",
                         left: isSmallScreen ? "75%" :
-                        currentLanguage === 'ar'? '72%' :
-                         "78%",
+                            currentLanguage === 'ar' ? '72%' :
+                                "78%",
                         width: isSmallScreen ? "24%" : "11%",
                         right: "unset",
-                        display: isSmallScreen ? "none" : "unset" 
+                        display: isSmallScreen ? "none" : "unset"
                     }}
                 >
                     <Typography
@@ -294,9 +298,9 @@ function BillingTransactions({ handleOpenDepositMenu }) {
 
                     style={{
                         position: "absolute",
-                        left: currentLanguage === 'ar'? '5%' :
-                        isSmallScreen ? "75%" :
-                         "91%",
+                        left: currentLanguage === 'ar' ? '5%' :
+                            isSmallScreen ? "75%" :
+                                "91%",
                         padding: '5px',
                         borderRadius: '16px',
                         right: "unset",
@@ -401,57 +405,64 @@ function BillingTransactions({ handleOpenDepositMenu }) {
                             <div className="Id" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                                 <Checkbox checked={checkedItems.selectAll} onChange={handleSelectAll} sx={{ color: "white", verticalAlign: "middle", padding: 0 }} size="small" />
                                 <Typography
-                                 sx={{ color: "white",
-                                  fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                   fontWeight: "bold", fontSize: "14px" }}>
+                                    sx={{
+                                        color: "white",
+                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                        fontWeight: "bold", fontSize: "14px"
+                                    }}>
                                     {t("Date")}
                                 </Typography>
                             </div>
-                            <div className="Type" style={{ position: "absolute", left: currentLanguage === 'ar'? '24%' : "22%", right: "unset", top: "33%", display: isSmallScreen ? "none" : "unset" }}>
+                            <div className="Type" style={{ position: "absolute", left: currentLanguage === 'ar' ? '24%' : "22%", right: "unset", top: "33%", display: isSmallScreen ? "none" : "unset" }}>
                                 <Typography
-                                 sx={{fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
+                                    sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                                     {t("Type")}
                                 </Typography>
                             </div>
                             <div className="Amount"
-                             style={{ position: "absolute",
-                              left: "42%",
-                               top: "33%",
-                                right: "unset",
+                                style={{
+                                    position: "absolute",
+                                    left: "42%",
+                                    top: "33%",
+                                    right: "unset",
                                 }}>
                                 <Typography
-                                 sx={{ fontFamily : currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
+                                    sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                                     {t("Amount")}
                                 </Typography>
                             </div>
                             <div className="Currency"
-                             style={{ position: "absolute",
-                              left: isSmallScreen ? "48%" : "60%", 
-                              top: "33%", right: "unset",
-                              display: isSmallScreen ? "none" : "unset" 
-                               }}>
-                                <Typography sx={{  fontFamily : currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
+                                style={{
+                                    position: "absolute",
+                                    left: isSmallScreen ? "48%" : "60%",
+                                    top: "33%", right: "unset",
+                                    display: isSmallScreen ? "none" : "unset"
+                                }}>
+                                <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                                     {t("Currency")}
                                 </Typography>
                             </div>
                             <div className="Method"
-                             style={{ position: "absolute",
-                              left: isSmallScreen ? "80%" : "78%",
-                               top: "33%", right: "unset",
-                               display: isSmallScreen ? "none" : "unset" 
+                                style={{
+                                    position: "absolute",
+                                    left: isSmallScreen ? "80%" : "78%",
+                                    top: "33%", right: "unset",
+                                    display: isSmallScreen ? "none" : "unset"
                                 }}>
-                                <Typography sx={{ fontFamily : currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
+                                <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                                     {t("Method")}
                                 </Typography>
                             </div>
                             <div className="Status"
-                             style={{ position: "absolute",
-                              left: currentLanguage === 'ar' && isSmallScreen? '8%' :
-                               isSmallScreen ? "80%" :
-                              currentLanguage === 'ar'? '6%' :
-                               "93%",
-                               top: "33%", right: "unset" }}>
-                                <Typography sx={{ fontFamily : currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
+                                style={{
+                                    position: "absolute",
+                                    left: currentLanguage === 'ar' && isSmallScreen ? '8%' :
+                                        isSmallScreen ? "80%" :
+                                            currentLanguage === 'ar' ? '6%' :
+                                                "93%",
+                                    top: "33%", right: "unset"
+                                }}>
+                                <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                                     {t("Status")}
                                 </Typography>
                             </div>

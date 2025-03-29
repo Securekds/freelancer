@@ -23,7 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useUser } from "../../../Context/UserContext.jsx";
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/NoGigFound.json';
 
 import { useBilling } from "../../../Context/BillingContext.jsx";
@@ -139,31 +139,35 @@ function BillingInvoices({ SetOpenInvoice }) {
 
     if (invoices.length === 0) {
       return (
-          <div className="Div"
-                style={{
-                    display : 'flex',
-                    flexDirection : 'column',
-                    alignItems : 'center',
-                }}
-                >
-                    <div className="Lottie"
-                        style={{
-                        
-                        }}
-                    >
-                        <Lottie animationData={animationData} style={{ width: 190, height: 150 }} />
-                    </div>
-                    <Typography sx={{ color: "white", textAlign: "center",
-                       padding: "16px",
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+        <div className="Div"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <div className="Lottie"
+            style={{
 
-                        }}>
-                        {t('No invoices found.')}
-                    </Typography>
+            }}
+          >
+            <Player
+              src={animationData}
+              autoplay
+              style={{ width: 190, height: 150 }}
+            />                    </div>
+          <Typography sx={{
+            color: "white", textAlign: "center",
+            padding: "16px",
+            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+
+          }}>
+            {t('No invoices found.')}
+          </Typography>
 
 
 
-                </div>
+        </div>
       );
     }
 
@@ -186,14 +190,14 @@ function BillingInvoices({ SetOpenInvoice }) {
 
         }}
       >
-        <div className="Id" style={{ display: "flex", gap: "10px" ,   display: isSmallScreen ? "none" : "unset"  }}>
+        <div className="Id" style={{ display: "flex", gap: "10px", display: isSmallScreen ? "none" : "unset" }}>
           <Checkbox
             checked={false} // Add logic for checkbox state
             onChange={() => { }} // Add logic for checkbox change
             sx={{ color: "white", verticalAlign: "middle", padding: 0 }}
             size="small"
           />
-          <Typography sx={{ fontFamily: '"Airbnbcereal", sans-serif', fontSize: "14px" ,  display: isSmallScreen ? "none" : "unset"  }}>
+          <Typography sx={{ fontFamily: '"Airbnbcereal", sans-serif', fontSize: "14px", display: isSmallScreen ? "none" : "unset" }}>
             #{invoice.invoiceNumber}
           </Typography>
         </div>
@@ -204,7 +208,7 @@ function BillingInvoices({ SetOpenInvoice }) {
             alignItems: "center",
             gap: "10px",
             position: "absolute",
-            left: isSmallScreen? '37%' : "25%",
+            left: isSmallScreen ? '37%' : "25%",
             right: "unset",
           }}
         >
@@ -212,7 +216,7 @@ function BillingInvoices({ SetOpenInvoice }) {
             className="ProfileCircle"
             style={{
               width: "35px",
-              display : isSmallScreen? 'none' : 'unset',
+              display: isSmallScreen ? 'none' : 'unset',
               height: "35px",
               borderRadius: "50%",
               overflow: "hidden",
@@ -236,7 +240,7 @@ function BillingInvoices({ SetOpenInvoice }) {
             }}
           >
             {isSeller
-              ? `${invoice.buyer.firstName} ${invoice.buyer.lastName}` 
+              ? `${invoice.buyer.firstName} ${invoice.buyer.lastName}`
               : `${invoice.seller.firstName} ${invoice.seller.lastName}`}
           </Typography>
         </div>
@@ -266,8 +270,8 @@ function BillingInvoices({ SetOpenInvoice }) {
           style={{
             position: "absolute",
             left: isSmallScreen ? "3%" :
-           
-             "66%",
+
+              "66%",
             right: "unset",
             textWrap: "nowrap",
             display: "flex",
@@ -289,10 +293,10 @@ function BillingInvoices({ SetOpenInvoice }) {
           style={{
             position: "absolute",
             left: isSmallScreen ? "75%" :
-            currentLanguage === 'ar'? '3%' :
-            "85%",
-            width: isSmallScreen ? "24%" : 
-            "11%",
+              currentLanguage === 'ar' ? '3%' :
+                "85%",
+            width: isSmallScreen ? "24%" :
+              "11%",
             right: "unset",
           }}
         >
@@ -334,9 +338,11 @@ function BillingInvoices({ SetOpenInvoice }) {
 
 
         <div className="Table"
-         style={{ width: "100%", minHeight: "auto",
-          backgroundColor: "rgba(0, 0, 0, 0.2)", 
-           borderRadius: "10px", boxShadow: "0 0.3rem 0.8rem rgba(0, 0, 0, 0.12)", borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px" }}>
+          style={{
+            width: "100%", minHeight: "auto",
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+            borderRadius: "10px", boxShadow: "0 0.3rem 0.8rem rgba(0, 0, 0, 0.12)", borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px"
+          }}>
           <div className="InvoiceHead"
             style={{
               width: "100%",
@@ -384,62 +390,73 @@ function BillingInvoices({ SetOpenInvoice }) {
           <div className="Tablecontent">
             <div className="Header" style={{ width: "99.9%", minHeight: "45px", backgroundColor: "rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", borderRadius: "10px", color: "white", WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(255, 255, 255, 0.18)", borderBottomRightRadius: "0px", borderBottomLeftRadius: "0px", display: "flex", position: "relative", justifyContent: "space-between", padding: "10px" }}>
               <div className="Id"
-               style={{ display: "flex",
-                alignItems: "center",
-                 gap: "10px",
-                 display: isSmallScreen ? "none" : "unset" 
-                 
-                  }}>
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  display: isSmallScreen ? "none" : "unset"
+
+                }}>
                 <Checkbox checked={checkedItems.selectAll} onChange={handleSelectAll} sx={{ color: "white", verticalAlign: "middle", padding: 0 }} size="small" />
-                <Typography sx={{ color: "white",
-                   fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', 
-                   fontWeight: "bold",
-                    fontSize: "14px",
-                    display: isSmallScreen ? "none" : "unset" 
-                     }}>
+                <Typography sx={{
+                  color: "white",
+                  fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  display: isSmallScreen ? "none" : "unset"
+                }}>
                   {t("Invoice Id")}
                 </Typography>
               </div>
-              <div className="Client" style={{ position: "absolute",
-                 left: currentLanguage === 'ar'? '31%' :
-                 isSmallScreen? '37%' :
-                  "25%", 
-                 right: "unset", top: "33%",
-                }}>
+              <div className="Client" style={{
+                position: "absolute",
+                left: currentLanguage === 'ar' ? '31%' :
+                  isSmallScreen ? '37%' :
+                    "25%",
+                right: "unset", top: "33%",
+              }}>
                 <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                   {isSeller ? t("Client") : t("Freelancer")}
                 </Typography>
               </div>
               <div className="Email"
-               style={{ position: "absolute",
-                left: currentLanguage === 'ar'? '45.5%' : "43%",
-                 top: "33%",
-                 right: "unset",
-                  display: isSmallScreen ? "none" : "unset" }}>
+                style={{
+                  position: "absolute",
+                  left: currentLanguage === 'ar' ? '45.5%' : "43%",
+                  top: "33%",
+                  right: "unset",
+                  display: isSmallScreen ? "none" : "unset"
+                }}>
                 <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                   {t("Email")}
                 </Typography>
               </div>
               <div className="Date"
-               style={{ position: "absolute",
-                left: isSmallScreen ? "4%" :
-                currentLanguage === 'ar'? '70%' :
-                 "66%",
-                 top: "33%", right: "unset" }}>
+                style={{
+                  position: "absolute",
+                  left: isSmallScreen ? "4%" :
+                    currentLanguage === 'ar' ? '70%' :
+                      "66%",
+                  top: "33%", right: "unset"
+                }}>
                 <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', fontWeight: "bold", fontSize: "14px" }}>
                   {t("Date")}
                 </Typography>
               </div>
               <div className="Status"
-               style={{ position: "absolute",
-                left: isSmallScreen ? "80%" :
-                currentLanguage === 'ar'? '7.5%' :
-                 "88%",
-                 top: "33%", right: "unset" }}>
-                <Typography sx={{ fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                style={{
+                  position: "absolute",
+                  left: isSmallScreen ? "80%" :
+                    currentLanguage === 'ar' ? '7.5%' :
+                      "88%",
+                  top: "33%", right: "unset"
+                }}>
+                <Typography sx={{
+                  fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
-                   fontWeight: "bold",
-                    fontSize: "14px" }}>
+                  fontWeight: "bold",
+                  fontSize: "14px"
+                }}>
                   {t("Status")}
                 </Typography>
               </div>

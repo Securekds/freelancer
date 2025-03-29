@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import Created from '../../assets/images/small-logos/Created.json'
 import DOMPurify from 'dompurify';
 
@@ -1010,10 +1010,15 @@ function FacebookRegMobile({ userData, setFacebookReg, setShowNormalForm }) {
                         }}
                     />
                     {showSuccessAnimation && (
-                        <Lottie
-                            animationData={Created}
+                        <Player
+                            src={Created}
+                            autoplay
                             loop={false}
-                            style={{ width: 100, height: 100, marginBottom: '-20px' }} // Adjust size as needed
+                            style={{
+                                width: 100,
+                                height: 100,
+                                marginBottom: '-20px'
+                            }}
                         />
                     )}
 

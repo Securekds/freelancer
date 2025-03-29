@@ -6,7 +6,7 @@ import { useChat } from "../../Context/ChatContext.jsx";
 import { useProject } from "../../Context/ProjectContext.jsx";
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import ProgressBubble from './ProgressBubble.jsx'; // Import the new component
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import UploadProject from '../../assets/images/small-logos/UploadProject.json';
 import PaymentDone from '../../assets/images/small-logos/PaymentDone.json';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -61,10 +61,10 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
     }, [currentLanguage]);
 
 
-      const isSmallScreen = useMediaQuery('(max-width:600px)');
-        const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)');
-        const isMediumScreen = useMediaQuery('(min-width:1001px) and (max-width:1400px)');
-        const isLargeScreen = useMediaQuery('(min-width:1401px) and (max-width:1920px)');
+    const isSmallScreen = useMediaQuery('(max-width:600px)');
+    const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)');
+    const isMediumScreen = useMediaQuery('(min-width:1001px) and (max-width:1400px)');
+    const isLargeScreen = useMediaQuery('(min-width:1401px) and (max-width:1920px)');
 
     const { getProfileImage } = useChat();
     const { project,
@@ -401,7 +401,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
             setProject(prev => ({
                 ...prev,
                 isProjectSent: true,
-                isProjectNeedChanges :false,
+                isProjectNeedChanges: false,
                 projectFileUrl: project.projectFileUrl,
 
             }));
@@ -550,10 +550,10 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
 
     const handleReviewComment = (e) => {
         const value = e.target.value;
-    
+
         // Sanitize the input using DOMPurify
         const sanitizedValue = DOMPurify.sanitize(value);
-    
+
         // Check if the input contains only numbers
         if (/^\d+$/.test(sanitizedValue)) {
             setReviewErrorMessage('Comment cannot be just numbers.');
@@ -563,18 +563,18 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
             }));
             return;
         }
-    
+
         // Clear error state if input is valid
         setReviewErrorMessage('');
         setReviewError(prevErrors => ({
             ...prevErrors,
             commentError: false
         }));
-    
+
         // Update the comment state with the sanitized value
         setComment(sanitizedValue);
     };
-    
+
     const submitReview = async () => {
         setIsLoading(true); // Start loading
         try {
@@ -584,17 +584,17 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                 setIsLoading(false); // Stop loading
                 return;
             }
-    
+
             // Validate comment
             if (reviewError.commentError || !comment.trim()) {
                 setReviewErrorMessage('Please enter a valid comment.');
                 setIsLoading(false); // Stop loading
                 return;
             }
-    
+
             // Sanitize the comment again before sending it to the backend
             const sanitizedComment = DOMPurify.sanitize(comment);
-    
+
             // Prepare the request payload
             const payload = {
                 sellerId: selectedConversation?.sellerId?._id, // Dynamic sellerId
@@ -602,7 +602,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                 ratings,
                 comment: sanitizedComment // Use the sanitized comment
             };
-    
+
             // Make the API request
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/server/reviews/generalreviews`,
@@ -612,11 +612,11 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             // Handle success
             if (response.data.success) {
                 console.log('Review created successfully:', response.data.data);
-    
+
                 setComment('');
                 setRatings({
                     interactionBrilliance: 0,
@@ -624,7 +624,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                     craftedExcellence: 0,
                     domainExpertise: 0
                 });
-    
+
                 setReviewSection(false);
                 setReviewSuccess(true);
             } else {
@@ -637,10 +637,10 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
             setIsLoading(false);
         }
     };
- 
 
 
-    if (loading) return <ProjectCardSkeleton/>;
+
+    if (loading) return <ProjectCardSkeleton />;
     if (error) return <p>Error: {error}</p>;
 
 
@@ -658,7 +658,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems : isSmallScreen? 'center' : 'unset',
+                    alignItems: isSmallScreen ? 'center' : 'unset',
                     width: '100%',
                     gap: '10px',
                 }}
@@ -690,7 +690,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                                     : '"Airbnbcereal", sans-serif',
 
                             display: 'flex',
-                             textAlign : 'center',
+                            textAlign: 'center',
                             fontSize: '15px',
                             opacity: '0.5',
                             fontWeight: 'bold',
@@ -707,11 +707,11 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                     variant="outlined"
                     className=""
                     sx={{
-                        width: isSmallScreen? '90%' : '30%',
+                        width: isSmallScreen ? '90%' : '30%',
                         position: 'relative',
                         cursor: 'pointer',
                         background: 'black',
-                        border : '1px solid white',
+                        border: '1px solid white',
                         borderRadius: '16px',
                         height: '38px',
                         color: 'white',
@@ -750,16 +750,17 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
 
             />
             {project ? (
-                <div style={{ display: 'flex',
-                 gap: '20px',
-                  width: '100%',
-                  justifyContent : isSmallScreen? 'center' :'unset',
-                   }}>
+                <div style={{
+                    display: 'flex',
+                    gap: '20px',
+                    width: '100%',
+                    justifyContent: isSmallScreen ? 'center' : 'unset',
+                }}>
                     <div className="ProjectCard"
                         style={{
                             border: '1px solid grey',
                             borderRadius: '10px',
-                            width: isSmallScreen? '90%' : '40%',
+                            width: isSmallScreen ? '90%' : '40%',
                             height: 'auto',
                             padding: '20px',
                             gap: '20px',
@@ -1757,7 +1758,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                                                     textTransform: 'capitalize',
                                                     fontSize: '13px',
                                                     textAlign: 'center',
-                                                    marginTop : '10px',
+                                                    marginTop: '10px',
                                                 }}
                                             >
                                                 {t('Waiting for the seller to make the requested changes...')}
@@ -2070,13 +2071,14 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                                 <div className="Lottie"
                                     style={{}}
                                 >
-                                    <Lottie
-                                        animationData={UploadProject}
-
+                                    <Player
+                                        src={UploadProject}
+                                        autoplay
                                         style={{
                                             width: '200px',
-                                            height: '200px',
-                                        }} />
+                                            height: '200px'
+                                        }}
+                                    />
                                 </div>
                                 <div className="Div">
                                     <Typography
@@ -2268,7 +2270,7 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                                                 flexDirection: 'column',
                                                 width: '100%',
                                                 marginTop: '5px',
-                                                gap : '10px',
+                                                gap: '10px',
                                             }}
                                         >
                                             <div className="First"
@@ -2605,13 +2607,14 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
                                                 marginTop: '-30px',
                                             }}
                                         >
-                                            <Lottie
-                                                animationData={PaymentDone}
-
+                                            <Player
+                                                src={PaymentDone}
+                                                autoplay
                                                 style={{
                                                     width: '250px',
-                                                    height: '250px',
-                                                }} />
+                                                    height: '250px'
+                                                }}
+                                            />
                                         </div>
                                         <div className="FirstTypo"
                                             style={{
@@ -2819,13 +2822,14 @@ function ProjectManagment({ selectedConversation, handleHowItWorkOpen }) {
 
                         }}
                     >
-                        <Lottie
-                            animationData={NoProjects}
-
+                        <Player
+                            src={NoProjects}
+                            autoplay
                             style={{
                                 width: '250px',
-                                height: '250px',
-                            }} />
+                                height: '250px'
+                            }}
+                        />
                     </div>
                     <div className="FirstTypo"
                         style={{

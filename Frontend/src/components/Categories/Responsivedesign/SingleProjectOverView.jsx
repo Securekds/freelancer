@@ -10,7 +10,8 @@ import { faCircleCheck, faSatelliteDish, faHandshake, faGlobe, faFolderOpen, faB
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AddOfferToBuyer from '../Responsivedesign/AddOfferToBuyer.jsx';
 import axios from 'axios';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
+
 import animationData from '../../../assets/images/small-logos/NoImages.json'
 import { useParams } from 'react-router-dom';
 import { useGig } from '../../../Context/GigContext.jsx';
@@ -90,12 +91,12 @@ function SingleProjectOverView({ handleOpenUserVerify, handleOpenOffer, handleOp
 
     const { gigId } = useParams();
 
-    const { gig, isGigLoading, fetchGigById , offers } = useGig();
+    const { gig, isGigLoading, fetchGigById, offers } = useGig();
 
     useEffect(() => {
         if (gigId) {
             fetchGigById(gigId);
-         
+
 
         }
     }, [gigId]);
@@ -103,10 +104,10 @@ function SingleProjectOverView({ handleOpenUserVerify, handleOpenOffer, handleOp
     if (isGigLoading || !gig) {
         return <SkeletonLoading />;
     }
-    
 
 
-   
+
+
 
     const coverImage = gig?.userId?.coverImg
         ? `url(${getImageUrl(gig.userId.coverImg)}) center/cover no-repeat`
@@ -1247,8 +1248,9 @@ function SingleProjectOverView({ handleOpenUserVerify, handleOpenOffer, handleOp
                                     >
                                         {t("No images available")}
                                     </Typography>
-                                    <Lottie
-                                        animationData={animationData}
+                                    <Player
+                                        src={animationData}
+                                        autoplay
                                         style={{ width: 200, height: 200 }}
                                     />
                                 </div>
@@ -1376,8 +1378,9 @@ function SingleProjectOverView({ handleOpenUserVerify, handleOpenOffer, handleOp
                                         >
                                             {t("No Shared Links available")}
                                         </Typography>
-                                        <Lottie
-                                            animationData={animationData}
+                                        <Player
+                                            src={animationData}
+                                            autoplay
                                             style={{ width: 200, height: 200 }}
                                         />
                                     </div>
@@ -1624,7 +1627,7 @@ function SingleProjectOverView({ handleOpenUserVerify, handleOpenOffer, handleOp
                         gigId={gigId}
                         handleOpenOffer={handleOpenOffer}
                         handleOpenOfferDeclined={handleOpenOfferDeclined}
-                         handleOpenUserVerify={handleOpenUserVerify}
+                        handleOpenUserVerify={handleOpenUserVerify}
                     />
                 </div>
 

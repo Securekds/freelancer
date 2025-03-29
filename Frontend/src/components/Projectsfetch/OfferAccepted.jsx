@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import axios from "axios";
 import DOMPurify from 'dompurify';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import PaymentDone from '../../assets/images/small-logos/PaymentDone.json';
 import { useUser } from '../../Context/UserContext.jsx'
 import { useGig } from '../../Context/GigContext.jsx';
@@ -656,12 +656,13 @@ function OfferAccepted({ handleCloseOfferAccepted, selectedOffer, }) {
                                 marginTop: '-80px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentDone}
+                            <Player
+                                src={PaymentDone}
+                                autoplay
                                 loop={false}
                                 style={{
                                     width: '260px',
-                                    height: '260px',
+                                    height: '260px'
                                 }}
                             />
                         </div>

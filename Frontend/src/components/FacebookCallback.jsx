@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import Created from '../../assets/images/small-logos/Created.json'
 import DOMPurify from 'dompurify';
 
@@ -106,7 +106,7 @@ function FacebookRegMobile() {
                             setCountdown((prevCountdown) => {
                                 if (prevCountdown <= 0) {
                                     clearInterval(countdownInterval);
-                                    
+
                                     navigate('/auth/signin')
                                     return 0; // Ensure countdown reaches 0
                                 }
@@ -131,14 +131,14 @@ function FacebookRegMobile() {
             };
         }
     }, [showAccountCreation, navigate]); // Add navigate to the dependency array
-    
+
     // Update loading message while progress is below 100%
     useEffect(() => {
         if (progress < 100) {
             setMessage(t('We are setting up your account. This step takes a few seconds...'));
         }
     }, [progress]);
-    
+
 
 
 
@@ -913,129 +913,134 @@ function FacebookRegMobile() {
 
             </div>
             {showAccountCreation && (
-                  <div className="LastStep"
+                <div className="LastStep"
 
-                  style={{
-                    height: '110vh',
-                    width: '140%',
-                    background: '#0E0E10',
-                    position: 'fixed',
-                    top: -50,
-                    left: -190,
-                    zIndex: 9999,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                  }}
+                    style={{
+                        height: '110vh',
+                        width: '140%',
+                        background: '#0E0E10',
+                        position: 'fixed',
+                        top: -50,
+                        left: -190,
+                        zIndex: 9999,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                    }}
                 >
-                  <img
-                    src='https://res.cloudinary.com/damicjacf/image/upload/v1724631771/Capture_qf8psv.png'
-                    alt="Logo"
-                    style={{
-                      maxWidth: '200px',
-                      maxHeight: '200px',
-                      zIndex: 100000000,
-                    }}
-                  />
-                   {showSuccessAnimation && (
-                                <Lottie
-                                    animationData={Created}
-                                    loop={false}
-                                    style={{ width: 100, height: 100, marginBottom: '-20px' }} // Adjust size as needed
-                                />
-                            )}
-
-
-                  {/* Progress Bar */}
-                  <div
-                    style={{
-                      width: '40%',
-                      height: '10px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                      borderRadius: '10px',
-                      marginTop: '20px',
-                      position: 'relative',
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: '100%',
-                        width: `${progress}%`,
-                        backgroundColor: 'cyan',
-                        borderRadius: '10px',
-                        transition: 'width 0.5s ease',
-                      }}
+                    <img
+                        src='https://res.cloudinary.com/damicjacf/image/upload/v1724631771/Capture_qf8psv.png'
+                        alt="Logo"
+                        style={{
+                            maxWidth: '200px',
+                            maxHeight: '200px',
+                            zIndex: 100000000,
+                        }}
                     />
-                  </div>
-                  <span style={{
-                    color: 'white', marginTop: '20px', fontSize: '20px',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    {showSuccessAnimation && (
+                        <Player
+                            src={Created}
+                            autoplay
+                            loop={false}
+                            style={{
+                                width: 100,
+                                height: 100,
+                                marginBottom: '-20px'
+                            }}
+                        />
+                    )}
 
 
-                  }}>
-                    {progress}%
-                  </span>
-                  {/* Progress Message */}
-                  <p style={{
-                    color: 'white',
-                    marginTop: '20px',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    {/* Progress Bar */}
+                    <div
+                        style={{
+                            width: '40%',
+                            height: '10px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                            borderRadius: '10px',
+                            marginTop: '20px',
+                            position: 'relative',
+                        }}
+                    >
+                        <div
+                            style={{
+                                height: '100%',
+                                width: `${progress}%`,
+                                backgroundColor: 'cyan',
+                                borderRadius: '10px',
+                                transition: 'width 0.5s ease',
+                            }}
+                        />
+                    </div>
+                    <span style={{
+                        color: 'white', marginTop: '20px', fontSize: '20px',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
-                  }}>
-                    {message}
 
-                  </p>
-                  {showBackToLogin && (
-                                <div
-                                    className="BackToLogon slide-from-right"
-                                    style={{
-                                        marginTop: '20px',
-                                        display: 'flex',
-                                        gap: '6px',
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={(e) => {
-                                        e.preventDefault(); // Prevent the default anchor behavior
-                                        handleBackToSignin();
-                                    }}
-                                >
-                                    {currentLanguage === 'ar' ? (
-                                        <>
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: '"Droid Arabic Kufi", serif',
-                                                    color: 'white',
-                                                    fontSize: '15px',
-                                                }}
-                                            >
-                                                {t('Signin Directly With Facebook')}
-                                            </Typography>
-                                            <div className="Icon">
-                                                <ArrowBackIcon sx={{ color: 'white' }} />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="Icon">
-                                                <ArrowBackIcon sx={{ color: 'white' }} />
-                                            </div>
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: '"Airbnbcereal", sans-serif',
-                                                    color: 'white',
-                                                    fontSize: '15px',
-                                                }}
-                                            >
-                                                {t('Signin Directly With Facebook')}
-                                            </Typography>
-                                        </>
-                                    )}
-                                </div>
+                    }}>
+                        {progress}%
+                    </span>
+                    {/* Progress Message */}
+                    <p style={{
+                        color: 'white',
+                        marginTop: '20px',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
+                    }}>
+                        {message}
+
+                    </p>
+                    {showBackToLogin && (
+                        <div
+                            className="BackToLogon slide-from-right"
+                            style={{
+                                marginTop: '20px',
+                                display: 'flex',
+                                gap: '6px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={(e) => {
+                                e.preventDefault(); // Prevent the default anchor behavior
+                                handleBackToSignin();
+                            }}
+                        >
+                            {currentLanguage === 'ar' ? (
+                                <>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: '"Droid Arabic Kufi", serif',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                        }}
+                                    >
+                                        {t('Signin Directly With Facebook')}
+                                    </Typography>
+                                    <div className="Icon">
+                                        <ArrowBackIcon sx={{ color: 'white' }} />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="Icon">
+                                        <ArrowBackIcon sx={{ color: 'white' }} />
+                                    </div>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: '"Airbnbcereal", sans-serif',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                        }}
+                                    >
+                                        {t('Signin Directly With Facebook')}
+                                    </Typography>
+                                </>
                             )}
+                        </div>
+
+                    )}
 
                 </div>
             )}

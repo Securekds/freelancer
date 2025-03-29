@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import animationData from '../../assets/images/small-logos/Animation - 1721151722454.json';
 import animationData2 from '../../assets/images/small-logos/Animation - 1721224613686.json';
 import { useNavigate } from 'react-router-dom';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CodeIcon from '@mui/icons-material/Code';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
@@ -25,7 +25,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 
 
-function ProjectMobile({handleOpenUserVerify}) {
+function ProjectMobile({ handleOpenUserVerify }) {
     const [width, setWidth] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -115,7 +115,7 @@ function ProjectMobile({handleOpenUserVerify}) {
         if (isLargeScreen) return '23%';
 
     };
-    const getOffersWidth = () => {  
+    const getOffersWidth = () => {
         if (isSmallScreen) return '97.3%';
         if (isMediumScreen) return '100%';
         if (isLargeScreen) return '100%';
@@ -162,7 +162,7 @@ function ProjectMobile({handleOpenUserVerify}) {
     const [isBuyer, setIsBuyer] = useState(false);
 
 
-    
+
 
 
 
@@ -425,9 +425,15 @@ function ProjectMobile({handleOpenUserVerify}) {
                         }}
                     >
                         <div className="light-effect"></div>
-                        <Lottie
-                            animationData={animationData}
-                            style={{ width: 300, height: 300, display: 'block', margin: '0 auto' }}
+                        <Player
+                            src={animationData}
+                            autoplay
+                            style={{
+                                width: 300,
+                                height: 300,
+                                display: 'block',
+                                margin: '0 auto'
+                            }}
                         />
                     </div>
                     <div className='BoxesAR '
@@ -1185,18 +1191,21 @@ function ProjectMobile({handleOpenUserVerify}) {
                         }}
                     >
                         <div className="light-effect"></div>
-                        <Lottie animationData={animationData2} style={{ width: 100, height: 100 }} />
-                    </div>
+                        <Player
+                            src={animationData2}
+                            autoplay
+                            style={{ width: 100, height: 100 }}
+                        />                    </div>
                     <div className="Div"
-                    style={{
-                        width: isSmallScreen ? '126%' : '109%',
-                        display : 'flex',
-                        justifyContent : 'center',
-                        alignItems : 'center',
-                        marginTop : '90px',
-                    }}
+                        style={{
+                            width: isSmallScreen ? '126%' : '109%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: '90px',
+                        }}
                     >
-                    <ResponsiveAll handleOpenUserVerify={handleOpenUserVerify}  />
+                        <ResponsiveAll handleOpenUserVerify={handleOpenUserVerify} />
 
                     </div>
                 </div>
@@ -1204,12 +1213,12 @@ function ProjectMobile({handleOpenUserVerify}) {
 
                 <div className='CarAR'
                     style={{
-                    
-                        display: 'flex',           
-                        alignItems: 'center',      
-                        justifyContent: 'center',   
+
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         width: isSmallScreen ? '103%' : '100%',
-                      
+
 
                     }}
                 >
@@ -1219,11 +1228,11 @@ function ProjectMobile({handleOpenUserVerify}) {
                             display: 'flex',           // Flexbox for centering inner content
                             alignItems: 'center',       // Center vertically within CarAR
                             justifyContent: 'center',   // Center horizontally within CarAR
-                          
+
 
                         }}
                     >
-                      
+
                     </div>
                 </div>
             </div>

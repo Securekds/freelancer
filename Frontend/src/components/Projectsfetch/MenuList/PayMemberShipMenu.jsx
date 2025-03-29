@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, TextField, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import Deposit from '../../../assets/images/small-logos/Deposit.json';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import PaymentFailed from '../../../assets/images/small-logos/PaymentFailed.json';
 import PaymentDone from '../../../assets/images/small-logos/PaymentDone.json';
 import { useUser } from '../../../Context/UserContext.jsx';
@@ -70,21 +69,21 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
 
 
     const handlePayMemberShip = async () => {
-        setIsLoading(true); 
-    
+        setIsLoading(true);
+
 
         localStorage.setItem('tempUserId', user?._id);
-        localStorage.setItem('selectedPlan', selectedPlan); 
-        localStorage.setItem('shouldOpenMemberShipMenu', 'true'); 
+        localStorage.setItem('selectedPlan', selectedPlan);
+        localStorage.setItem('shouldOpenMemberShipMenu', 'true');
 
-      
+
 
 
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/server/payment/create-membership-payment`,
                 {
-                   
+
                     userId: user?._id,
                     membershipType: selectedPlan
                 },
@@ -96,7 +95,7 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
             console.error('Payment failed:', error);
             setShowDefaultForm(false);
             setPaymentFailed(true);
-            setIsLoading(false); 
+            setIsLoading(false);
         }
     };
     // Step 2: Execute payment after PayPal redirect
@@ -158,7 +157,7 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
 
 
 
-   
+
 
 
     const HandleTryAgain = () => {
@@ -216,11 +215,12 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
                             width: '35%',
                         }}
                     >
-                        <Lottie
-                            animationData={Deposit}
+                        <Player
+                            src={Deposit}
+                            autoplay
                             style={{
                                 width: '100%',
-                                height: '100%',
+                                height: '100%'
                             }}
                         />
                     </div>
@@ -333,7 +333,7 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
                                         cursor: 'pointer',
                                         height: '38px',
                                         color: 'white',
-                                        opacity : isLoading ? '0.5' : 'unset',
+                                        opacity: isLoading ? '0.5' : 'unset',
                                         borderColor: 'none',
                                         '&:hover': {
                                             borderColor: 'white',
@@ -367,7 +367,7 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
                         </>
                     )}
 
-                  
+
                 </>
             )}
 
@@ -386,12 +386,13 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
                                 marginTop: '-40px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentFailed}
+                            <Player
+                                src={PaymentFailed}
+                                autoplay
                                 loop={false}
                                 style={{
                                     width: '200px',
-                                    height: '200px',
+                                    height: '200px'
                                 }}
                             />
                         </div>
@@ -467,12 +468,13 @@ function PayMemberShipMenu({ isClose, selectedPlan }) {
                                 marginTop: '-80px',
                             }}
                         >
-                            <Lottie
-                                animationData={PaymentDone}
+                            <Player
+                                src={PaymentDone}
+                                autoplay
                                 loop={false}
                                 style={{
                                     width: '260px',
-                                    height: '260px',
+                                    height: '260px'
                                 }}
                             />
                         </div>

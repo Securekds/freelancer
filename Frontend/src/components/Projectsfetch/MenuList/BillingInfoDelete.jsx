@@ -3,11 +3,11 @@ import { FiChevronDown } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Typography , Button } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseIcon from '@mui/icons-material/Close';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import animationData from '../../../assets/images/small-logos/BillingInfo.json';
 
 
@@ -87,7 +87,7 @@ function BillingInfoDelete({ onAddCardClick1, onCloseClickBilling, InfoClose, on
 };
 
 
-const Tabs = ({ onCloseClickBilling, TABS, selected, setSelected, logoPath, onAddCardClick1, onLogoClick, onCloseClick , InfoClose }) => {
+const Tabs = ({ onCloseClickBilling, TABS, selected, setSelected, logoPath, onAddCardClick1, onLogoClick, onCloseClick, InfoClose }) => {
     const [dir, setDir] = useState(null);
 
     const handleSetSelected = (val) => {
@@ -118,7 +118,7 @@ const Tabs = ({ onCloseClickBilling, TABS, selected, setSelected, logoPath, onAd
             })}
 
             <AnimatePresence>
-                {selected && <Content InfoClose={InfoClose}  onCloseClickBilling={onCloseClickBilling} onCloseClick={onCloseClick} logoPath={logoPath} onLogoClick={onLogoClick} dir={dir} selected={selected} TABS={TABS} onAddCardClick1={onAddCardClick1} />}
+                {selected && <Content InfoClose={InfoClose} onCloseClickBilling={onCloseClickBilling} onCloseClick={onCloseClick} logoPath={logoPath} onLogoClick={onLogoClick} dir={dir} selected={selected} TABS={TABS} onAddCardClick1={onAddCardClick1} />}
             </AnimatePresence>
         </div>
     );
@@ -226,9 +226,9 @@ const Content = ({ onCloseClickBilling, selected, dir, TABS, onAddCardClick1, on
                     y: 8,
                 }}
                 style={{
-                    width: isSmallScreen? '80vw' :
-                    isMediumScreen? '81vw' :
-                     '40vw',
+                    width: isSmallScreen ? '80vw' :
+                        isMediumScreen ? '81vw' :
+                            '40vw',
                     padding: "1rem",
                     height: '300px',
                     zIndex: '11110',
@@ -420,7 +420,7 @@ const Pricing = ({ onCloseClickBilling, InfoClose, onLogoClick, onCloseClick }) 
                 justifyContent: 'center',
                 flexDirection: 'column',
                 position: 'relative',
-                 top : '-30px',  
+                top: '-30px',
                 marginLeft: '-2px',
                 alignItems: 'center',
 
@@ -434,7 +434,7 @@ const Pricing = ({ onCloseClickBilling, InfoClose, onLogoClick, onCloseClick }) 
                     position: 'absolute',
                     right: currentLanguage === 'ar' ? '95.5%' : '0%',
                     top: '40px',
-                    zIndex: '22222', 
+                    zIndex: '22222',
                     color: 'white',
                     cursor: 'pointer',
                 }}
@@ -442,117 +442,123 @@ const Pricing = ({ onCloseClickBilling, InfoClose, onLogoClick, onCloseClick }) 
                 <CloseIcon sx={{ fontSize: '20px' }} />
             </div>
             <div className='Animation'
-            style={{
-                position : 'absolute',
-                top :'-70px',
-
-            }}
-            >
-            <Lottie
-                animationData={animationData}
-                style={{ width: 200, height: 300, display: 'block', margin: '0 auto' }}
-            />
-            </div>
-            <div className="Confirm"
-            style={{
-                position : 'absolute',
-                top :'130px',
-
-            }}
-            >
-                <Typography
                 style={{
-                    fontSize : '20px',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    position: 'absolute',
+                    top: '-70px',
 
                 }}
+            >
+                <Player
+                    src={animationData}
+                    autoplay
+                    style={{
+                        width: 200,
+                        height: 300,
+                        display: 'block',
+                        margin: '0 auto'
+                    }}
+                />
+            </div>
+            <div className="Confirm"
+                style={{
+                    position: 'absolute',
+                    top: '130px',
+
+                }}
+            >
+                <Typography
+                    style={{
+                        fontSize: '20px',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+
+                    }}
                 >
                     {t('Confirm')}
                 </Typography>
             </div>
             <div className="Inforamtion"
-            style={{
-                position : 'absolute',
-                top :'160px',
-                width : '75%',
-                 
-                textAlign : 'center',
-            }}
+                style={{
+                    position: 'absolute',
+                    top: '160px',
+                    width: '75%',
+
+                    textAlign: 'center',
+                }}
             >
                 <Typography
-                style={{
-                    fontSize : '17px',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    style={{
+                        fontSize: '17px',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
-                }}
+                    }}
                 >
-                    {t('Are you sure you want to delete the information?')}    
+                    {t('Are you sure you want to delete the information?')}
                 </Typography>
             </div>
             <div className="SubmitBtn">
-                    <div className="button">
-                        <Button variant="outlined" className='btn-grad'
+                <div className="button">
+                    <Button variant="outlined" className='btn-grad'
+                        sx={{
+                            width: '100%',
+                            position: 'absolute',
+                            top: '220px',
+                            right: '0%',
+                            height: '38px',
+
+                            borderColor: 'none', '&:hover': {
+                                borderColor: 'white',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+                            },
+                        }}
+                    >
+                        <Typography
                             sx={{
-                                width: '100%',
-                                position: 'absolute',
-                                top :'220px',
-                                right : '0%',
-                                height: '38px',
+                                color: 'white',
+                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                fontWeight: 'bold',
+                                textTransform: 'capitalize',
+                                fontSize: '13px',
 
-                                borderColor: 'none', '&:hover': {
-                                    borderColor: 'white',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-                                },
                             }}
                         >
-                            <Typography
-                                sx={{
-                                    color: 'white',
-                                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                    fontWeight: 'bold',
-                                    textTransform: 'capitalize',
-                                    fontSize: '13px',
-
-                                }}
-                            >
-                                {t('Delete')}
-                            </Typography>
-                        </Button>
-                    </div>
+                            {t('Delete')}
+                        </Typography>
+                    </Button>
                 </div>
-                <div className="SubmitBtn">
-                    <div className="button">
-                        <Button variant="outlined" className='btn-grad' onClick={InfoClose}
+            </div>
+            <div className="SubmitBtn">
+                <div className="button">
+                    <Button variant="outlined" className='btn-grad' onClick={InfoClose}
+                        sx={{
+                            width: '100%',
+                            position: 'absolute',
+                            top: '263px',
+                            right: '0%',
+                            height: '38px',
+
+                            borderColor: 'none', '&:hover': {
+                                borderColor: 'white',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+                            },
+                        }}
+                    >
+                        <Typography
                             sx={{
-                                width: '100%',
-                                position: 'absolute',
-                                 top :'263px',
-                                right : '0%',
-                                height: '38px',
+                                color: 'white',
+                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                fontWeight: 'bold',
+                                textTransform: 'capitalize',
+                                fontSize: '13px',
 
-                                borderColor: 'none', '&:hover': {
-                                    borderColor: 'white',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-                                },
                             }}
                         >
-                            <Typography
-                                sx={{
-                                    color: 'white',
-                                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                    fontWeight: 'bold',
-                                    textTransform: 'capitalize',
-                                    fontSize: '13px',
-
-                                }}
-                            >
-                                {t('Cancel')}
-                            </Typography>
-                        </Button>
-                    </div>
+                            {t('Cancel')}
+                        </Typography>
+                    </Button>
                 </div>
+            </div>
 
 
 

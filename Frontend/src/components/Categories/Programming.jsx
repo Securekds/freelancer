@@ -6,7 +6,7 @@ import animationData from '../../assets/images/small-logos/AnimationProg.json';
 
 import animationData2 from '../../assets/images/small-logos/Animation - 1721224613686.json';
 import { useNavigate } from 'react-router-dom';
-import Lottie from 'lottie-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CodeIcon from '@mui/icons-material/Code';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
@@ -312,10 +312,16 @@ function Programming() {
                         }}
                     >
                         <div className="light-effect"></div>
-                        <Lottie
-                            animationData={animationData}
-                            style={{ width: 300, height: 300, display: 'block', margin: '0 auto' }}
-                        />
+                        <Player
+  src={animationData}
+  autoplay
+  style={{ 
+    width: 300, 
+    height: 300, 
+    display: 'block', 
+    margin: '0 auto' 
+  }}
+/>
                     </div>
                     <div className='BoxesAR '
                         style={{
@@ -1074,8 +1080,11 @@ function Programming() {
                         }}
                     >
                         <div className="light-effect"></div>
-                        <Lottie animationData={animationData2} style={{ width: 100, height: 100 }} />
-                    </div>
+                        <Player
+  src={animationData2}
+  autoplay
+  style={{ width: 100, height: 100 }}
+/>                    </div>
                 </div>
              
 

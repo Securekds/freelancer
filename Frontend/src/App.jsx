@@ -9709,9 +9709,7 @@ const AnimatedRoutes = () => {
   const routesWithOverlay = [
     '/',
     '/userdashboard',
-    '/userdashboard/project',
-    '/userdashboard/profile',
-    '/userdashboard/profile/settings',
+   
   ];
 
   useEffect(() => {

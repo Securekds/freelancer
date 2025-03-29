@@ -9,8 +9,18 @@ const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   ConfirmedEmail: { type: Boolean, default: false },
   password: { type: String, required: false },
-  googleId: { type: String, unique: true, sparse: true },
-  facebookId: { type: String, unique: true },
+  googleId: { 
+    type: String, 
+    default: undefined, // Better than null
+    sparse: true       // This is the key part
+  },
+  facebookId: { 
+    type: String, 
+    default: undefined,
+    sparse: true 
+  },
+
+
   isBuyer: { type: Boolean, required: true },
   profileImg: { 
     type: String, 
@@ -105,6 +115,14 @@ const UserSchema = new Schema({
     type: Number,
     default: Infinity, // Default for proPlus plan
   },
+  planStartDate: { type: Date, default: Date.now }, // Stores when the plan starts
+  planEndDate: { 
+    type: Date, 
+    default: function() {
+      return new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days later
+    } 
+  }, 
+
 
   secondaryEmail: { type: String, unique: true, sparse: true },
   ConfirmedSecondaryEmail: { type: Boolean, default: false },
@@ -135,5 +153,7 @@ UserSchema.pre("save", async function (next) {
   }
   next();
 });
+
+
 
 export default mongoose.model('User', UserSchema);

@@ -55,6 +55,9 @@ function Colors({ onBackgroundChange }) {
 
     const { user } = useUser();
 
+    const planStartDate = new Date(user?.planStartDate).toLocaleDateString();
+const planEndDate = new Date(user?.planEndDate).toLocaleDateString();
+
     // Data for Free Plan
     const freePlanUsageData = [
         { name: 'Offers', value: user?.remainingOffersFree, total: 15 },
@@ -786,7 +789,92 @@ function Colors({ onBackgroundChange }) {
                         </div>
 
                     </div>
-
+                    {/* Plan Dates Section */}
+<div style={{
+    padding: '15px',
+    width: '95%',
+    borderTop: '1px solid #2d2d2d',
+}}>
+    <Typography
+        sx={{
+            color: 'white',
+            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+            fontWeight: 'bold',
+            fontSize: '15px',
+            marginBottom: '16px',
+            textAlign: 'center'
+        }}
+    >
+        Plan Duration
+    </Typography>
+    
+    <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '10px',
+    }}>
+        <div style={{
+            backgroundColor: '#1f2937',
+            borderRadius: '8px',
+            padding: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        }}>
+            <Typography
+                sx={{
+                    color: '#9ca3af',
+                    fontSize: '14px',
+                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                }}
+            >
+                Start Date
+            </Typography>
+            <Typography
+                sx={{
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    marginTop: '4px',
+                    fontFamily: '"Airbnbcereal", sans-serif',
+                }}
+            >
+                {planStartDate}
+            </Typography>
+        </div>
+        
+        <div style={{
+            backgroundColor: '#1f2937',
+            borderRadius: '8px',
+            padding: '12px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        }}>
+            <Typography
+                sx={{
+                    color: '#9ca3af',
+                    fontSize: '14px',
+                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                }}
+            >
+                End Date
+            </Typography>
+            <Typography
+                sx={{
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    marginTop: '4px',
+                    fontFamily: '"Airbnbcereal", sans-serif',
+                }}
+            >
+                {planEndDate}
+            </Typography>
+        </div>
+    </div>
+</div>
+        
                     {/* Footer */}
                     <div style={{
                         padding: '12px',

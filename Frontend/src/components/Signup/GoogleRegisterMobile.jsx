@@ -15,7 +15,7 @@ import Created from '../../assets/images/small-logos/Created.json';
 import Lottie from 'lottie-react';
 import DOMPurify from 'dompurify';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { GoogleLogin } from 'react-google-login';
+
 
 
 function GoogleRegisterMobile({ userData, setShowNormalForm, setShowGoogleMobileForm }) {
@@ -45,25 +45,56 @@ function GoogleRegisterMobile({ userData, setShowNormalForm, setShowGoogleMobile
         password: '', // Add the password field
         isBuyerSelected: true,
         selectedOptions: [],
+        googleId :''
     });
 
-   // Effect to update formData when userData is received
+ // New state for generated password
+const [generatedPassword, setGeneratedPassword] = useState('');
+
 useEffect(() => {
     if (userData) {
-        setFormData(prevFormData => ({
-            ...prevFormData, // Preserve existing formData
-            firstName: userData.first_name || '', // Assuming userData has first_name
-            lastName: userData.last_name || '',   // Assuming userData has last_name
-            email: userData.email || '',          // Update email from userData
-            password: generatePassword(),          // Generate a new password
-        }));
-    }
-}, [userData]); // Trigger when userData changes
+        const newPassword = generatePassword(); // Generate password
+        setGeneratedPassword(newPassword); // Store it in state
+        console.log("Generated Password:", newPassword); // Log generated password
 
-// Effect to log formData whenever it updates
-useEffect(() => {
-    console.log('Form Data:', formData);
-}, [formData]);
+        setFormData((prevData) => {
+            const updatedFormData = {
+                ...prevData,
+                firstName: userData.firstName || prevData.firstName,
+                lastName: userData.lastName || prevData.lastName,
+                email: userData.email || prevData.email,
+                googleId: userData.googleId || prevData.googleId,
+                password: newPassword // Store password in formData
+            };
+
+            console.log("Updated Form Data:", updatedFormData); // Log after updating
+            return updatedFormData;
+        });
+    }
+}, [userData]); // Runs when userData changes
+
+
+      const generatePassword = (length = 12) => {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const specialChars = '@$!%*?&'; // Only allowed special characters
+        const allChars = letters + numbers + specialChars;
+    
+        let password = '';
+        
+        // Ensure at least one character from each required set
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += specialChars[Math.floor(Math.random() * specialChars.length)];
+    
+        // Fill the rest of the password with random characters
+        for (let i = 3; i < length; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+    
+        // Shuffle the password to avoid predictable patterns
+        return password.split('').sort(() => 0.5 - Math.random()).join('');
+    };
 
 
     const navigate = useNavigate();
@@ -273,58 +304,55 @@ useEffect(() => {
 
 
     const handleRegistration = async () => {
-        setIsLoading(true); // Start loading
-        setServerError2(''); // Reset any previous error messages
+        setIsLoading(true);
+        setServerError2('');
     
-        // Check if at least one div is selected
         const totalSelections = Object.values(selectedDivs).flat().length;
         if (totalSelections < 1) {
             setServerError2(t('Select at least 1 option to proceed.'));
             setIsLoading(false);
-            return; // Exit if no selections are made
+            return;
         }
     
-        // Wait for 2 seconds before making the request
         await new Promise(resolve => setTimeout(resolve, 2000));
     
-        // Construct the sanitized form data
         const sanitizedFormData = {
-            firstName: DOMPurify.sanitize(userData.firstName), // Use userData from props
-            lastName: DOMPurify.sanitize(userData.lastName),   // Use userData from props
-            email: DOMPurify.sanitize(userData.email),         // Use userData from props
-            password: DOMPurify.sanitize(userData.password),    // Use generated password
+            firstName: DOMPurify.sanitize(formData.firstName), 
+            lastName: DOMPurify.sanitize(formData.lastName),   
+            email: DOMPurify.sanitize(formData.email),         
+            password: DOMPurify.sanitize(generatedPassword), // Use `generatedPassword`
             isBuyerSelected: formData.isBuyerSelected,
             selectedOptions: Object.values(selectedDivs).flat(),
-            byGoogle: true // Indicate that this registration is through Google
+            googleId: formData.googleId, // ✅ Include googleId
+            byGoogle: true, // ✅ Flag to indicate Google registration
         };
     
-        // Make the registration request
+        console.log("Final Registration Data:", sanitizedFormData); // Log before sending request
+    
         try {
             const registerResponse = await fetch(
                 `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`, 
                 { 
-              
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sanitizedFormData),
-            });
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sanitizedFormData),
+                });
     
             const registerData = await registerResponse.json();
     
             if (registerResponse.status === 201) {
-                // Show account creation state
-                setShowUserinterest(false);
-                setShowAccountCreation(true);
+                navigate('/auth/AccountCreation');
             } else {
-                setServerError2(registerData.message || 'An error occurred during registration.');
-                setIsLoading(false); // Stop loading on error
+                const translatedMessage = t(registerData.message || 'An error occurred during registration.');
+                setServerError2(translatedMessage);
+
+                setIsLoading(false);
             }
         } catch (error) {
             setServerError2('An unexpected error occurred. Please try again later.');
-            setIsLoading(false); // Stop loading on error
+            setIsLoading(false);
         }
     };
-    
     
 
     const handleBackToPrevStep = () => {
@@ -342,6 +370,13 @@ useEffect(() => {
 
     const [currentStep, setCurrentStep] = useState(1);
 
+
+    const handleBackToRegister = ()=> {
+        setShowGoogleMobileForm(false);
+        setShowNormalForm(true);
+
+    }
+
     return (
         <div className='Container'
             style={{
@@ -351,70 +386,13 @@ useEffect(() => {
                 overflow: 'hidden',
             }}
         >
-            <div className="BacktoWeb"
-                style={{
-                    position: 'absolute',
-                    top: '2%',
-                    left: '50%', // Center horizontally
-                    transform: 'translateX(-50%)', // Adjust for centering
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    zIndex: 3,
-                }}
-            >
-                <Button
-                    sx={{
-                        width: '200px', // Fixed width for all mobile screens
-                        color: 'white',
-                        border: '1px solid white',
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        borderRadius: '16px',
-                        height: '32px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center', // Center arrow and text
-                        gap: '8px', // Space between arrow and text
-                    }}
-                >
-                    <ArrowBackIcon sx={{
-                        fontSize: '22px',
-                        transform: currentLanguage === 'ar' ? 'rotate(180deg)' : 'none',
-                    }} />
-                    <Typography
-                        sx={{
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            textAlign: 'center', // Center text
-                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                        }}
-                    >
-                        {t('Back to website')}
-                    </Typography>
-                </Button>
-            </div>
-            {/* Cover Image */}
-            <div className="Cover"
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: isSmallScreen ? '0' : '16px', // No border radius on mobile
-                    backgroundImage: `url('https://res.cloudinary.com/damicjacf/image/upload/v1728562826/pixelcut-export_1_urcpe5.png')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    position: 'absolute', // Fill the parent container
-                    zIndex: 1,
-                    opacity: '0.8', // Slight opacity for visibility of the form
-                }}
-            />
+        
             <div className="SignUpGoogleForm"
                 style={{
                     width: '100%', // Responsive width for mobile
-                    maxWidth: '400px', // Limit the max width for readability
+                   
                     padding: '20px',
                     height : '100%',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background for contrast
                     borderRadius: '8px',
                     position: 'absolute', // Absolute positioning relative to the parent container
                     top: '45%', // Center vertically

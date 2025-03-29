@@ -27,93 +27,90 @@ const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_SECRET);
 // Register Controller
 export const register = async (req, res, next) => {
     try {
-        const { email, password, firstName, lastName, isBuyerSelected, selectedOptions } = req.body;
+        const { email, password, firstName, lastName, isBuyerSelected, selectedOptions, facebookId, googleId } = req.body;
 
-        // Check if required fields are missing
-        if (!email || !password || !firstName || !lastName || typeof isBuyerSelected !== 'boolean') {
+        if (!email || !firstName || !lastName || typeof isBuyerSelected !== 'boolean') {
             return res.status(400).json({ message: 'All fields are required, and isBuyerSelected must be a boolean' });
         }
 
-        // Additional validation for email format
+        if (!selectedOptions || selectedOptions.length < 1) {
+            return res.status(400).json({ message: 'At least one option must be selected.' });
+        }
+
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ message: 'Please provide a valid email address.' });
         }
 
-        // Additional validation for first and last names
         const nameRegex = /^[A-Za-z\s]+$/;
-        if (!nameRegex.test(firstName)) {
-            return res.status(400).json({ message: 'First name can only contain letters and spaces.' });
-        }
-        if (!nameRegex.test(lastName)) {
-            return res.status(400).json({ message: 'Last name can only contain letters and spaces.' });
+        if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+            return res.status(400).json({ message: 'Names can only contain letters and spaces.' });
         }
 
-        // Additional validation for password
-        if (password.length < 8) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
-        }
-
-        // Password strength check (contains letter, number, and special character)
-        const passwordStrengthRegex = /(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])/;
-        if (!passwordStrengthRegex.test(password)) {
-            return res.status(400).json({ message: 'Password must contain at least one letter, one number, and one special character.' });
-        }
-
-        // Check if selectedOptions are provided and have at least one item
-        if (!selectedOptions || selectedOptions.length < 1) {
-            return res.status(400).json({ message: 'At least one option must be selected.' });
-        }
-
-        // Check if email is already registered
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "This Email is already registered!" });
         }
 
         const now = Date.now();
-        const MAX_ATTEMPTS = 5; // Max attempts for registration rate limiting
-        const RATE_LIMIT_DURATION = 60 * 1000; // 1 minute (system-wide)
+        const MAX_ATTEMPTS = 5;
+        const RATE_LIMIT_DURATION = 60 * 1000; // 1 minute
 
-        // Track failed registration attempts in the last minute for rate-limiting
         const failedRegisterAttemptsInLastMinute = await User.countDocuments({
             lastFailedAttempt: { $gte: new Date(now - RATE_LIMIT_DURATION) },
         });
 
         if (failedRegisterAttemptsInLastMinute >= MAX_ATTEMPTS) {
-            return res.status(429).json({
-                message: 'Too many registration attempts. Please try again later.',
-            });
+            return res.status(429).json({ message: 'Too many registration attempts. Please try again later.' });
         }
 
-        // Hash the password
-        const hashedPassword = bcrypt.hashSync(password, 12);
+        let hashedPassword = password;
+
+        // Handle social login (Google & Facebook)
+        if (facebookId || googleId) {
+            hashedPassword = bcrypt.hashSync(password, 12);
+            await sendRegistrationPassword(email, firstName, password);
+        } else {
+            if (!password || password.length < 8) {
+                return res.status(400).json({ message: 'Password must be at least 8 characters long.' });
+            }
+            const passwordStrengthRegex = /(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])/;
+            if (!passwordStrengthRegex.test(password)) {
+                return res.status(400).json({ message: 'Password must contain at least one letter, one number, and one special character.' });
+            }
+            hashedPassword = bcrypt.hashSync(password, 12);
+        }
 
         // Create new user
         const newUser = new User({
             email,
             firstName,
             lastName,
-            password: hashedPassword,  // Store hashed password
-            isBuyer: isBuyerSelected,  // Assign buyer/seller status
-            selectedOptions: selectedOptions,  // Store selected options
+            password: hashedPassword,
+            isBuyer: isBuyerSelected,
+            selectedOptions,
+            ...(facebookId && { facebookId }),
+            ...(googleId && { googleId }), // ✅ Only add googleId if it exists
+            planStartDate: new Date(),
+            planEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
         });
 
-        // Save the user in the database
         const savedUser = await newUser.save();
-        const newWallet = new Wallet({ userId: savedUser._id });
-        // No need to specify balances - defaults to 0.00 for all fields
-        await newWallet.save();
-        const BASE_URL = process.env.FRONTEND_BASE; // Example: "http://localhost:5173"
 
-        // Create default welcome notification
+        // Create a wallet for the new user
+        const newWallet = new Wallet({ userId: savedUser._id });
+        await newWallet.save();
+
+        const BASE_URL = process.env.FRONTEND_BASE;
+
+        // Create a default notification for the new user
         const defaultNotification = new Notification({
             userId: savedUser._id,
             sender: {
-                _id: null, // No specific sender, it's from the platform
+                _id: null,
                 firstName: "Khadamat",
                 lastName: "Platform",
-                profileImage: "https://your-platform-logo-url.com/logo.png", // Platform logo
+                profileImage: "https://your-platform-logo-url.com/logo.png",
             },
             title: "Welcome to Khadamat! 🚀 Your Journey Begins Here!",
             description: "register",
@@ -125,180 +122,132 @@ export const register = async (req, res, next) => {
 
         await defaultNotification.save();
 
-
-
-
-        // Exclude the password from the response
+        // Remove password before sending response
         const { password: _, ...userDetails } = savedUser._doc;
 
-        // Send user details as the response
         res.status(201).json({ user: userDetails });
-
     } catch (err) {
-        next(err);  // Forward errors to the error handler
+        next(err);
     }
 };
 
 
 
-export const facebookAuth = async (req, res) => {
-    const { code, redirectUri } = req.body; // Now you receive redirectUri from the body
-    const client_id = process.env.FACEBOOK_CLIENT_ID;
-    const client_secret = process.env.FACEBOOK_CLIENT_SECRET;
-
-    console.log('Received code:', code);
-
+export const loginWithFacebook = async (req, res) => {
     try {
-        // Log the full access token request URL and parameters
-        console.log("Access token request URL:", `https://graph.facebook.com/v13.0/oauth/access_token`);
-        console.log("Parameters:", {
-            client_id,
-            redirect_uri: redirectUri, // Use the one received from the client
-            client_secret,
-            code,
-        });
+        const { facebookId, email } = req.body;
 
-        // Request access token from Facebook
-        const tokenResponse = await axios.get(
-            `https://graph.facebook.com/v13.0/oauth/access_token`, {
-            params: {
-                client_id,
-                redirect_uri: redirectUri,
-                client_secret,
-                code,
-            },
-        }
-        );
-
-        const accessToken = tokenResponse.data.access_token;
-        if (!accessToken) {
-            return res.status(400).json({ success: false, message: "Failed to obtain access token" });
+        if (!facebookId || !email) {
+            return res.status(400).json({ message: "Facebook ID and email are required." });
         }
 
-        // Retrieve user information from Facebook
-        const userResponse = await axios.get(
-            `https://graph.facebook.com/me`, {
-            params: {
-                fields: 'id,email,first_name,last_name',
-                access_token: accessToken,
-            },
-        }
-        );
-
-        const { email, first_name, last_name, id: facebookId } = userResponse.data;
-
-        // Check if the user exists in your database
-        let user = await User.findOne({ email });
+        // Check if the user exists
+        const user = await User.findOne({ email });
 
         if (!user) {
-            // User doesn't exist: send user info for registration form
-            return res.status(404).json({
-                success: true,
-                userInfo: { email, first_name, last_name, facebookId, accessToken }
-            });
-        } else {
-            // User exists: Update Facebook ID if necessary
-            if (!user.facebookId) {
-                user.facebookId = facebookId;
-                await user.save();
-            }
-
-            // Generate JWT for the existing user
-            const token = jwt.sign(
-                { id: user._id, email: user.email },
-                process.env.JWT_KEY,
-                { expiresIn: '1h' }
-            );
-
-            // Send JWT in an HTTP-only cookie and return user data
-            res.cookie("accessToken", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'Strict',
-            }).status(200).json({
-                success: true,
-                user: {
-                    id: user._id,
-                    email: user.email,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    facebookId: user.facebookId,
-                    profileImg: user.profileImg || 'https://res.cloudinary.com/damicjacf/image/upload/v1728490158/default_profile_image.png',
-                    coverImg: user.coverImg || 'https://res.cloudinary.com/damicjacf/image/upload/v1728583460/MyCover_yngwcg.jpg',
-                }
-            });
+            return res.status(404).json({ message: "No account found with this email." });
         }
+
+        // Generate JWT Token
+        const token = jwt.sign(
+            {
+                id: user._id,
+                isBuyer: user.isBuyer,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                tokenVersion: user.tokenVersion, // Add this line
+
+            },
+            process.env.JWT_KEY,
+            { expiresIn: "7d" }
+        );
+
+        const { password, emailCode, resetCode, ...userWithoutSensitiveData } = user._doc;
+        res.cookie("accessToken", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        }).status(200).json(userWithoutSensitiveData); // Send user data directly
     } catch (error) {
-        console.error("Error during Facebook authentication:", error.response ? error.response.data : error.message);
-        res.status(500).json({ success: false, message: "Authentication failed" });
+        console.error("Facebook login error:", error);
+        res.status(500).json({ message: "Something went wrong." });
     }
 };
 
 
-// Google Login
-export const googleLogin = async (req, res) => {
-
-
-    const { idToken } = req.body;
+// Google Login Controller (Corrected)
+export const googleLogin = async (req, res, next) => {
     try {
+        const { token } = req.body; // Google ID Token from frontend
+
+        if (!token) {
+            return res.status(400).json({ message: "Google token is required." });
+        }
+
+        // Verify Google ID Token
         const ticket = await client.verifyIdToken({
-            idToken,
+            idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
-        const googleId = payload['sub'];
-        const email = payload['email'];
-        const firstName = payload['given_name'];
-        const lastName = payload['family_name'];
+        const email = payload.email;
+        const googleId = payload.sub;
 
-        // Check for existing user by email
-        let user = await User.findOne({ email });
+        if (!email) {
+            return res.status(400).json({ message: "Invalid Google token." });
+        }
+
+        // Find user by Google ID OR email (for migration purposes)
+        const user = await User.findOne({ 
+            $or: [
+                { googleId },
+                { email }
+            ]
+        });
 
         if (!user) {
-            // If the user does not exist, return an error message
-            return res.status(404).json({
-                success: false,
-                message: "This user doesn't exist. You have to register."
+            return res.status(404).json({ 
+                message: "No account found. Please register first.",
+                suggestedEmail: email // Send email for registration flow
             });
         }
 
-        // If user exists but googleId is not set, update the user
+        // Update user with Google ID if missing
         if (!user.googleId) {
-            user.googleId = googleId; // Assign the Google ID
-            await user.save(); // Save the updated user
+            user.googleId = googleId;
+            await user.save();
         }
 
-        // Generate JWT token for the user
-        const token = jwt.sign(
-            { id: user._id, email: user.email },
-            process.env.JWT_KEY,
-            { expiresIn: '1h' }
-        );
-
-        // Set the cookie with the token
-        res.cookie("accessToken", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-        }).status(200).json({
-            success: true,
-            user: {
-                id: user._id,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                googleId: user.googleId, // Ensure the Google ID is sent in the response
-                profileImg: user.profileImg || 'https://res.cloudinary.com/damicjacf/image/upload/v1728490158/default_profile_image.png', // Return default if not set
-                coverImg: user.coverImg || 'https://res.cloudinary.com/damicjacf/image/upload/v1728583460/MyCover_yngwcg.jpg', // Return default if not set
-            }
+        // Generate JWT Token
+        const accessToken = jwt.sign({ 
+            id: user._id,
+            tokenVersion: user.tokenVersion 
+        }, process.env.JWT_KEY, {
+            expiresIn: "7d",
         });
-    } catch (err) {
 
-        res.status(401).json({ success: false, message: 'Unauthorized' });
+        // Set secure cookie
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        // Remove sensitive fields
+        const { password, tokenVersion, ...safeUser } = user.toObject();
+
+        res.status(200).json({ 
+            user: safeUser,
+            token: accessToken 
+        });
+
+    } catch (error) {
+        next(error);
     }
 };
-
 
 
 export const login = async (req, res, next) => {

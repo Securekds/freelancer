@@ -6,7 +6,7 @@ import {
         verifyResetCode,
         resetPassword,
         googleLogin,
-        facebookAuth,
+        loginWithFacebook,
         sendEmailCodeVerification,
         verifyEmailCode,        
         updatePassword,
@@ -35,7 +35,7 @@ router.post("/send-email-code", verifyToken , sendEmailCodeVerification); // End
 router.post("/verify-email-code", verifyToken , verifyEmailCode); // Endpoint to Verify the Email code
 router.post("/reset-password", resetPassword); // Endpoint to reset the user's password
 router.post("/google-login", googleLogin); // New route for Google login
-router.post("/facebook-auth", facebookAuth); // New route for Facebook login
+router.post("/facebook-auth", loginWithFacebook);
 router.post("/new-password", verifyToken , validatePasswordChange , updatePassword); // New route for Changing Current Password
 
 

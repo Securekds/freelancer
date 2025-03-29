@@ -12,7 +12,7 @@ import DOMPurify from 'dompurify';
 
 
 
-function FacebookRegMobile({userData}) {
+function FacebookRegMobile({ userData, setFacebookReg, setShowNormalForm }) {
     const { t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(() => {
         const storedLanguage = localStorage.getItem('language');
@@ -33,13 +33,25 @@ function FacebookRegMobile({userData}) {
 
 
     const generatePassword = (length = 12) => {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const specialChars = '@$!%*?&'; // Only allowed special characters
+        const allChars = letters + numbers + specialChars;
+
         let password = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * chars.length);
-            password += chars[randomIndex];
+
+        // Ensure at least one character from each required set
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+        // Fill the rest of the password with random characters
+        for (let i = 3; i < length; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
         }
-        return password;
+
+        // Shuffle the password to avoid predictable patterns
+        return password.split('').sort(() => 0.5 - Math.random()).join('');
     };
 
 
@@ -54,22 +66,18 @@ function FacebookRegMobile({userData}) {
         selectedOptions: [],
     });
     useEffect(() => {
-        // Log the userData to confirm it is received correctly
-        console.log('Received userData in FacebookRegMobile:', userData);
-
-        // Populate the form data if userData is available
         if (userData) {
-            setFormData({
-                email: userData.email || '',
-                firstName: userData.first_name || '',
-                lastName: userData.last_name || '',
-                facebookId: userData.facebookId || '',
-                accessToken: userData.accessToken || '',
-                password: generatePassword() // Generate a password
-            });
+            setFormData((prevData) => ({
+                ...prevData,
+                firstName: userData.firstName || prevData.firstName,
+                lastName: userData.lastName || prevData.lastName,
+                email: userData.email || prevData.email,
+                facebookId: userData.facebookId || prevData.facebookId, // Store Facebook ID
+                password: generatePassword(),
+            }));
         }
     }, [userData]);
-    
+
 
 
     const navigate = useNavigate();
@@ -110,7 +118,7 @@ function FacebookRegMobile({userData}) {
                                 if (prevCountdown <= 0) {
                                     clearInterval(countdownInterval);
 
-                                    
+
                                     return 0; // Ensure countdown reaches 0
                                 }
 
@@ -300,29 +308,29 @@ function FacebookRegMobile({userData}) {
             password: DOMPurify.sanitize(formData.password),
             isBuyerSelected: formData.isBuyerSelected,
             selectedOptions: Object.values(selectedDivs).flat(),
-            byFacebook: true,
+            facebookId: formData.facebookId ? DOMPurify.sanitize(formData.facebookId) : null, // ✅ Include Facebook ID
+            byFacebook: !!formData.facebookId, // ✅ Ensure boolean is correct
         };
 
         console.log("Sanitized Data to be Sent:", sanitizedFormData);
 
         try {
             const registerResponse = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`, 
-                { 
-              
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sanitizedFormData),
-            });
+                `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`,
+                {
+
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sanitizedFormData),
+                });
 
             const registerData = await registerResponse.json();
 
             if (registerResponse.status === 201) {
-                // Start the account creation animation
-                setShowUserinterest(false);
-                setShowAccountCreation(true); // Show progress animation
+                navigate('/auth/AccountCreation')
             } else {
-                setServerError2(registerData.message || 'An error occurred during registration.');
+                const translatedMessage = t(registerData.message || 'An error occurred during registration.');
+                setServerError2(translatedMessage);
                 setIsLoading(false);
             }
         } catch (error) {
@@ -333,9 +341,9 @@ function FacebookRegMobile({userData}) {
 
 
     const handleBackToRegister = () => {
-        setShowBuyerSeller(false)
-        setShowGoogleForm(false)
-        setShowNormalForm(true)
+
+        setFacebookReg(false);
+        setShowNormalForm(true);
 
     }
 
@@ -355,16 +363,15 @@ function FacebookRegMobile({userData}) {
         <>
             <div className="Container slide-from-right"
                 style={{
-                    width: currentLanguage === 'fr'? '115%' : '110%',
+                    width: currentLanguage === 'fr' ? '115%' : '110%',
                     padding: '10px',
                     display: 'flex',
-                    marginTop: 
-                     currentLanguage === 'ar' ? '60px' :
-                     'unset',
+                    marginTop:
+                        currentLanguage === 'ar' ? '60px' :
+                            'unset',
                     alignItems: 'center',
-                    justifyContent :  'center',
+                    justifyContent: 'center',
                     marginTop: '80px',
-                
                     marginLeft: currentLanguage === 'ar' ? '70px' : '0px',
                     position: 'relative',
                     marginRight: currentLanguage === 'ar' ? '70px' : 'unset',
@@ -380,7 +387,7 @@ function FacebookRegMobile({userData}) {
                                 sx={{
                                     fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                                     color: 'white',
-                                    textWrap: currentLanguage === 'fr'? 'wrap' : 'nowrap',
+
                                     textAlign: 'center',
                                     fontSize: '38px',
                                     lineHeight: '45px',
@@ -617,48 +624,48 @@ function FacebookRegMobile({userData}) {
                                 justifyContent: 'center', // Center horizontally
                             }}
                         >
-                           
-                                <Button
-                                    onClick={() => {
-                                        handleNextStep();
-                                    
-                                    }}
-                                    variant="outlined"
-                                    className="btn-grad"
-                                    sx={{
-                                        width: '100%',
-                                        maxWidth: '340px',
-                                        height: '38px',
-                                        border: 'none',
-                                        color: 'white',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        '&:hover': {
-                                            borderColor: 'white',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                        },
-                                    }}
-                                > {isLoading ? (
-                                    <>
-                                        <div className="lds-dual-ring" style={{ margin: 'auto' }}></div>
 
-                                    </>
-                                ) : (
-                                    <Typography
-                                        sx={{
-                                            color: 'white',
-                                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                            fontWeight: 'bold',
-                                            textTransform: 'capitalize',
-                                            fontSize: '13px',
-                                        }}
-                                    >
-                                        {t('Next Step (2/3)')}
-                                    </Typography>
-                                )}
-                                </Button>
-                            
+                            <Button
+                                onClick={() => {
+                                    handleNextStep();
+
+                                }}
+                                variant="outlined"
+                                className="btn-grad"
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '340px',
+                                    height: '38px',
+                                    border: 'none',
+                                    color: 'white',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    '&:hover': {
+                                        borderColor: 'white',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                    },
+                                }}
+                            > {isLoading ? (
+                                <>
+                                    <div className="lds-dual-ring" style={{ margin: 'auto' }}></div>
+
+                                </>
+                            ) : (
+                                <Typography
+                                    sx={{
+                                        color: 'white',
+                                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                        fontWeight: 'bold',
+                                        textTransform: 'capitalize',
+                                        fontSize: '13px',
+                                    }}
+                                >
+                                    {t('Next Step (2/3)')}
+                                </Typography>
+                            )}
+                            </Button>
+
                         </div>
 
                         <div className="BackToRegister slide-from-right"
@@ -666,7 +673,7 @@ function FacebookRegMobile({userData}) {
                             style={{
                                 marginTop: '20px',
                                 display: 'flex',
-                                fontWeight : 'bold',
+                                fontWeight: 'bold',
                                 gap: '6px',
                                 cursor: 'pointer',
                             }}
@@ -684,7 +691,7 @@ function FacebookRegMobile({userData}) {
                                             fontSize: '15px',
                                         }}
                                     >
-                                        {t('Back to Login')}
+                                        {t('Back to Register')}
                                     </Typography>
                                     <div className="Icon">
                                         <ArrowBackIcon sx={{ color: 'white' }} />
@@ -700,10 +707,10 @@ function FacebookRegMobile({userData}) {
                                             fontFamily: '"Airbnbcereal", sans-serif',
                                             color: 'white',
                                             fontSize: '15px',
-                                            fontWeight : 'bold',
+                                            fontWeight: 'bold',
                                         }}
                                     >
-                                        {t('Back to Login')}
+                                        {t('Back to Register')}
                                     </Typography>
                                 </>
                             )}
@@ -721,8 +728,8 @@ function FacebookRegMobile({userData}) {
                                     color: 'white',
                                     fontSize: '38px',
                                     lineHeight: '45px',
-                                    textWrap : currentLanguage === 'fr'? 'wrap' : 'nowrap',
-                                    textAlign : 'center',
+
+                                    textAlign: 'center',
                                 }}
                             >
                                 {t('Processing with Facebook')}
@@ -739,7 +746,7 @@ function FacebookRegMobile({userData}) {
                                     color: 'white',
                                     fontSize: '16px',
                                     textWrap: 'wrap',
-                                    textAlign : 'center',
+                                    textAlign: 'center',
 
                                 }}
                             >
@@ -872,13 +879,13 @@ function FacebookRegMobile({userData}) {
 
                         </div>
                         <div className="CreateAccountButton"
-                           style={{
-                            width: '100%', // Full width of the parent container
-                            marginTop: '18px',
-                            display: 'flex', // Use flexbox for alignment
-                            justifyContent: 'center', // Center horizontally
-                        }}
-                         >
+                            style={{
+                                width: '100%', // Full width of the parent container
+                                marginTop: '18px',
+                                display: 'flex', // Use flexbox for alignment
+                                justifyContent: 'center', // Center horizontally
+                            }}
+                        >
                             <Button onClick={handleRegistration}
                                 variant="outlined"
                                 className="btn-grad"
@@ -887,7 +894,7 @@ function FacebookRegMobile({userData}) {
                                     position: 'relative',
                                     height: '38px',
                                     border: 'none',
-                                    
+
                                     color: 'white',
                                     display: 'flex', // Use flexbox for centering
                                     justifyContent: 'center', // Center horizontally
@@ -958,7 +965,7 @@ function FacebookRegMobile({userData}) {
                                             fontFamily: '"Airbnbcereal", sans-serif',
                                             color: 'white',
                                             fontSize: '15px',
-                                            fontWeight : 'bold',
+                                            fontWeight: 'bold',
                                         }}
                                     >
                                         {t('Back to previous step')}
@@ -1033,9 +1040,9 @@ function FacebookRegMobile({userData}) {
                         />
                     </div>
                     <span style={{
-                        color: 'white', 
+                        color: 'white',
                         marginTop: '20px',
-                         fontSize: '16px',
+                        fontSize: '16px',
                         fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
 

@@ -14,13 +14,14 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Created from '../../assets/images/small-logos/Created.json';
 import Lottie from 'lottie-react';
 import DOMPurify from 'dompurify';
-import { GoogleLogin } from 'react-google-login';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import GoogleRegister from './GoogleRegister';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 import SignupMobile from './SignupMobile';
 import FacebookRegister from '../Signup/FacebookRegister';
 import AccountCreation from './AccountCreation';
+import { width } from '@mui/system';
 
 
 
@@ -97,9 +98,9 @@ function Signup() {
   const [selectionError, setSelectionError] = useState(''); // Error message state
 
 
-  
 
-  
+
+
 
 
 
@@ -298,11 +299,11 @@ function Signup() {
     setServerError(''); // Clear previous server errors
     setServerError2(''); // Clear other error messages (if applicable)
     setIsLoading(true); // Start loading state
-  
+
     const namePattern = /^[A-Za-z\s]+$/; // Only allow letters and spaces for names
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email pattern
     const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/; // Password: Min 8 chars, 1 number, 1 special char
-  
+
     const sanitizedFormData = {
       firstName: DOMPurify.sanitize(formData.firstName),
       lastName: DOMPurify.sanitize(formData.lastName),
@@ -311,44 +312,44 @@ function Signup() {
       isBuyerSelected: formData.isBuyerSelected,
       selectedOptions: Object.values(selectedDivs).flat(),
     };
-  
+
     const errors = {
       firstName: sanitizedFormData.firstName === '',
       lastName: sanitizedFormData.lastName === '',
       email: sanitizedFormData.email === '',
       password: sanitizedFormData.password === '',
     };
-  
+
     setInputErrors(errors);
-  
+
     // Validate inputs
     if (Object.values(errors).some((error) => error)) {
       setServerError(t('All fields are required.'));
       setIsLoading(false);
       return;
     }
-  
+
     if (!namePattern.test(sanitizedFormData.firstName)) {
       setInputErrors((prevErrors) => ({ ...prevErrors, firstName: true }));
       setServerError(t('First name can only contain letters and spaces.'));
       setIsLoading(false);
       return;
     }
-  
+
     if (!namePattern.test(sanitizedFormData.lastName)) {
       setInputErrors((prevErrors) => ({ ...prevErrors, lastName: true }));
       setServerError(t('Last name can only contain letters and spaces.'));
       setIsLoading(false);
       return;
     }
-  
+
     if (!emailPattern.test(sanitizedFormData.email)) {
       setInputErrors((prevErrors) => ({ ...prevErrors, email: true }));
       setServerError(t('Please enter a valid email address.'));
       setIsLoading(false);
       return;
     }
-  
+
     if (!passwordPattern.test(sanitizedFormData.password)) {
       setInputErrors((prevErrors) => ({ ...prevErrors, password: true }));
       setServerError(
@@ -371,26 +372,26 @@ function Signup() {
       setIsLoading(false);
       return;
     }
-  
+
     if (!isCheckboxChecked) {
       setServerError('You must agree to the terms to proceed.');
       setIsLoading(false);
       return; // Prevent moving to the next step
     }
-  
+
     if (typeof sanitizedFormData.isBuyerSelected !== 'boolean') {
       setServerError(t('Please select whether you are a Buyer or Seller.'));
       setIsLoading(false);
       return;
     }
-  
+
     const totalSelections = Object.values(selectedDivs).flat().length;
     if (currentStep === 3 && totalSelections < 1) {
       setServerError2(t('Select at least 1 option to proceed.'));
       setIsLoading(false);
       return;
     }
-  
+
     try {
       // Only check email in step 1
       if (currentStep === 1) {
@@ -400,9 +401,10 @@ function Signup() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: sanitizedFormData.email }),
+            credentials: 'include' 
           }
         );
-  
+
         if (!response.ok) {
           const data = await response.json();
           if (response.status === 400) {
@@ -415,7 +417,7 @@ function Signup() {
           return; // Exit if there's an error
         }
       }
-  
+
       // Register user only at the final step
       if (currentStep === 3) {
         const registerResponse = await fetch(
@@ -426,13 +428,13 @@ function Signup() {
             body: JSON.stringify(sanitizedFormData),
           }
         );
-  
+
         const registerData = await registerResponse.json();
-  
+
         if (registerResponse.status === 201) {
           navigate('/auth/AccountCreation')
           console.log('Registration successful:', registerData);
-  
+
           // Store token and user data in localStorage or sessionStorage
           if (registerData.accessToken) {
             localStorage.setItem('user', JSON.stringify(registerData.user));
@@ -440,10 +442,10 @@ function Signup() {
           } else {
             console.error('Token not found in response');
           }
-  
+
           // Redirect to dashboard
           setShowStep3Inputs(false);
-          
+
           setCurrentStep(currentStep + 1);
         } else if (registerResponse.status === 429) {
           setServerError(t('You have reached the registration limit. Please try again later.'));
@@ -455,7 +457,7 @@ function Signup() {
           return; // Exit after error
         }
       }
-  
+
       // Move between steps when the user is not on the last step
       if (currentStep < 3) {
         switch (currentStep) {
@@ -480,7 +482,7 @@ function Signup() {
       setIsLoading(false); // Ensure loading state is reset after all operations
     }
   };
-  
+
 
 
 
@@ -489,63 +491,8 @@ function Signup() {
   const [showSignupMobile, setShowSignupMobile] = useState(false);
   const [userData, setUserData] = useState(null); // State to hold user data from Google
 
-  const handleGoogleSignInSuccess = async (response) => {
-    const { profileObj: { givenName, familyName, email } } = response;
-    const password = generateRandomPassword(); // Generate a random password
-
-    // Set loading to true when starting the email verification process
-    setIsLoading(true);
-
-    // Check if the email exists in the database
-    try {
-      const checkEmailResponse = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/server/auth/check-email`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }), // Send the email directly from response
-        });
-
-      const data = await checkEmailResponse.json();
-
-      // Stop loading after receiving a response
-      setIsLoading(false);
-
-      // Check if the email already exists (assuming 400 status means email exists)
-      if (checkEmailResponse.status === 400) {
-        setInputErrors(prevErrors => ({ ...prevErrors, email: true }));
-        setServerError(t('This email is already registered.')); // Show error message if email exists
-        return; // Exit if there's an error, ensuring no further code runs
-      }
-
-      // If the email doesn't exist, set user data in state
-      setUserData({
-        firstName: givenName,
-        lastName: familyName,
-        email,
-        password,
-      });
-
-      // Now show the Google registration form
-      setShowNormalForm(false);
-      setShowGoogleForm(true);
-
-    } catch (error) {
-
-      setServerError('An unexpected error occurred. Please try again later.'); // Handle fetch error
-      setIsLoading(false); // Stop loading in case of error
-    }
-  };
-
-
-
-  const handleGoogleSignInFailure = (error) => {
-    console.error('Google sign-in failed:', error);
-    console.log(response)
-  };
-
   const generateRandomPassword = () => {
-    return Math.random().toString(36).slice(-8); // Generate an 8-character random string
+    return Math.random().toString(36).slice(-8);
   };
   const isSmallScreen = useMediaQuery('(max-width:600px)');
   const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)')
@@ -560,48 +507,106 @@ function Signup() {
     navigate('/')
   }
 
-
-
-
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: import.meta.env.VITE_FACEBOOK_APP_ID, // Your Facebook App ID
-        cookie: true,
-        xfbml: true,
-        version: 'v13.0',
-      });
-    };
-
-    (function (d, s, id) {
-      let js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  }, []);
-
-
-  const [hasAuthenticated, setHasAuthenticated] = useState(false); // New state flag to track if auth has occurred
-  const [facebookReg, setFacebookReg] = useState(false);
-
-  const handleFacebookRedirect = () => {
-    setIsLoading(true);
-    const appId = import.meta.env.VITE_FACEBOOK_APP_ID;
-    const redirectUri = window.location.pathname.includes('/auth/signup')
-      ? `${import.meta.env.VITE_FRONTEND_URL}/auth/signup`
-      : `${import.meta.env.VITE_FRONTEND_URL}/auth/signin`;
-
-
-    const facebookOAuthUrl = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile`;
-
-    window.location.href = facebookOAuthUrl;
+  const handleFacebookResponse = (profile) => {
+    setUserData({
+      firstName: profile.first_name || '',
+      lastName: profile.last_name || '',
+      email: profile.email || '',
+      facebookId: profile.id
+    });
   };
 
 
 
+
+
+  const [hasAuthenticated, setHasAuthenticated] = useState(false);
+  const [facebookReg, setFacebookReg] = useState(false);
+
+
+  // Initialize FB SDK
+  useEffect(() => {
+    const initFB = () => {
+      if (window.FB) return;
+
+      const script = document.createElement('script');
+      script.src = 'https://connect.facebook.net/en_US/sdk.js';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        window.FB.init({
+          appId: import.meta.env.VITE_FACEBOOK_APP_ID,
+          cookie: true,
+          xfbml: true,
+          version: 'v18.0'
+        });
+      };
+      document.body.appendChild(script);
+    };
+
+    initFB();
+  }, []);
+
+  const handleRegister = () => {
+    setIsLoading(true);
+
+    window.FB.login(response => {
+      if (response.authResponse) {
+        window.FB.api('/me',
+          { fields: 'first_name,last_name,email' },
+          (profile) => {
+            handleFacebookResponse(profile);
+            setShowNormalForm(false);
+            setFacebookReg(true);
+
+
+
+
+            setIsLoading(false);
+          }
+        );
+      } else {
+        setIsLoading(false);
+        console.log('User cancelled registration');
+      }
+    }, { scope: 'email,public_profile' });
+  };
+
+
+  const handleGoogleRegisterClick = () => {
+    /* Google OAuth2 Client ID */
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  
+    /* Open Google's Authentication Popup */
+    google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: "openid email profile",
+      callback: (response) => {
+        if (response.access_token) {
+          fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+            headers: {
+              Authorization: `Bearer ${response.access_token}`,
+            },
+          })
+            .then((res) => res.json())
+            .then((user) => {
+              // Update state with user data
+              setUserData({
+                googleId: user.sub,
+                firstName: user.given_name,
+                lastName: user.family_name,
+                email: user.email,
+              });
+  
+              // Hide normal form & show Google form
+              setShowNormalForm(false);
+              setShowGoogleForm(true);
+            })
+            .catch((err) => console.error("Error fetching Google user data:", err));
+        }
+      },
+    }).requestAccessToken();
+  };
 
   return (
 
@@ -613,7 +618,7 @@ function Signup() {
           style={{
             width: isSmallScreen ? '100%' : '80%',
             height: isSmallScreen ? '100vh' : '90vh',
-            maxHeight: '650px',
+            maxHeight: '800px',
             backgroundColor: 'rgba(0, 0, 0, 0.2)',
             borderRadius: '16px',
             display: 'flex',
@@ -626,7 +631,7 @@ function Signup() {
               width: isSmallScreen ? '100%' : '50%',
               height: '100%',
               borderRadius: '16px',
-              backgroundImage: `url('https://res.cloudinary.com/damicjacf/image/upload/v1728562826/pixelcut-export_1_urcpe5.png')`,
+              backgroundImage: `url('/images/signup.png')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
 
@@ -696,8 +701,8 @@ function Signup() {
             {showNormalForm && (
               <div className="Container slide-from-downToUp"
                 style={{
-                  width:  isMediumScreen? '70%' : '60%',  // Full width of the parent
-                  maxWidth: '600px', // Optionally, set a max width to avoid too wide container
+                  width: isMediumScreen ? '70%' : '60%',  // Full width of the parent
+                  maxWidth: '600px',
                   padding: '10px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -946,7 +951,7 @@ function Signup() {
                       }}
                     >
                       {t('What type of projects you are up to?  Select 2')}
-                     
+
                       {currentLanguage === 'fr' ? (
                         <>
                           <span
@@ -1411,7 +1416,7 @@ function Signup() {
                         width: '100%',
                         color: 'white',
                         background: '#3B364C',
-                        height: isMediumScreen? '50px' : '60px',
+                        height: isMediumScreen ? '50px' : '60px',
                         marginTop: '10px',
                         borderRadius: '16px',
                         display: 'flex',
@@ -1434,7 +1439,7 @@ function Signup() {
                             sx={{
                               fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                               color: formData.isBuyerSelected ? '#000000' : '#FFFFFF',
-                              fontSize: isMediumScreen? '14px' : '15px',
+                              fontSize: isMediumScreen ? '14px' : '15px',
                               fontWeight: 'bold',
                             }}>
                             {t('Khadamat Buyer')}
@@ -1458,7 +1463,7 @@ function Signup() {
                             sx={{
                               fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                               color: !formData.isBuyerSelected ? '#000000' : '#FFFFFF',
-                              fontSize: isMediumScreen? '14px' : '15px',
+                              fontSize: isMediumScreen ? '14px' : '15px',
                               fontWeight: 'bold',
                             }}>
                             {t('Khadamat Seller')}
@@ -1520,9 +1525,9 @@ function Signup() {
                               color: 'white',
                               fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                               fontWeight: 'bold',
-       
-                       
-                              fontSize: isMediumScreen? '10px' : '12px',
+
+
+                              fontSize: isMediumScreen ? '10px' : '12px',
                             }}>
                             {t('The one who needs someone to build their project.')}
                           </Typography>
@@ -1562,11 +1567,11 @@ function Signup() {
                             position: 'absolute',
                             left: currentLanguage === 'ar' ? '74%' : '26%',
                           }}></div>
-                       <div className="SellerTypos "
+                        <div className="SellerTypos "
                           style={{
                             position: 'absolute',
                             left: currentLanguage === 'ar' ? '2%' : '30%',
-                            width : '60%'
+                            width: '60%'
                           }}>
                           <Typography
                             sx={{
@@ -1582,8 +1587,8 @@ function Signup() {
                               color: 'white',
                               fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
                               fontWeight: 'bold',
-       
-                              fontSize: isMediumScreen? '10px' : '12px',
+
+                              fontSize: isMediumScreen ? '10px' : '12px',
                             }}>
                             {t('The one who will build the project for the client.')}
                           </Typography>
@@ -1697,8 +1702,8 @@ function Signup() {
                     </div>
                   </>
                 )}
-             
-            
+
+
 
 
                 <div className="CreatButton" style={{ width: '100%', marginTop: '5px' }}>
@@ -1711,7 +1716,7 @@ function Signup() {
                       height: '38px',
                       border: 'none',
                       color: 'white',
-                      opacity : isLoading? '0.5' : 'unset', 
+                      opacity: isLoading ? '0.5' : 'unset',
                       display: 'flex', // Use flexbox for centering
                       justifyContent: 'center', // Center horizontally
                       alignItems: 'center', // Center vertically
@@ -1721,7 +1726,7 @@ function Signup() {
                       },
                     }}
                     onClick={handleNextStep}
-                    disabled={isLoading} 
+                    disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
@@ -1798,60 +1803,64 @@ function Signup() {
                   </div>
 
                 </div>
-                <div className="SocailRegister"
-                  style={{
-                    width: '101%',
-                    marginTop: '13px',
-                    display: 'flex',
-                    gap: '17px',
-                  }}
-                >
-                  <GoogleLogin
-                    clientId="667288614483-84vm2m107b7n58lehckvmkrq7dm98ut7.apps.googleusercontent.com"
-                    buttonText={
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img
-                          src="https://res.cloudinary.com/damicjacf/image/upload/v1726935029/GoogleLogo-removebg-preview_as5ffe.png" // Make sure this is a transparent PNG
-                          alt="Google Logo"
-                          style={{ width: '26px', height: '26px', marginRight: currentLanguage === 'ar' ? '-5px' : '8px' }}
-                        />
-                        <Typography
-                          sx={{
-                            fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                            textTransform: 'capitalize',
-                          }}
-                        >
-                          {t('Google')}
-                        </Typography>
-                      </div>
-                    }
-                    onSuccess={handleGoogleSignInSuccess}
-                    onFailure={handleGoogleSignInFailure}
-                    cookiePolicy={'single_host_origin'}
-                    className="google-login-button"
-                  />
+                <div className="SocialRegister" style={{
+                  width: '100%',
+                  marginTop: '13px',
 
-
-
-                  <Button onClick={handleFacebookRedirect}
+                  display: 'flex',
+                  gap: '15px',
+                }}>
+                  {/* Google Button */}
+                  <Button
+                    onClick={handleGoogleRegisterClick}
                     variant="outlined"
                     sx={{
                       color: 'white',
-                      width: '47%',
+                      width: '100%',
                       height: '40px',
                       border: '1px solid white',
                       ":hover": {
                         border: '1px solid white',
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)'
                       },
                       display: 'flex',
-                      alignItems: 'center', // Center logo and text vertically
-                      justifyContent: 'center', // Center logo and text horizontally
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <img
+                      src="https://res.cloudinary.com/damicjacf/image/upload/v1726935029/GoogleLogo-removebg-preview_as5ffe.png" // Make sure this is a transparent PNG
+                      alt="Google Logo"
+                      style={{ width: '26px', height: '26px', marginRight: currentLanguage === 'ar' ? '-5px' : '8px' }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {t('Google')}
+                    </Typography>
+                  </Button>
+
+                  {/* Existing Facebook Button */}
+                  <Button onClick={handleRegister}
+                    variant="outlined"
+                    sx={{
+                      color: 'white',
+                      width: '100%',
+                      height: '40px',
+                      border: '1px solid white',
+                      ":hover": { border: '1px solid white' },
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
                     <img
                       src="https://res.cloudinary.com/damicjacf/image/upload/v1726935243/facebook_logos_PNG19754_iz2nrh.png"
-                      alt="Google Logo"
-                      style={{ width: '30px', height: '30px', marginRight: '8px' }} // Adjust size and spacing
+                      alt="Facebook Logo"
+                      style={{ width: '30px', height: '30px', marginRight: '8px' }}
                     />
                     <Typography
                       sx={{
@@ -1865,9 +1874,10 @@ function Signup() {
                 </div>
 
 
+
               </div>
             )}
-              
+
 
             {showGoogleForm && (
               <GoogleRegister
@@ -1879,16 +1889,19 @@ function Signup() {
 
             {facebookReg && (
               <>
-                <FacebookRegister userData={userData} />
+                <FacebookRegister userData={userData}
+                  setFacebookReg={setFacebookReg}
+                  setShowNormalForm={setShowNormalForm}
+                />
               </>
             )}
 
 
           </div>
-          
+
 
         </div>
-        
+
 
       )}
     </>

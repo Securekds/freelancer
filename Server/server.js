@@ -15,6 +15,9 @@ import adminRoute from "./routes/admin.route.js";
 import sessionRoutes from "./routes/session.route.js";
 import audioRoutes from "./routes/audio.route.js";
 import paymentRoutes from './routes/payment.route.js';
+import https from "https";
+import './utils/cronJobs.js';  // Import the cron job file
+
 import walletRoutes from './routes/buyerswallet.route.js';
 import transactionRoutes from './routes/transaction.route.js';
 import uploadRoutes from './routes/upload.route.js'; // ✅ Import the new route
@@ -34,6 +37,10 @@ import categoryRoutes from './routes/category.route.js';
 import subcategoryRoutes from './routes/subcategory.route.js';
 import useragent from "express-useragent";
 import rateLimit from "express-rate-limit";
+
+
+import fs from "fs";
+
 import Notification from "./models/notification.model.js";
 
 
@@ -47,13 +54,20 @@ mongoose.set('strictQuery', true);
 
 
 
-// Apply CORS middleware for Express routes
 app.use(
   cors({
-    origin: ["http://62.171.139.251", "http://localhost:5173"],
-    credentials: true,
+    origin: [
+      "http://62.171.139.251", 
+      "https://localhost:5173",
+      "http://localhost:5173" 
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
   })
 );
+
+// Now this will work
 
 
 
@@ -62,7 +76,7 @@ const server = http.createServer(app);
 // Setup Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: ["http://62.171.139.251", "http://localhost:5173"], // Allow both
+    origin: ["http://62.171.139.251", "https://localhost:5173"], // Allow both
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -453,7 +467,6 @@ app.use((req, res, next) => {
 
 
 
-
 // Apply user-agent middleware
 app.use(useragent.express());
 app.use(trackSession);
@@ -541,9 +554,8 @@ app.use((err, req, res, next) => {
 
 
 
+const PORT = 8800;
 
-// Create HTTP server
-const port = 8800; // Change the port if necessary
-server.listen(port, () => {
-  console.log('Server running on http://localhost:8800');
+server.listen(PORT, () => {
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });

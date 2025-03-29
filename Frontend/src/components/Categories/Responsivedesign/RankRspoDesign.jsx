@@ -99,7 +99,11 @@ function RankRspoDesign({ onCloseClick, ocClickOpen }) {
         setLoading(true);
         setError(null); // Reset error state before the request
         try {
-            const response = await axios.get("http://localhost:8800/server/ranks/get-totalranks");
+            const response = await axios.get(
+               
+                `${import.meta.env.VITE_BACKEND_URL}/server/ranks/get-totalranks`,
+                { withCredentials: true },
+            );
 
             // Log the entire response to check the structure
             console.log('Fetched ranks:', response.data);

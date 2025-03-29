@@ -957,6 +957,7 @@ function ResponsiveallPro() {
                                 </div>
                                 <div className="Button">
                                     <Button variant="outlined"
+                                     onClick={() => handleGigClick(gig._id)}
                                         sx={{
 
                                             borderColor: 'white', '&:hover': {

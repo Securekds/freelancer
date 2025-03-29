@@ -12,7 +12,7 @@ import DOMPurify from 'dompurify';
 
 
 
-function FacebookRegister({ userData, responseFacebook ,  }) {
+function FacebookRegister({ userData, setFacebookReg, setShowNormalForm }) {
     const { t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(() => {
         const storedLanguage = localStorage.getItem('language');
@@ -31,42 +31,61 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
         i18n.changeLanguage(currentLanguage);
     }, [currentLanguage]);
 
-
     const generatePassword = (length = 12) => {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const specialChars = '@$!%*?&'; // Only allowed special characters
+        const allChars = letters + numbers + specialChars;
+
         let password = '';
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * chars.length);
-            password += chars[randomIndex];
+
+        // Ensure at least one character from each required set
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+        // Fill the rest of the password with random characters
+        for (let i = 3; i < length; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
         }
-        return password;
+
+        // Shuffle the password to avoid predictable patterns
+        return password.split('').sort(() => 0.5 - Math.random()).join('');
     };
+
+    // Example usage:
+    console.log(generatePassword()); // Generates a valid password
+
+
+    // Example usage:
+    console.log(generatePassword(12)); // Output: Random strong password
+
 
 
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
-        password: '', // Add the password field
+        password: '',
+        facebookId: '', // Add facebookId
         isBuyerSelected: true,
         selectedOptions: [],
     });
 
+
     useEffect(() => {
         if (userData) {
-            setFormData((prevData) => {
-                const updatedData = {
-                    ...prevData,
-                    firstName: userData.first_name || prevData.firstName,
-                    lastName: userData.last_name || prevData.lastName,
-                    email: userData.email || prevData.email,
-                    password: generatePassword(),
-                };
-                console.log("Updated formData:", updatedData); // Log updated formData here
-                return updatedData;
-            });
+            setFormData((prevData) => ({
+                ...prevData,
+                firstName: userData.firstName || prevData.firstName,
+                lastName: userData.lastName || prevData.lastName,
+                email: userData.email || prevData.email,
+                facebookId: userData.facebookId || prevData.facebookId, // Store Facebook ID
+                password: generatePassword(),
+            }));
         }
     }, [userData]);
+
 
 
     const navigate = useNavigate();
@@ -83,12 +102,7 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
     const [countdown, setCountdown] = useState(5);
     const [message, setMessage] = useState(t('We are setting up your account. This step takes a few seconds...'));
 
-    const [sanitizedFormData, setSanitizedFormData] = useState({
-        email: '',
-        firstName: '',
-        lastName: '',
-        accessToken: '',
-    });
+
 
 
     useEffect(() => {
@@ -106,7 +120,7 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
                             setCountdown((prevCountdown) => {
                                 if (prevCountdown <= 0) {
                                     clearInterval(countdownInterval);
-                                    
+
                                     navigate('/auth/signin')
                                     return 0; // Ensure countdown reaches 0
                                 }
@@ -131,14 +145,14 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
             };
         }
     }, [showAccountCreation, navigate]); // Add navigate to the dependency array
-    
+
     // Update loading message while progress is below 100%
     useEffect(() => {
         if (progress < 100) {
             setMessage(t('We are setting up your account. This step takes a few seconds...'));
         }
     }, [progress]);
-    
+
 
 
 
@@ -297,20 +311,21 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
             password: DOMPurify.sanitize(formData.password),
             isBuyerSelected: formData.isBuyerSelected,
             selectedOptions: Object.values(selectedDivs).flat(),
-            byFacebook: true,
+            facebookId: formData.facebookId ? DOMPurify.sanitize(formData.facebookId) : null, // ✅ Include Facebook ID
+            byFacebook: !!formData.facebookId, // ✅ Ensure boolean is correct
         };
 
         console.log("Sanitized Data to be Sent:", sanitizedFormData);
 
         try {
             const registerResponse = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`, 
-                { 
-              
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sanitizedFormData),
-            });
+                `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`,
+                {
+
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sanitizedFormData),
+                });
 
             const registerData = await registerResponse.json();
 
@@ -330,9 +345,8 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
 
 
     const handleBackToRegister = () => {
-        setShowBuyerSeller(false)
-        setShowGoogleForm(false)
-        setShowNormalForm(true)
+        setFacebookReg(false);
+        setShowNormalForm(true);
 
     }
 
@@ -351,17 +365,16 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
             <div className="Container slide-from-right"
                 style={{
                     width: '90%',
+                    maxWidth: '500px',
                     padding: '10px',
                     display: 'flex',
-                    marginTop: currentLanguage === 'ar' ? '60px' : 'unset',
                     alignItems: 'center',
-                    marginTop: '80px',
-                    marginLeft: currentLanguage === 'ar' ? '70px' : '0px',
-                    position: 'relative',
-                    marginRight: currentLanguage === 'ar' ? '70px' : 'unset',
+                    justifyContent: 'center',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                     overflow: 'hidden',
                     flexDirection: 'column',
-                    height: '100%',
+                    height: 'auto',
                 }}
             >
                 {showBuyerSeller && (
@@ -577,17 +590,17 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
                                 </div>
                             </div>
                         )}
-                        <div className="BuyerAndSellerButton" style={{ width: '75%', marginTop: '18px' }}>
+                        <div className="BuyerAndSellerButton" style={{ width: '100%', marginTop: '18px' }}>
                             <Button onClick={handleNextStep}
                                 variant="outlined"
                                 className="btn-grad"
                                 sx={{
-                                    width: '365px',
+                                    width: currentLanguage === 'ar' ? '100%' : '85%',
                                     position: 'relative',
                                     height: '38px',
                                     border: 'none',
-                                    marginRight: currentLanguage === 'ar' ? '-37px' : 'unset',
-                                    marginLeft: '-20px',
+
+                                    margin: 'auto',
                                     color: 'white',
                                     display: 'flex', // Use flexbox for centering
                                     justifyContent: 'center', // Center horizontally
@@ -636,7 +649,7 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
                                             fontSize: '15px',
                                         }}
                                     >
-                                        {t('Back to Login')}
+                                        {t('Back to Register')}
                                     </Typography>
                                     <div className="Icon">
                                         <ArrowBackIcon sx={{ color: 'white' }} />
@@ -654,7 +667,7 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
                                             fontSize: '15px',
                                         }}
                                     >
-                                        {t('Back to Login')}
+                                        {t('Back to Register')}
                                     </Typography>
                                 </>
                             )}
@@ -818,17 +831,17 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
                             </div>
 
                         </div>
-                        <div className="CreateAccountButton" style={{ width: '78%', marginTop: '18px' }}>
+                        <div className="CreateAccountButton" style={{ width: '90%', marginTop: '18px' }}>
                             <Button onClick={handleRegistration}
                                 variant="outlined"
                                 className="btn-grad"
                                 sx={{
-                                    width: '340px',
+                                    width: '90%',
                                     position: 'relative',
                                     height: '38px',
                                     border: 'none',
-                                    marginRight: currentLanguage === 'ar' ? '-35px' : 'unset',
-                                    marginLeft: '-5px',
+
+                                    margin: 'auto',
                                     color: 'white',
                                     display: 'flex', // Use flexbox for centering
                                     justifyContent: 'center', // Center horizontally
@@ -916,129 +929,130 @@ function FacebookRegister({ userData, responseFacebook ,  }) {
 
             </div>
             {showAccountCreation && (
-                  <div className="LastStep"
+                <div className="LastStep"
 
-                  style={{
-                    height: '110vh',
-                    width: '140%',
-                    background: '#0E0E10',
-                    position: 'fixed',
-                    top: -50,
-                    left: -190,
-                    zIndex: 9999,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                  }}
+                    style={{
+                        height: '110vh',
+                        width: '140%',
+                        background: '#0E0E10',
+                        position: 'fixed',
+                        top: -50,
+                        left: -190,
+                        zIndex: 9999,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                    }}
                 >
-                  <img
-                    src='https://res.cloudinary.com/damicjacf/image/upload/v1724631771/Capture_qf8psv.png'
-                    alt="Logo"
-                    style={{
-                      maxWidth: '200px',
-                      maxHeight: '200px',
-                      zIndex: 100000000,
-                    }}
-                  />
-                   {showSuccessAnimation && (
-                                <Lottie
-                                    animationData={Created}
-                                    loop={false}
-                                    style={{ width: 100, height: 100, marginBottom: '-20px' }} // Adjust size as needed
-                                />
-                            )}
-
-
-                  {/* Progress Bar */}
-                  <div
-                    style={{
-                      width: '40%',
-                      height: '10px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                      borderRadius: '10px',
-                      marginTop: '20px',
-                      position: 'relative',
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: '100%',
-                        width: `${progress}%`,
-                        backgroundColor: 'cyan',
-                        borderRadius: '10px',
-                        transition: 'width 0.5s ease',
-                      }}
+                    <img
+                        src='https://res.cloudinary.com/damicjacf/image/upload/v1724631771/Capture_qf8psv.png'
+                        alt="Logo"
+                        style={{
+                            maxWidth: '200px',
+                            maxHeight: '200px',
+                            zIndex: 100000000,
+                        }}
                     />
-                  </div>
-                  <span style={{
-                    color: 'white', marginTop: '20px', fontSize: '20px',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    {showSuccessAnimation && (
+                        <Lottie
+                            animationData={Created}
+                            loop={false}
+                            style={{ width: 100, height: 100, marginBottom: '-20px' }} // Adjust size as needed
+                        />
+                    )}
 
 
-                  }}>
-                    {progress}%
-                  </span>
-                  {/* Progress Message */}
-                  <p style={{
-                    color: 'white',
-                    marginTop: '20px',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    {/* Progress Bar */}
+                    <div
+                        style={{
+                            width: '40%',
+                            height: '10px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                            borderRadius: '10px',
+                            marginTop: '20px',
+                            position: 'relative',
+                        }}
+                    >
+                        <div
+                            style={{
+                                height: '100%',
+                                width: `${progress}%`,
+                                backgroundColor: 'cyan',
+                                borderRadius: '10px',
+                                transition: 'width 0.5s ease',
+                            }}
+                        />
+                    </div>
+                    <span style={{
+                        color: 'white', marginTop: '20px', fontSize: '20px',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
-                  }}>
-                    {message}
 
-                  </p>
-                  {showBackToLogin && (
-                                <div
-                                    className="BackToLogon slide-from-right"
-                                    style={{
-                                        marginTop: '20px',
-                                        display: 'flex',
-                                        gap: '6px',
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={(e) => {
-                                        e.preventDefault(); // Prevent the default anchor behavior
-                                        handleBackToSignin();
-                                    }}
-                                >
-                                    {currentLanguage === 'ar' ? (
-                                        <>
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: '"Droid Arabic Kufi", serif',
-                                                    color: 'white',
-                                                    fontSize: '15px',
-                                                }}
-                                            >
-                                                {t('Signin Directly With Facebook')}
-                                            </Typography>
-                                            <div className="Icon">
-                                                <ArrowBackIcon sx={{ color: 'white' }} />
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="Icon">
-                                                <ArrowBackIcon sx={{ color: 'white' }} />
-                                            </div>
-                                            <Typography
-                                                sx={{
-                                                    fontFamily: '"Airbnbcereal", sans-serif',
-                                                    color: 'white',
-                                                    fontSize: '15px',
-                                                }}
-                                            >
-                                                {t('Signin Directly With Facebook')}
-                                            </Typography>
-                                        </>
-                                    )}
-                                </div>
+                    }}>
+                        {progress}%
+                    </span>
+                    {/* Progress Message */}
+                    <p style={{
+                        color: 'white',
+                        marginTop: '20px',
+                        fontSize: '18px',
+                        fontWeight: 'bold',
+                        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
 
+                    }}>
+                        {message}
+
+                    </p>
+                    {showBackToLogin && (
+                        <div
+                            className="BackToLogon slide-from-right"
+                            style={{
+                                marginTop: '20px',
+                                display: 'flex',
+                                gap: '6px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={(e) => {
+                                e.preventDefault(); // Prevent the default anchor behavior
+                                handleBackToSignin
+                                handleBackToSignin();
+                            }}
+                        >
+                            {currentLanguage === 'ar' ? (
+                                <>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: '"Droid Arabic Kufi", serif',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                        }}
+                                    >
+                                        {t('Signin Directly With Facebook')}
+                                    </Typography>
+                                    <div className="Icon">
+                                        <ArrowBackIcon sx={{ color: 'white' }} />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="Icon">
+                                        <ArrowBackIcon sx={{ color: 'white' }} />
+                                    </div>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: '"Airbnbcereal", sans-serif',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                        }}
+                                    >
+                                        {t('Signin Directly With Facebook')}
+                                    </Typography>
+                                </>
                             )}
+                        </div>
+
+                    )}
 
                 </div>
             )}

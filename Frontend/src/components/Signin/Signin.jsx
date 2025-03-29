@@ -12,12 +12,11 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useGoogleLogin } from "@react-oauth/google";
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import DraftsOutlinedIcon from '@mui/icons-material/DraftsOutlined';
 import PasswordIcon from '@mui/icons-material/Password';
 import Lottie from 'lottie-react';
-import { GoogleLogin } from 'react-google-login';
-import FacebookLogin from 'react-facebook-login';
 import PasswordSucces from '../../assets/images/small-logos/PasswordSucces.json'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -164,47 +163,47 @@ function Signin() {
   };
 
   const [isTwoFARequired, setIsTwoFARequired] = useState(false);
-const [twoFAMethod, setTwoFAMethod] = useState(null); 
-const [loggedInUser, setLoggedInUser] = useState(null); // Store user data
+  const [twoFAMethod, setTwoFAMethod] = useState(null);
+  const [loggedInUser, setLoggedInUser] = useState(null); // Store user data
 
 
-const handleLogin = async () => {
-  setError(null);
-  setIsLoading(true);
-  setInputError({ email: false, password: false });
+  const handleLogin = async () => {
+    setError(null);
+    setIsLoading(true);
+    setInputError({ email: false, password: false });
 
-  if (isRateLimited || accountLockedUntil) {
-    setIsLoading(false);
-    return;
-  }
+    if (isRateLimited || accountLockedUntil) {
+      setIsLoading(false);
+      return;
+    }
 
-  // Input validation
-  if (!userEmailValue || !password) {
-    setError(t("Email and password are required."));
-    setInputError({ email: !userEmailValue, password: !password });
-    setIsLoading(false);
-    return;
-  }
+    // Input validation
+    if (!userEmailValue || !password) {
+      setError(t("Email and password are required."));
+      setInputError({ email: !userEmailValue, password: !password });
+      setIsLoading(false);
+      return;
+    }
 
-  // Sanitize inputs
-  const sanitizedEmail = sanitizeInput(userEmailValue);
-  const sanitizedPassword = sanitizeInput(password);
+    // Sanitize inputs
+    const sanitizedEmail = sanitizeInput(userEmailValue);
+    const sanitizedPassword = sanitizeInput(password);
 
-  // Email format validation
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(sanitizedEmail)) {
-    setError(t("Please enter a valid email."));
-    setInputError((prev) => ({ ...prev, email: true }));
-    setIsLoading(false);
-    return;
-  }
+    // Email format validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(sanitizedEmail)) {
+      setError(t("Please enter a valid email."));
+      setInputError((prev) => ({ ...prev, email: true }));
+      setIsLoading(false);
+      return;
+    }
 
-  try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/server/auth/login`,
-      { email: sanitizedEmail, password: sanitizedPassword },
-      { withCredentials: true }
-    );
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/server/auth/login`,
+        { email: sanitizedEmail, password: sanitizedPassword },
+        { withCredentials: true }
+      );
 
       // Check if two-factor authentication is required
       if (response.data.twoFactorRequired) {
@@ -212,95 +211,95 @@ const handleLogin = async () => {
         setLoginDesign(false);
         setIsTwoFARequired(true);
         setTwoFAMethod(response.data.twoFactorMethod);
-       setLoggedInUser(response.data.user);
+        setLoggedInUser(response.data.user);
         setIsLoading(false); // Stop loading indicator
         return; // Important: Return here to prevent proceeding to login success
       }
 
-    // Only execute this code if 2FA is not required
-    console.log('Login successful:', response.data);
-    login(response.data);
-    setError(null);
-    setIsLoading(false);
-    setLoginSuccess(true);
-
-    toast.success(t('Login successful!'), {
-      style: {
-        fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-        fontSize: '16px',
-      },
-    });
-
-    setTimeout(() => {
-      navigate('/userdashboard');
-    }, 2000);
-
-  } catch (err) {
-    console.error('Login failed:', err.response?.data?.message || err.message);
-
-    // Handle network errors
-    if (!err.response) {
-      setError(t("Unable to connect to the server. Please check your internet connection or try again later."));
+      // Only execute this code if 2FA is not required
+      console.log('Login successful:', response.data);
+      login(response.data);
+      setError(null);
       setIsLoading(false);
-      return;
-    }
+      setLoginSuccess(true);
 
-    // Handle rate limiting (status 429)
-    if (err.response?.status === 429) {
-      const rateLimitedUntil = new Date().getTime() + (60 * 1000); // 1 minute
-      localStorage.setItem('rateLimitedUntil', rateLimitedUntil.toString());
-      setIsRateLimited(true);
-      setCountdown(60);
-      setError(t("Too many login attempts. Please try again later."));
-      setIsLoading(false);
-      return;
-    }
+      toast.success(t('Login successful!'), {
+        style: {
+          fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+          fontSize: '16px',
+        },
+      });
 
-    // Handle account lockout (status 403)
-    if (err.response?.status === 403) {
-      const errorMessage = err.response?.data?.message;
-      const lockUntil = err.response?.data?.lockUntil;
+      setTimeout(() => {
+        navigate('/userdashboard');
+      }, 2000);
 
-      if (errorMessage === "Warning: 1 more attempt before account lock. Reset password if needed.") {
-        setError(t(errorMessage));
-      } else if (errorMessage === "Wrong password or email!") {
-        setError(t("Incorrect email or password."));
-      } else if (errorMessage === "Your account is temporarily locked due to multiple failed login attempts. Please try again in 2 minutes.") {
-        setError(t(errorMessage));
+    } catch (err) {
+      console.error('Login failed:', err.response?.data?.message || err.message);
 
-        if (lockUntil) {
-          const accountLockedUntil = new Date(lockUntil).getTime();
-          if (!isNaN(accountLockedUntil)) {
-            localStorage.setItem('accountLockedUntil', accountLockedUntil.toString());
-            setAccountLockedUntil(accountLockedUntil);
-            setIsRateLimited(true);
-            const timeRemaining = Math.max(0, Math.floor((accountLockedUntil - new Date().getTime()) / 1000));
-            setCountdown(timeRemaining);
+      // Handle network errors
+      if (!err.response) {
+        setError(t("Unable to connect to the server. Please check your internet connection or try again later."));
+        setIsLoading(false);
+        return;
+      }
+
+      // Handle rate limiting (status 429)
+      if (err.response?.status === 429) {
+        const rateLimitedUntil = new Date().getTime() + (60 * 1000); // 1 minute
+        localStorage.setItem('rateLimitedUntil', rateLimitedUntil.toString());
+        setIsRateLimited(true);
+        setCountdown(60);
+        setError(t("Too many login attempts. Please try again later."));
+        setIsLoading(false);
+        return;
+      }
+
+      // Handle account lockout (status 403)
+      if (err.response?.status === 403) {
+        const errorMessage = err.response?.data?.message;
+        const lockUntil = err.response?.data?.lockUntil;
+
+        if (errorMessage === "Warning: 1 more attempt before account lock. Reset password if needed.") {
+          setError(t(errorMessage));
+        } else if (errorMessage === "Wrong password or email!") {
+          setError(t("Incorrect email or password."));
+        } else if (errorMessage === "Your account is temporarily locked due to multiple failed login attempts. Please try again in 2 minutes.") {
+          setError(t(errorMessage));
+
+          if (lockUntil) {
+            const accountLockedUntil = new Date(lockUntil).getTime();
+            if (!isNaN(accountLockedUntil)) {
+              localStorage.setItem('accountLockedUntil', accountLockedUntil.toString());
+              setAccountLockedUntil(accountLockedUntil);
+              setIsRateLimited(true);
+              const timeRemaining = Math.max(0, Math.floor((accountLockedUntil - new Date().getTime()) / 1000));
+              setCountdown(timeRemaining);
+            }
           }
         }
+        setIsLoading(false);
+        return;
       }
+
+      // Map error messages to translations
+      const errorMessages = {
+        "User not found!": t("No user found with this email."),
+        "Wrong password or email!": t("Incorrect email or password."),
+        "Too many login attempts. Please try again later.": t("Too many login attempts. Please try again later."),
+        "Invalid email format.": t("Invalid email format."),
+        "Warning: 1 more attempt before account lock. Reset password if needed.":
+          t("Warning: You have 1 more attempt before your account may be locked. If you forgot your password, please reset it."),
+        "Your account is temporarily locked due to multiple failed login attempts. Please try again in 2 minutes.":
+          t("Your account is temporarily locked due to multiple failed login attempts. Please try again in 2 minutes."),
+      };
+
+      const errorMessage = err.response?.data?.message || 'An error occurred';
+      const translatedError = errorMessages[errorMessage] || t('An error occurred.');
+      setError(translatedError);
       setIsLoading(false);
-      return;
     }
-
-    // Map error messages to translations
-    const errorMessages = {
-      "User not found!": t("No user found with this email."),
-      "Wrong password or email!": t("Incorrect email or password."),
-      "Too many login attempts. Please try again later.": t("Too many login attempts. Please try again later."),
-      "Invalid email format.": t("Invalid email format."),
-      "Warning: 1 more attempt before account lock. Reset password if needed.":
-        t("Warning: You have 1 more attempt before your account may be locked. If you forgot your password, please reset it."),
-      "Your account is temporarily locked due to multiple failed login attempts. Please try again in 2 minutes.":
-        t("Your account is temporarily locked due to multiple failed login attempts. Please try again in 2 minutes."),
-    };
-
-    const errorMessage = err.response?.data?.message || 'An error occurred';
-    const translatedError = errorMessages[errorMessage] || t('An error occurred.');
-    setError(translatedError);
-    setIsLoading(false);
-  }
-};
+  };
 
 
 
@@ -688,78 +687,112 @@ const handleLogin = async () => {
   const passwordBorderColor = inputErrorPassword.password ? 'red' : (newPassword.length >= 8 ? '#4caf50' : '#4776E6'); // green for success
   const confirmPasswordBorderColor = confirmPassword && confirmPassword === newPassword ? '#4caf50' : (inputErrorPassword.confirmPassword ? 'red' : '#4776E6'); // green for success
 
-  const responseGoogle = async (response) => {
-    console.log("Google response:", response);
+  const handleGoogleLogin = async () => {
     setIsLoading(true);
-
-    // Destructure the fields from the Google response
-    const { email, familyName, givenName, googleId, imageUrl } = response.profileObj;
-    const idToken = response.tokenId; // Token received from Google
-
+    setError('');
+  
     try {
-      // Post the token and other information to your backend
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/server/auth/google-login`, {
-        email,
-        name: `${givenName} ${familyName}`,
-        googleId,
-        idToken
-      }, {
-        withCredentials: true,
-      });
-
-      console.log('Google login successful:', res.data);
-
-      if (res.data.success) {
-        // Extract the user data from the response
-        const user = res.data.user;
-
-        // Prepare user data for local storage
-        const userData = {
-          _id: user._id || '',
-          email: user.email || '',
-          firstName: user.firstName || '',
-          lastName: user.lastName || '',
-          googleId: user.googleId || '',
-          profileImg: user.profileImg || 'https://res.cloudinary.com/damicjacf/image/upload/v1728490158/default_profile_image.png', // Use default if necessary
-          coverImg: user.coverImg || 'https://res.cloudinary.com/damicjacf/image/upload/v1728583460/MyCover_yngwcg.jpg', // Use default if necessary
-          createdAt: user.createdAt || '',
-          updatedAt: user.updatedAt || '',
-        };
-
-
-        // Save user data in local storage
-        localStorage.setItem('userData', JSON.stringify(userData));
-
-        // Update state and show success message
-        setIsLoading(true)
-        setLoginSuccess(true);
-        toast.success(t('Google login successful!'));
-
-        // Redirect to the user dashboard after a short delay
-        setTimeout(() => {
-          setIsLoading(false); // End loading state
-          navigate('/userdashboard');
-        }, 2000);
-      } else {
-        // If the user is not found, display the error and navigate to register
-        setError(res.data.message); // Set the error message from the response
-        toast.error(res.data.message); // Show error message as toast
-        setIsLoading(false); // End loading state
-        navigate('/auth/signup'); // Redirect to the register page
+      // Determine the correct redirect URI (force HTTPS for localhost)
+      const redirectUri = window.location.hostname === 'localhost' 
+        ? 'https://localhost:5173' 
+        : window.location.origin;
+  
+      // 1. Try the modern FedCM flow first
+      if (typeof window.FedCmCredential !== 'undefined') {
+        await new Promise((resolve, reject) => {
+          // Load Google script if needed
+          if (!window.google?.accounts) {
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error('Failed to load Google Identity Services'));
+            document.body.appendChild(script);
+          } else {
+            resolve();
+          }
+        });
+  
+        // Initialize Google Auth
+        const { credential } = await new Promise((resolve, reject) => {
+          window.google.accounts.id.initialize({
+            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+            callback: (response) => {
+              if (response.error) reject(new Error(response.error));
+              else resolve(response);
+            },
+            error_callback: (error) => {
+              reject(new Error(error.type || 'Google authentication failed'));
+            },
+            ux_mode: 'popup'
+          });
+          window.google.accounts.id.prompt();
+        });
+  
+        // Send token to backend
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/auth/google-login`,
+          { token: credential },
+          { 
+            withCredentials: true,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+  
+        // Handle successful login
+        login({
+          ...data.user,
+          isBuyer: data.user.isBuyer ?? false,
+          isSeller: !(data.user.isBuyer ?? true),
+          isProfileUpdated: data.user.isProfileUpdated ?? false
+        });
+  
+        navigate('/userdashboard', { state: { freshLogin: true } });
+      } 
+      // 2. Fallback to traditional OAuth flow
+      else {
+        window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&` +
+          `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+          `response_type=code&` +
+          `scope=email%20profile`;
       }
-    } catch (err) {
-      // Handle error if the login process fails
-      console.error('Google login failed:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || (t('An error occurred please ckeck your connection')));
-      setIsLoading(false); // End loading state on failure
+    } catch (error) {
+      console.error('Google login error:', error);
+      
+      // Special handling for registration flow
+      if (error.response?.status === 404 && error.config?.data) {
+        try {
+          const token = JSON.parse(error.config.data).token;
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          navigate('/register', { 
+            state: { 
+              prefilledEmail: payload.email,
+              authMethod: 'google',
+              message: 'Please complete registration' 
+            } 
+          });
+          return;
+        } catch (e) {
+          console.warn('Failed to parse error token', e);
+        }
+      }
+  
+      // Network/configuration errors
+      if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+        setError('Network issues detected. Please check your connection.');
+      } 
+      // Google API errors
+      else if (error.message.includes('popup_closed')) {
+        setError('Login window was closed. Please try again.');
+      }
+      else {
+        setError(error.response?.data?.message || error.message || 'Login failed. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const onFailure = (response) => {
-    console.error('Login failed:', response);
-    toast.error('Google login failed. Please try again.'); // Show an error toast message
-  };
-
   const containsArabic = (text) => /[\u0600-\u06FF]/.test(text);
   const isSmallScreen = useMediaQuery('(max-width:600px)');
   const isTabletScreen = useMediaQuery('(min-width:601px) and (max-width:1000px)')
@@ -790,114 +823,98 @@ const handleLogin = async () => {
   const handleVerificationSuccess = (data) => {
     console.log("Login finalized:", data);
 
-    // Log the user in using UserContext
+   
     login(data);
 
-   
-    navigate('/userdashboard'); 
+
+    navigate('/userdashboard');
   };
 
-
   useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: import.meta.env.VITE_FACEBOOK_APP_ID, // Your Facebook App ID
-        cookie: true,
-        xfbml: true,
-        version: 'v13.0',
-      });
+    const initFB = () => {
+      if (window.FB) return;
+
+      const script = document.createElement("script");
+      script.src = "https://connect.facebook.net/en_US/sdk.js";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        window.FB.init({
+          appId: import.meta.env.VITE_FACEBOOK_APP_ID,
+          cookie: true,
+          xfbml: true,
+          version: "v18.0",
+        });
+      };
+      document.body.appendChild(script);
     };
 
-    (function (d, s, id) {
-      let js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
+    initFB();
   }, []);
 
-
-  const [hasAuthenticated, setHasAuthenticated] = useState(false); // New state flag to track if auth has occurred
-
-  const handleFacebookRedirect = () => {
+  // Handle Facebook Login
+  const handleFacebookLogin = () => {
     setIsLoading(true);
-    const appId = import.meta.env.VITE_FACEBOOK_APP_ID;
+    setError("");
 
-    // Define the exact redirect URI for sign-in
-    const redirectUri = window.location.pathname.includes('/auth/signup')
-      ? `${import.meta.env.VITE_FRONTEND_URL}/auth/signup`
-      : `${import.meta.env.VITE_FRONTEND_URL}/auth/signin`; // Your callback URL
+    window.FB.login(
+      (response) => {
+        if (response.authResponse) {
+          window.FB.api(
+            "/me",
+            { fields: "first_name,last_name,email,id" },
+            async (profile) => {
+              try {
+                const { email, id: facebookId } = profile;
 
-    // URL to initiate Facebook OAuth dialog with redirect
-    const facebookOAuthUrl = `https://www.facebook.com/v13.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile`;
+                if (!email) {
+                  setError("Email is required to log in.");
+                  setIsLoading(false);
+                  return;
+                }
 
-    // Redirect the user to the Facebook login URL
-    window.location.href = facebookOAuthUrl;
-  };
+                // Send login request to backend
+                const response = await axios.post(
+                  `${import.meta.env.VITE_BACKEND_URL}/server/auth/facebook-auth`,
+                  { email, facebookId },
+                  { withCredentials: true } // Needed for session-based auth
+                );
 
-  // In your useEffect for handling the response
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code'); // Get the authorization code
+                login(response.data);
 
-    if (code && !hasAuthenticated) {
-      const authenticateWithFacebook = async () => {
-        setIsLoading(true);
+                setIsLoading(false);
+                setLoginSuccess(true);
 
-        // Determine redirect URI based on current component
+                toast.success(t('Login successful!'), {
+                  style: {
+                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                    fontSize: '16px',
+                  },
+                });
 
-        const redirectUri = window.location.pathname.includes('/auth/signup')
-          ? `${import.meta.env.VITE_FRONTEND_URL}/auth/signup`
-          : `${import.meta.env.VITE_FRONTEND_URL}/auth/signin`; // Your callback URL
+                setTimeout(() => {
+                  navigate('/userdashboard');
+                }, 2000);
 
-        try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_BACKEND_URL}/server/auth/facebook-auth`,
-            { code, redirectUri },
-            { withCredentials: true }
+              } catch (err) {
+                if (err.response?.status === 404) {
+                  setError("No account found. Please sign up first.");
+                } else {
+                  setError("An error occurred. Please try again.");
+                }
+              } finally {
+                setIsLoading(false);
+              }
+            }
           );
-
-          // Check for success and handle user info or 404 response
-          if (response.data.success) {
-            const { user } = response.data;
-
-            // Store user data in local storage under the key 'userData'
-            localStorage.setItem('userData', JSON.stringify(user));
-
-            setIsLoading(false);
-            toast.success('Facebook login successful!');
-            setLoginSuccess(true);
-
-
-
-            setTimeout(() => {
-              navigate('/userdashboard'); // Redirect to user dashboard
-            }, 2000);
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 404) {
-            const { userInfo } = error.response.data; // Get user info from 404 response
-            console.log("User info from Facebook:", userInfo);
-
-            // Store user data in local storage under the key 'userData'
-            localStorage.setItem('userData', JSON.stringify(userInfo));
-            setUserData(userInfo); // Set user data from Facebook
-            setSignindefault(false); // Hide the default sign-in
-            setFacebookReg(true);    // Show the registration component
-          } else {
-            console.error("Error during Facebook authentication:", error.response ? error.response.data : error.message);
-          }
-        } finally {
+        } else {
           setIsLoading(false);
+          console.log("User cancelled login");
         }
-      };
-
-      authenticateWithFacebook();
-    }
-  }, [hasAuthenticated]); // Runs only on mount
-
+      },
+      { scope: "email,public_profile" }
+    );
+  };
 
 
   return (
@@ -922,7 +939,7 @@ const handleLogin = async () => {
                 width: isSmallScreen ? '100%' : '50%',
                 height: '100%',
                 borderRadius: '16px',
-                backgroundImage: `url('https://res.cloudinary.com/damicjacf/image/upload/v1727009687/_43df115a-ba53-4cab-ba9b-5d89b4e24396_hxjdkg.jpg')`,
+                backgroundImage: `url('/images/Login.jpg')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 position: 'relative',
@@ -1129,7 +1146,7 @@ const handleLogin = async () => {
                               style={{
                                 position: 'absolute',
                                 right: currentLanguage === 'ar' ? '90%' : '10px',
-                                top: '50%',
+                                top: '25%',
                                 transform: 'translateY(-50%)',
                                 color: 'red',
                                 cursor: 'default',
@@ -1142,7 +1159,7 @@ const handleLogin = async () => {
                               style={{
                                 position: 'absolute',
                                 right: currentLanguage === 'ar' ? '90%' : '10px',
-                                top: '60%',
+                                top: '53%',
                                 transform: 'translateY(-50%)',
                                 cursor: 'pointer',
                                 color: 'white',
@@ -1323,33 +1340,39 @@ const handleLogin = async () => {
                             gap: '17px',
                           }}
                         >
-                          <GoogleLogin
-                            clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-                            buttonText={
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <img
-                                  src="https://res.cloudinary.com/damicjacf/image/upload/v1726935029/GoogleLogo-removebg-preview_as5ffe.png" // Transparent PNG
-                                  alt="Google Logo"
-                                  style={{ width: '26px', height: '26px', marginRight: '8px' }}
-                                />
-                                <Typography
-                                  sx={{
-                                    fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
-                                    textTransform: 'capitalize',
-                                  }}
-                                >
-                                  {t('Google')}
-                                </Typography>
-                              </div>
-                            }
-                            onSuccess={responseGoogle}
-                            onFailure={onFailure}
-                            cookiePolicy={'single_host_origin'}
-                            className="google-login-button"
-                          />
 
-
-                          <Button onClick={handleFacebookRedirect}
+                          <Button
+                            onClick={handleGoogleLogin}
+                            variant="outlined"
+                            sx={{
+                              color: 'white',
+                              flex: 1,
+                              height: '40px',
+                              border: '1px solid white',
+                              ":hover": {
+                                border: '1px solid white',
+                                backgroundColor: 'rgba(255, 255, 255, 0.08)'
+                              },
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <img
+                              src="https://res.cloudinary.com/damicjacf/image/upload/v1726935029/GoogleLogo-removebg-preview_as5ffe.png" // Make sure this is a transparent PNG
+                              alt="Google Logo"
+                              style={{ width: '26px', height: '26px', marginRight: currentLanguage === 'ar' ? '-5px' : '8px' }}
+                            />
+                            <Typography
+                              sx={{
+                                fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif',
+                                textTransform: 'capitalize',
+                              }}
+                            >
+                              {t('Google')}
+                            </Typography>
+                          </Button>
+                          <Button onClick={handleFacebookLogin}
                             variant="outlined"
                             sx={{
                               color: 'white',
@@ -2187,22 +2210,22 @@ const handleLogin = async () => {
                         </div>
 
                       </div>
-                     ) : isTwoFARequired ? (
+                    ) : isTwoFARequired ? (
                       twoFAMethod === "email" ? (
                         <div className="div"
-                        style={{
-                          color : 'white'
-                        }}
+                          style={{
+                            color: 'white'
+                          }}
                         >
-                          <LoginEmailAuth user={loggedInUser} onVerificationSuccess={handleVerificationSuccess}  />
+                          <LoginEmailAuth user={loggedInUser} onVerificationSuccess={handleVerificationSuccess} />
                         </div>
                       ) : twoFAMethod === "phone" ? (
                         <div className="div"
-                        style={{
-                         
-                        }}
+                          style={{
+
+                          }}
                         >
-                         <Fauthphonelogin user={loggedInUser} onVerificationSuccess={handleVerificationSuccess} /> 
+                          <Fauthphonelogin user={loggedInUser} onVerificationSuccess={handleVerificationSuccess} />
                         </div>
                       ) : (
                         <div className="div">
@@ -2211,8 +2234,8 @@ const handleLogin = async () => {
                       )
 
                     ) :
-                    
-                     null}
+
+                      null}
                   </div>
                 </>
               )};

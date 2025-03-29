@@ -5,12 +5,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import i18n from 'i18next';
-import { Typography , Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightFromBracket,  faDiagramProject, faMoneyCheckDollar, faUserDoctor, faBell, faUserTie, faBriefcase, faChartPie, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
+import { faGift , faArrowRightFromBracket, faDiagramProject, faMoneyCheckDollar, faUserDoctor, faBell, faUserTie, faBriefcase, faChartPie, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 import { faTelegramPlane, faDiscord, faRedditAlien } from '@fortawesome/free-brands-svg-icons';
 import { fontSize } from '@mui/system';
 import { useUser } from '../../Context/UserContext.jsx'
@@ -67,7 +67,7 @@ const Sidenav = () => {
     // Wait for 2 seconds before making the request
     setTimeout(async () => {
       try {
-        const response = await fetch('http://localhost:8800/server/auth/logout', {
+        const response = await fetch('https://localhost:8800/server/auth/logout', {
           method: 'POST',
           credentials: 'include', // Include cookies in the request
         });
@@ -93,7 +93,7 @@ const Sidenav = () => {
   };
 
 
-  const { isSeller , isBuyer} = useUser();
+  const { isSeller, isBuyer } = useUser();
 
   return (
     <div
@@ -147,16 +147,16 @@ const Sidenav = () => {
         <div>
           <div style={{ marginBottom: '30px', textAlign: 'center' }}>
             <img
-              style={{ maxWidth: '100%', height: 'auto' }}
-              src="/src/assets/images/small-logos/Khadamat.webp"
+              src="/images/Khadamat.webp"  
               alt="Logo"
-              loading="lazy" 
+              loading="lazy"
+              style={{ maxWidth: '100%', height: 'auto' }}
             />
-        
+
           </div>
-          
+
           <div className='MenuListContainer'
-           style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <button className='Dahboard'
               style={getMenuButtonStyle(selectedButton === 'Dashboard')}
               onClick={() => handleNavigation('/userdashboard', 'Dashboard')}
@@ -189,7 +189,7 @@ const Sidenav = () => {
                 }} />
               <span style={{ marginRight: currentLanguage === 'ar' ? '8px' : 'unset', fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', }}>{t('Projects')}</span>
             </button>
-         
+
 
             <button className='Billing'
               style={getMenuButtonStyle(selectedButton === 'Billing')}
@@ -221,14 +221,14 @@ const Sidenav = () => {
               style={getMenuButtonStyle(selectedButton === 'MemberShip')}
               onClick={() => handleNavigation('/userdashboard/membership', 'MemberShip')}
             >
-              <FontAwesomeIcon icon={faBell}
+              <FontAwesomeIcon icon={faGift}
                 style={{
                   marginRight: '12px', fontSize: '17px',
                   transform: 'rotate(0deg)',
                   verticalAlign: 'middle', // Aligns with text
 
                 }} />
-              <span style={{ marginRight: currentLanguage === 'ar' ? '8px' : 'unset', fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', }}>{t('MemberShip')}</span>
+              <span style={{ marginRight: currentLanguage === 'ar' ? '8px' : 'unset', fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', }}>{t('Membership')}</span>
             </button>
             <button
               style={getMenuButtonStyle(selectedButton === '')}
@@ -260,12 +260,12 @@ const Sidenav = () => {
 
             </button>
             <button className='Signout'
-            style={getMenuButtonStyle(selectedButton === '')}
+              style={getMenuButtonStyle(selectedButton === '')}
               onClick={() => {
                 setSelectedButton('SignOut');
                 handleLogout(); // Call logout function
               }}
-              
+
             >
               <FontAwesomeIcon icon={faArrowRightFromBracket}
 
@@ -275,14 +275,14 @@ const Sidenav = () => {
                   verticalAlign: 'middle', // Aligns with text
 
                 }} />
-                    {loading ? (
-            <div className="lds-dual-ring" style={{ margin: 'auto' }}></div> // Show loading ring
-          ) : (
-              <span 
-              style={{ marginRight: currentLanguage === 'ar' ? '8px' : 'unset', fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', }}>
-                {t('SignOut')}
+              {loading ? (
+                <div className="lds-dual-ring" style={{ margin: 'auto' }}></div> // Show loading ring
+              ) : (
+                <span
+                  style={{ marginRight: currentLanguage === 'ar' ? '8px' : 'unset', fontFamily: currentLanguage === 'ar' ? '"Droid Arabic Kufi", serif' : '"Airbnbcereal", sans-serif', }}>
+                  {t('SignOut')}
                 </span>
-          )}
+              )}
 
             </button>
 

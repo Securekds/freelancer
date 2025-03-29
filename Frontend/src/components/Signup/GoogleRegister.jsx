@@ -17,7 +17,7 @@ import DOMPurify from 'dompurify';
 import GoogleRegisterMobile from './GoogleRegisterMobile';
 
 
-function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
+function GoogleRegister({ userData, setShowNormalForm, setShowGoogleForm }) {
     const { t } = useTranslation();
     const [currentLanguage, setCurrentLanguage] = useState(() => {
         const storedLanguage = localStorage.getItem('language');
@@ -36,6 +36,7 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
         i18n.changeLanguage(currentLanguage);
     }, [currentLanguage]);
 
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -43,22 +44,56 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
         password: '', // Add the password field
         isBuyerSelected: true,
         selectedOptions: [],
+        googleId: '',
     });
 
     useEffect(() => {
-       
-
-        // Set form data with received user data
         if (userData) {
-            setFormData({
-                ...formData,
-                firstName: userData.firstName,
-                lastName: userData.lastName,
-                email: userData.email,
-                password: userData.password, // Include the generated password
+            const generatedPassword = generatePassword(); // Generate password
+            console.log("Generated Password:", generatedPassword); // Log generated password
+
+            setFormData((prevData) => {
+                const updatedFormData = {
+                    ...prevData,
+                    firstName: userData.firstName || prevData.firstName,
+                    lastName: userData.lastName || prevData.lastName,
+                    email: userData.email || prevData.email,
+                    googleId: userData.googleId || prevData.googleId, // Store Google ID
+                    password: generatedPassword, // Ensure password is set
+                };
+
+                console.log("Updated Form Data:", updatedFormData); // Log after updating
+
+                return updatedFormData;
             });
         }
-    }, [userData]); // Log whenever userData changes
+    }, [userData]);
+
+
+
+    const generatePassword = (length = 12) => {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const specialChars = '@$!%*?&'; // Only allowed special characters
+        const allChars = letters + numbers + specialChars;
+
+        let password = '';
+
+        // Ensure at least one character from each required set
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+        // Fill the rest of the password with random characters
+        for (let i = 3; i < length; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        // Shuffle the password to avoid predictable patterns
+        return password.split('').sort(() => 0.5 - Math.random()).join('');
+    };
+
+
 
     const navigate = useNavigate();
     const [showBuyerSeller, setShowBuyerSeller] = useState(true);
@@ -68,7 +103,7 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
     const [showBackToLogin, setShowBackToLogin] = useState(false)
-    const [showGoogleRegisterMobile , setShowGoogleRegisterMobile]  = useState(false)
+    const [showGoogleRegisterMobile, setShowGoogleRegisterMobile] = useState(false)
 
     const [progress, setProgress] = useState(0);
     const [countdown, setCountdown] = useState(5);
@@ -90,7 +125,7 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
                             setCountdown((prevCountdown) => {
                                 if (prevCountdown <= 0) {
                                     clearInterval(countdownInterval);
-                                    
+
                                     // Redirect to /userdashboard or perform other actions here
                                     return 0; // Ensure countdown reaches 0
                                 }
@@ -124,27 +159,19 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
     }, [progress]);
 
     const handleAccountTypeChange = (isBuyer) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            isBuyerSelected: isBuyer,
-        }));
-    };
+        setFormData((prevState) => {
+            const updatedFormData = {
+                ...prevState,
+                isBuyerSelected: isBuyer,
+            };
 
+            console.log("Updated Form Data (Account Type Change):", updatedFormData); // Log updated state
 
-    // Function to update form data with selected options
-    const updateSelectedOptions = () => {
-        const allSelectedOptions = Object.values(selectedDivs).flat();
-        setFormData((prevData) => ({
-            ...prevData,
-            selectedOptions: allSelectedOptions,
-        }));
-    };
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
+            return updatedFormData;
         });
     };
+
+
 
     const handleNextStep = () => {
         // Move to the next step
@@ -162,13 +189,14 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
 
 
     const handleDivClick = (group, label) => {
-       
         const isSelected = selectedDivs[group].includes(label);
 
+        // Toggle selection
         const newSelection = isSelected
             ? selectedDivs[group].filter(item => item !== label)
             : [...selectedDivs[group], label];
 
+        // Count total selections across all groups
         const totalSelections = Object.values({ ...selectedDivs, [group]: newSelection }).flat().length;
 
         if (totalSelections > 4 && !isSelected) {
@@ -177,15 +205,37 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
         }
 
         if (totalSelections > 0) {
-            setServerError2(t(''));
+            setServerError2('');
         }
 
         setServerError2('');
-        setSelectedDivs((prev) => ({
-            ...prev,
-            [group]: newSelection,
-        }));
+
+        // Update the state for selectedDivs
+        setSelectedDivs((prev) => {
+            const updatedSelection = {
+                ...prev,
+                [group]: newSelection,
+            };
+
+            console.log("Updated Selected Divs:", updatedSelection); // Log updated selection
+
+            // Update formData with selected options
+            const updatedOptions = Object.values(updatedSelection).flat(); // Flatten to get all selected options
+
+            setFormData((prevFormData) => {
+                const newFormData = {
+                    ...prevFormData,
+                    selectedOptions: updatedOptions,
+                };
+                console.log("Updated FormData:", newFormData); // Log updated formData
+                return newFormData;
+            });
+
+            return updatedSelection;
+        });
     };
+
+
 
 
 
@@ -275,25 +325,26 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
             password: DOMPurify.sanitize(formData.password),
             isBuyerSelected: formData.isBuyerSelected,
             selectedOptions: Object.values(selectedDivs).flat(),
-            byGoogle: true ,
+            googleId: formData.googleId, // ✅ Include googleId
+            byGoogle: true, // ✅ Flag to indicate Google registration
         };
-      
+
         // Make the registration request
         try {
             const registerResponse = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`, 
-                { 
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(sanitizedFormData),
-            });
+                `${import.meta.env.VITE_BACKEND_URL}/server/auth/register`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sanitizedFormData),
+                });
 
             const registerData = await registerResponse.json();
 
             if (registerResponse.status === 201) {
-                
 
-                // Show account creation state
+
+
                 setShowUserinterest(false);
                 setShowAccountCreation(true);
 
@@ -303,7 +354,7 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
                 setIsLoading(false); // Stop loading on error
             }
         } catch (error) {
-            
+
             setServerError2('An unexpected error occurred. Please try again later.');
             setIsLoading(false); // Stop loading on error
         }
@@ -313,6 +364,12 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
         setShowBuyerSeller(false)
         setShowGoogleForm(false)
         setShowNormalForm(true)
+
+    }
+
+    const handleBackToPrevStep = () => {
+        setShowUserinterest(false);
+        setShowBuyerSeller(true);
 
     }
 
@@ -327,11 +384,11 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
                     width: '90%',
                     padding: '10px',
                     display: 'flex',
-                    marginTop: currentLanguage === 'ar' ? '60px' : 'unset',
+                    maxWidth: '500px',
                     alignItems: 'center',
-                    marginLeft: currentLanguage === 'ar' ? '70px' : '20px',
+                    justifyContent: 'center',
                     position: 'relative',
-                    marginRight: currentLanguage === 'ar' ? '70px' : 'unset',
+
                     overflow: 'hidden',
                     flexDirection: 'column',
                     height: '100%',
@@ -549,17 +606,17 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
                                 </div>
                             </div>
                         )}
-                        <div className="BuyerAndSellerButton" style={{ width: '78%', marginTop: '18px' }}>
+                        <div className="BuyerAndSellerButton" style={{ width: '82%', marginTop: '18px' }}>
                             <Button onClick={handleNextStep}
                                 variant="outlined"
                                 className="btn-grad"
                                 sx={{
-                                    width: '340px',
+                                    width: '100%',
                                     position: 'relative',
                                     height: '38px',
                                     border: 'none',
-                                    marginRight: currentLanguage === 'ar' ? '-37px' : 'unset',
-                                    marginLeft: '-5px',
+                                    margin: 'auto',
+
                                     color: 'white',
                                     display: 'flex', // Use flexbox for centering
                                     justifyContent: 'center', // Center horizontally
@@ -586,8 +643,8 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
 
                             </Button>
                         </div>
-                        <div 
-                            className="BackToRegister slide-from-right"
+                        <div className="BackToRegister slide-from-right"
+
                             style={{
                                 marginTop: '20px',
                                 display: 'flex',
@@ -788,17 +845,16 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
                             </div>
 
                         </div>
-                        <div className="CreateAccountButton" style={{ width: '78%', marginTop: '18px' }}>
+                        <div className="CreateAccountButton" style={{ width: '82%', marginTop: '18px' }}>
                             <Button onClick={handleRegistration}
                                 variant="outlined"
                                 className="btn-grad"
                                 sx={{
-                                    width: '340px',
+                                    width: '100%',
                                     position: 'relative',
                                     height: '38px',
                                     border: 'none',
-                                    marginRight: currentLanguage === 'ar' ? '-35px' : 'unset',
-                                    marginLeft: '-5px',
+                                    margin: 'auto',
                                     color: 'white',
                                     display: 'flex', // Use flexbox for centering
                                     justifyContent: 'center', // Center horizontally
@@ -831,6 +887,51 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
                                 )}
 
                             </Button>
+                        </div>
+                        <div className="BackToRegister slide-from-right"
+
+                            style={{
+                                marginTop: '20px',
+                                display: 'flex',
+                                gap: '6px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={(e) => {
+                                e.preventDefault(); // Prevent the default anchor behavior
+                                handleBackToRegister(); // Call the function
+                            }}
+                        >
+                            {currentLanguage === 'ar' ? (
+                                <>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: '"Droid Arabic Kufi", serif',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                        }}
+                                    >
+                                        {t('Back to prevStep')}
+                                    </Typography>
+                                    <div className="Icon">
+                                        <ArrowBackIcon sx={{ color: 'white' }} />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="Icon">
+                                        <ArrowBackIcon sx={{ color: 'white' }} />
+                                    </div>
+                                    <Typography
+                                        sx={{
+                                            fontFamily: '"Airbnbcereal", sans-serif',
+                                            color: 'white',
+                                            fontSize: '15px',
+                                        }}
+                                    >
+                                        {t('Back to prevStep')}
+                                    </Typography>
+                                </>
+                            )}
                         </div>
                     </>
                 )}
@@ -967,7 +1068,7 @@ function GoogleRegister({ userData , setShowNormalForm , setShowGoogleForm }) {
 
                 )}
 
-               
+
 
             </div>
         </>

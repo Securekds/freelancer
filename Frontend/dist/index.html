@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Khadamat Platform</title>
+    <script type="module" crossorigin src="/assets/index-p13pzCWO.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/lottie-CCTKFRuu.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-gIZu9_rS.js">
+    <link rel="stylesheet" crossorigin href="/assets/vendor-DbXuoIQc.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-Bg7MR-kE.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/flipdown@0.3.2/dist/flipdown.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/flipdown@0.3.2/dist/flipdown.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Droid+Arabic+Kufi&display=swap" rel="stylesheet">
+
+
+    <script>
+      // Initialize Facebook SDK
+      window.fbAsyncInit = function() {
+          FB.init({
+              appId      : import.meta.env.REACT_APP_FACEBOOK_APP_ID, // Use the correct way to fetch environment variable
+              cookie     : true, // Enable cookies to allow the server to access the session
+              xfbml      : true, // Parse social plugins on this webpage
+              version    : 'v12.0' // Use the desired Graph API version
+          });
+      };
+  
+      // Load the Facebook SDK asynchronously
+      (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {return;} // Prevent loading the SDK multiple times
+          js = d.createElement(s); js.id = id;
+          js.src = "https://connect.facebook.net/en_US/sdk.js"; // Load the SDK
+          fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+  </body>
+</html>
